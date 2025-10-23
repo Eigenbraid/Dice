@@ -75,18 +75,24 @@ h2 {
 
 .controls {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 15px;
     margin-bottom: 30px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    justify-content: center;
+    align-items: stretch;
 }
 
 .control-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.control-group-inline {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .drop-control {
@@ -103,6 +109,22 @@ h2 {
     font-weight: 600;
     color: #555;
     cursor: pointer;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.radio-label input[type="radio"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
 }
 
 .drop-control input[type="checkbox"] {
@@ -130,6 +152,21 @@ label {
     font-weight: 600;
     color: #555;
     font-size: 1em;
+    white-space: nowrap;
+}
+
+.dice-label {
+    display: inline-block;
+    width: 140px;
+}
+
+.mode-label {
+    display: inline-flex;
+    width: 160px;
+}
+
+.dropdown-aligned {
+    width: 120px;	
 }
 
 select, input[type="text"] {
@@ -202,6 +239,39 @@ input[type="text"] {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+.success-result {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 8px;
+}
+
+.sum-result {
+    font-size: 2.25em;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 8px;
+}
+
+.rolls-result {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.discarded-result {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    font-style: italic;
 }
 
 .dice-display {
