@@ -21,6 +21,7 @@
 
         <div class="result-display">
             <div id="currentResult" class="current-result">--</div>
+            <div id="diceDisplay" class="dice-display"></div>
         </div>
 
         <div class="history-section">
@@ -35,6 +36,7 @@
             // Get references to DOM elements
             const rollButton = document.getElementById('rollButton');
             const currentResultDiv = document.getElementById('currentResult');
+            const diceDisplayDiv = document.getElementById('diceDisplay');
             const rollHistoryDiv = document.getElementById('rollHistory');
 
             // Add click event listener to roll button
@@ -64,7 +66,7 @@
                 const total = rolls.reduce((sum, roll) => sum + roll.value, 0);
 
                 // Update the display
-                displayResult(total);
+                displayResult(rolls, total);
 
                 // Add to history
                 addToHistory(rolls, total);
@@ -89,9 +91,10 @@
 
             /**
              * Display the current roll result
+             * @param {Array} rolls - Array of roll objects with value and symbol
              * @param {number} total - The total to display
              */
-            function displayResult(total) {
+            function displayResult(rolls, total) {
                 // Format with + or - sign
                 if (total > 0) {
                     currentResultDiv.textContent = '+' + total;
@@ -100,6 +103,26 @@
                 } else {
                     currentResultDiv.textContent = total.toString();
                 }
+
+                // Clear previous dice
+                diceDisplayDiv.innerHTML = '';
+
+                // Create visual dice
+                rolls.forEach(roll => {
+                    const die = document.createElement('div');
+                    die.className = 'fate-die';
+
+                    // Set the symbol based on the roll
+                    if (roll.value === 1) {
+                        die.textContent = '➕';
+                    } else if (roll.value === -1) {
+                        die.textContent = '➖';
+                    } else {
+                        die.textContent = '';  // Blank for 0
+                    }
+
+                    diceDisplayDiv.appendChild(die);
+                });
             }
 
             /**
