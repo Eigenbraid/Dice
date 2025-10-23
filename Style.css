@@ -22,11 +22,49 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
 h1 {
     text-align: center;
     color: #7a2a1f;
-    margin-bottom: 30px;
+    margin: 0;
     font-size: 2.5em;
+    flex: 1;
+}
+
+.close-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(122, 42, 31, 0.1);
+    color: #7a2a1f;
+    text-decoration: none;
+    border-radius: 50%;
+    font-size: 1.5em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.close-button:hover {
+    background: rgba(122, 42, 31, 0.2);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.close-button:active {
+    transform: translateY(-50%) scale(0.95);
 }
 
 h2 {
@@ -319,5 +357,11 @@ input[type="text"] {
 
     .current-result {
         font-size: 3em;
+    }
+
+    .close-button {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3em;
     }
 }
