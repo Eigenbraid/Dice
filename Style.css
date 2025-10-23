@@ -42,6 +42,7 @@ h2 {
     margin-bottom: 30px;
     align-items: flex-end;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .control-group {
