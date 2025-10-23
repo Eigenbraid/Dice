@@ -441,24 +441,42 @@ document.addEventListener('DOMContentLoaded', function() {
         const entry = document.createElement('div');
         entry.className = 'history-entry';
 
-        // Build the description
-        let description = `Rolled ${numDice}d${diceType}`;
+        // Build the configuration lines
+        const configLines = [];
+
+        // Main roll description
+        configLines.push(`Roll ${numDice} dice with ${diceType} sides`);
 
         // Add mode if not normal
         if (rollMode === 'advantage') {
-            description += ' with Advantage';
+            configLines.push('Advantage');
         } else if (rollMode === 'disadvantage') {
-            description += ' with Disadvantage';
+            configLines.push('Disadvantage');
+        }
+
+        // Add drop info
+        if (dropEnabled) {
+            configLines.push(`Drop ${dropCount} ${dropType}`);
         }
 
         // Add exploding info
         if (explodingEnabled) {
-            description += ' (exploding)';
+            configLines.push('Exploding');
         }
 
-        // Create main text element
-        const mainText = document.createElement('div');
-        mainText.textContent = description;
+        // Add success counting info
+        if (successCountEnabled) {
+            const comparisonText = successComparison === 'atleast' ? 'at least' :
+                                  successComparison === 'exactly' ? 'exactly' : 'at most';
+            configLines.push(`Success Count (${comparisonText} ${successThreshold})`);
+        }
+
+        // Create config section
+        const configDiv = document.createElement('div');
+        configDiv.style.marginBottom = '0.3em';
+        configDiv.textContent = configLines.join('\n');
+
+        entry.appendChild(configDiv);
 
         // Helper function to format a single result
         function formatResult(result) {
@@ -467,26 +485,27 @@ document.addEventListener('DOMContentLoaded', function() {
             details.style.marginLeft = '1em';
             details.style.color = '#666';
 
-            let text = `  Rolls: [${result.rolls.join(', ')}]`;
+            let lines = [];
 
+            // Show individual rolls
+            lines.push(`Rolls: [${result.rolls.join(', ')}]`);
+
+            // Show dropped rolls if applicable
             if (dropEnabled && result.droppedRolls.length > 0) {
-                text += `\n  Dropped: [${result.droppedRolls.join(', ')}]`;
-                text += `\n  Kept: [${result.keptRolls.join(', ')}]`;
+                lines.push(`Dropped: [${result.droppedRolls.join(', ')}]`);
             }
 
-            text += `\n  Sum: ${result.total}`;
-
+            // Show success count first (on its own line)
             if (successCountEnabled) {
-                const comparisonText = successComparison === 'atleast' ? '≥' :
-                                      successComparison === 'exactly' ? '=' : '≤';
-                text += `\n  Successes (${comparisonText}${successThreshold}): ${result.successCount}`;
+                lines.push(`${result.successCount} successes`);
             }
 
-            details.textContent = text;
+            // Then show sum
+            lines.push(`Sum: ${result.total}`);
+
+            details.textContent = lines.join('\n');
             return details;
         }
-
-        entry.appendChild(mainText);
 
         // Show both rolls if advantage/disadvantage
         if (otherResult) {
@@ -498,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
             entry.appendChild(formatResult(chosenResult));
 
             const otherLabel = document.createElement('div');
-            otherLabel.style.marginTop = '0.3em';
+            otherLabel.style.marginTop = '0.5em';
             otherLabel.style.fontWeight = 'normal';
             otherLabel.textContent = '  Other:';
             entry.appendChild(otherLabel);
