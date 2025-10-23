@@ -179,6 +179,86 @@ select:focus {
     background: #764ba2;
 }
 
+/* Link containers for index page */
+.link-container {
+    border: 2px solid #667eea;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.link-container:hover {
+    border-color: #764ba2;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+    transform: translateY(-2px);
+}
+
+.link-container h2 {
+    margin-bottom: 10px;
+}
+
+.link-container a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+.link-container a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.link-container p {
+    color: #666;
+    margin-top: 10px;
+    line-height: 1.6;
+}
+
+/* Section styling */
+.section {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+}
+
+.section h2 {
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.section p, .section ul {
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 10px;
+}
+
+.section ul {
+    list-style-position: inside;
+    padding-left: 20px;
+}
+
+.section a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.section a:hover {
+    text-decoration: underline;
+}
+
+.footer-text {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
+    line-style: italic;
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
     .container {
