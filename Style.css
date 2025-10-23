@@ -130,6 +130,7 @@ select:focus {
     font-size: 2em;
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    padding-bottom: 3px;
 }
 
 .history-section {

@@ -39,6 +39,9 @@
             const diceDisplayDiv = document.getElementById('diceDisplay');
             const rollHistoryDiv = document.getElementById('rollHistory');
 
+            // Initialize with blank dice on page load
+            initializeDiceDisplay();
+
             // Add click event listener to roll button
             rollButton.addEventListener('click', rollDice);
 
@@ -48,6 +51,18 @@
                     rollDice();
                 }
             });
+
+            /**
+             * Initialize the dice display with four blank dice
+             */
+            function initializeDiceDisplay() {
+                for (let i = 0; i < 4; i++) {
+                    const die = document.createElement('div');
+                    die.className = 'fate-die';
+                    die.textContent = '';  // Blank dice
+                    diceDisplayDiv.appendChild(die);
+                }
+            }
 
             /**
              * Main dice rolling function for Fate dice
