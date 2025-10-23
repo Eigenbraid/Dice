@@ -15,13 +15,10 @@
 
         <div class="controls">
             <div class="control-group-inline">
-                <label for="numDice" class="dice-label">Number of Dice:</label>
-                <input type="text" id="numDice" value="3" placeholder="e.g., 3">
-            </div>
-
-            <div class="control-group-inline">
-                <label for="diceType" class="dice-label">Number of Sides:</label>
-                <input type="text" id="diceType" value="6" placeholder="e.g., 6 or d6">
+                <label for="numDice" >Dice:</label>
+                <input type="text" id="numDice" value="3" placeholder="quantity" style="width: 60px;">
+				<label for="diceType" >Sides:</label>
+                <input type="text" id="diceType" value="6" placeholder="sides" style="width: 60px;">
             </div>
 
             <div class="control-group-inline">
@@ -45,7 +42,7 @@
                     <input type="checkbox" id="explodingEnabled">
                     Exploding Dice:
                 </label>
-                <select id="explodingMode">
+                <select id="explodingMode" class="dropdown-aligned">
                     <option value="unlimited">Unlimited</option>
                     <option value="once">Once</option>
                 </select>
@@ -56,12 +53,12 @@
                     <input type="checkbox" id="successCountEnabled">
                     Count results:
                 </label>
-                <select id="successComparison">
+                <select id="successComparison" class="dropdown-aligned">
                     <option value="atleast">at least</option>
                     <option value="exactly">exactly</option>
                     <option value="atmost">at most</option>
                 </select>
-                <input type="text" id="successThreshold" value="4" placeholder="threshold">
+                <input type="text" id="successThreshold" value="4" placeholder="threshold" style="width: 60px;">
             </div>
 
             <div class="control-group-inline">
@@ -69,11 +66,11 @@
                     <input type="checkbox" id="dropEnabled">
                     Drop:
                 </label>
-                <input type="text" id="dropCount" value="1" placeholder="1" style="width: 60px;">
-                <select id="dropType">
+                <select id="dropType" class="dropdown-aligned">
                     <option value="lowest">lowest</option>
                     <option value="highest">highest</option>
                 </select>
+                <input type="text" id="dropCount" value="1" placeholder="dice" style="width: 60px;">
             </div>
 
             <button id="rollButton" class="roll-button">Roll</button>
