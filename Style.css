@@ -316,6 +316,15 @@ input[type="text"] {
     border-radius: 5px;
     color: #555;
     font-size: 0.95em;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.history-entry:hover {
+    background: #f0f5ef;
+    border: 2px solid #5a7a47;
+    border-left: 4px solid #5a7a47;
+    box-shadow: 0 2px 8px rgba(90, 122, 71, 0.15);
 }
 
 .history-entry:last-child {
