@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const successResultDiv = document.getElementById('successResult');
     const sumResultDiv = document.getElementById('sumResult');
     const rollsResultDiv = document.getElementById('rollsResult');
+    const discardedResultDiv = document.getElementById('discardedResult');
     const rollHistoryDiv = document.getElementById('rollHistory');
     const errorMessageDiv = document.getElementById('errorMessage');
 
@@ -291,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Update the display
-            displayResult(chosenResult, successCountEnabled, successThreshold, successComparison, dropEnabled);
+            displayResult(chosenResult, successCountEnabled, successThreshold, successComparison, dropEnabled, otherResult);
 
             // Add to history with both rolls
             addToHistory(numDice, diceType, chosenResult, otherResult, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
@@ -300,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode, dropEnabled, dropType, dropCount, successCountEnabled, successComparison, successThreshold);
 
             // Update the display
-            displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled);
+            displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled, null);
 
             // Add to history
             addToHistory(numDice, diceType, result, null, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
@@ -414,8 +415,9 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {number} successThreshold - Threshold for success counting
      * @param {string} successComparison - Comparison type for success counting
      * @param {boolean} dropEnabled - Whether drop is enabled
+     * @param {Object|null} otherResult - The discarded result (for advantage/disadvantage)
      */
-    function displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled) {
+    function displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled, otherResult) {
         // Show success count if enabled
         if (successCountEnabled) {
             successResultDiv.textContent = `Successes: ${result.successCount}`;
@@ -448,6 +450,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
         rollsResultDiv.innerHTML = diceText;
         rollsResultDiv.style.display = 'block';
+
+        // Show discarded roll if advantage/disadvantage
+        if (otherResult) {
+            let discardedText = 'Discarded: ';
+
+            if (successCountEnabled) {
+                // Create HTML to bold successful dice
+                const diceElements = otherResult.rolls.map(roll => {
+                    const isSuccess = checkSuccess(roll, successThreshold, successComparison);
+                    return isSuccess ? `<b>${roll}</b>` : roll;
+                });
+                discardedText += `[${diceElements.join(', ')}]`;
+            } else {
+                discardedText += `[${otherResult.rolls.join(', ')}]`;
+            }
+
+            // Add drop info if applicable
+            if (dropEnabled && otherResult.droppedRolls.length > 0) {
+                discardedText += ` → keep [${otherResult.keptRolls.join(', ')}]`;
+            }
+
+            discardedResultDiv.innerHTML = discardedText;
+            discardedResultDiv.style.display = 'block';
+        } else {
+            discardedResultDiv.style.display = 'none';
+        }
     }
 
     /**
@@ -487,40 +515,40 @@ document.addEventListener('DOMContentLoaded', function() {
         const entry = document.createElement('div');
         entry.className = 'history-entry';
 
-        // Build the configuration lines
-        const configLines = [];
+        // Build the configuration as comma-separated list
+        const configParts = [];
 
         // Main roll description
-        configLines.push(`Roll ${numDice} dice with ${diceType} sides`);
+        configParts.push(`Rolling ${numDice}d${diceType}`);
 
         // Add mode if not normal
         if (rollMode === 'advantage') {
-            configLines.push('Advantage');
+            configParts.push('Advantage');
         } else if (rollMode === 'disadvantage') {
-            configLines.push('Disadvantage');
+            configParts.push('Disadvantage');
         }
 
         // Add drop info
         if (dropEnabled) {
-            configLines.push(`Drop ${dropCount} ${dropType}`);
+            configParts.push(`Drop ${dropCount} ${dropType}`);
         }
 
         // Add exploding info
         if (explodingEnabled) {
-            configLines.push('Exploding');
+            configParts.push('Exploding');
         }
 
         // Add success counting info
         if (successCountEnabled) {
             const comparisonText = successComparison === 'atleast' ? 'at least' :
                                   successComparison === 'exactly' ? 'exactly' : 'at most';
-            configLines.push(`Success Count (${comparisonText} ${successThreshold})`);
+            configParts.push(`Success Count (${comparisonText} ${successThreshold})`);
         }
 
         // Create config section
         const configDiv = document.createElement('div');
         configDiv.style.marginBottom = '0.3em';
-        configDiv.textContent = configLines.join('\n');
+        configDiv.textContent = configParts.join(', ');
 
         entry.appendChild(configDiv);
 
