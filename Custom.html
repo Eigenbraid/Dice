@@ -14,74 +14,66 @@
         </div>
 
         <div class="controls">
-            <div class="control-group">
+            <div class="control-group-inline">
                 <label for="numDice">Number of Dice:</label>
                 <input type="text" id="numDice" value="3" placeholder="e.g., 3">
             </div>
 
-            <div class="control-group">
+            <div class="control-group-inline">
                 <label for="diceType">Number of Sides:</label>
                 <input type="text" id="diceType" value="6" placeholder="e.g., 6 or d6">
             </div>
 
-            <div class="control-group">
+            <div class="control-group-inline">
                 <label>Roll Mode:</label>
-                <div class="radio-group">
-                    <label class="radio-label">
-                        <input type="radio" name="rollMode" value="advantage">
-                        Advantage
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="rollMode" value="normal" checked>
-                        Normal
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="rollMode" value="disadvantage">
-                        Disadvantage
-                    </label>
-                </div>
+                <label class="radio-label">
+                    <input type="radio" name="rollMode" value="advantage">
+                    Advantage
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="rollMode" value="normal" checked>
+                    Normal
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="rollMode" value="disadvantage">
+                    Disadvantage
+                </label>
             </div>
 
-            <div class="control-group">
+            <div class="control-group-inline">
                 <label class="checkbox-label">
                     <input type="checkbox" id="explodingEnabled">
                     Exploding Dice:
                 </label>
-                <div>
-                    <select id="explodingMode">
-                        <option value="unlimited">Unlimited</option>
-                        <option value="once">Once</option>
-                    </select>
-                </div>
+                <select id="explodingMode">
+                    <option value="unlimited">Unlimited</option>
+                    <option value="once">Once</option>
+                </select>
             </div>
 
-            <div class="control-group">
+            <div class="control-group-inline">
                 <label class="checkbox-label">
                     <input type="checkbox" id="successCountEnabled">
                     Count results:
                 </label>
-                <div>
-                    <select id="successComparison">
-                        <option value="atleast">at least</option>
-                        <option value="exactly">exactly</option>
-                        <option value="atmost">at most</option>
-                    </select>
-                    <input type="text" id="successThreshold" value="4" placeholder="threshold">
-                </div>
+                <select id="successComparison">
+                    <option value="atleast">at least</option>
+                    <option value="exactly">exactly</option>
+                    <option value="atmost">at most</option>
+                </select>
+                <input type="text" id="successThreshold" value="4" placeholder="threshold">
             </div>
 
-            <div class="control-group">
+            <div class="control-group-inline">
                 <label class="checkbox-label">
                     <input type="checkbox" id="dropEnabled">
                     Drop:
                 </label>
-                <div>
-                    <input type="text" id="dropCount" value="1" placeholder="1" style="width: 60px;">
-                    <select id="dropType">
-                        <option value="lowest">lowest</option>
-                        <option value="highest">highest</option>
-                    </select>
-                </div>
+                <input type="text" id="dropCount" value="1" placeholder="1" style="width: 60px;">
+                <select id="dropType">
+                    <option value="lowest">lowest</option>
+                    <option value="highest">highest</option>
+                </select>
             </div>
 
             <button id="rollButton" class="roll-button">Roll</button>

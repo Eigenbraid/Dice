@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add drop info if applicable
         if (dropEnabled && result.droppedRolls.length > 0) {
-            diceText += ` → keep [${result.keptRolls.map(r => r.display).join(', ')}]`;
+            diceText += `<br>→ keep [${result.keptRolls.map(r => r.display).join(', ')}]`;
         }
 
         rollsResultDiv.innerHTML = diceText;
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Add drop info if applicable
             if (dropEnabled && otherResult.droppedRolls.length > 0) {
-                discardedText += ` → keep [${otherResult.keptRolls.map(r => r.display).join(', ')}]`;
+                discardedText += `<br>→ keep [${otherResult.keptRolls.map(r => r.display).join(', ')}]`;
             }
 
             discardedResultDiv.innerHTML = discardedText;

@@ -87,6 +87,14 @@ h2 {
     gap: 8px;
 }
 
+.control-group-inline {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 .drop-control {
     flex-direction: row !important;
     align-items: center;
@@ -103,12 +111,6 @@ h2 {
     cursor: pointer;
 }
 
-.radio-group {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
 .radio-label {
     display: flex;
     align-items: center;
@@ -116,6 +118,7 @@ h2 {
     font-weight: 500;
     color: #555;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .radio-label input[type="radio"] {
@@ -149,6 +152,7 @@ label {
     font-weight: 600;
     color: #555;
     font-size: 1em;
+    white-space: nowrap;
 }
 
 select, input[type="text"] {
