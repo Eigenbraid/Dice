@@ -15,7 +15,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const dropEnabledCheckbox = document.getElementById('dropEnabled');
     const dropTypeSelect = document.getElementById('dropType');
     const dropCountInput = document.getElementById('dropCount');
-    const currentResultDiv = document.getElementById('currentResult');
+    const successResultDiv = document.getElementById('successResult');
+    const sumResultDiv = document.getElementById('sumResult');
+    const rollsResultDiv = document.getElementById('rollsResult');
     const rollHistoryDiv = document.getElementById('rollHistory');
     const errorMessageDiv = document.getElementById('errorMessage');
 
@@ -289,11 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Update the display
-            if (successCountEnabled) {
-                displayResult(`${chosenResult.successCount} (sum: ${chosenResult.total})`);
-            } else {
-                displayResult(chosenResult.total);
-            }
+            displayResult(chosenResult, successCountEnabled);
 
             // Add to history with both rolls
             addToHistory(numDice, diceType, chosenResult, otherResult, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
@@ -302,11 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode, dropEnabled, dropType, dropCount, successCountEnabled, successComparison, successThreshold);
 
             // Update the display
-            if (successCountEnabled) {
-                displayResult(`${result.successCount} (sum: ${result.total})`);
-            } else {
-                displayResult(result.total);
-            }
+            displayResult(result, successCountEnabled);
 
             // Add to history
             addToHistory(numDice, diceType, result, null, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
@@ -415,10 +409,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * Display the current roll result
-     * @param {string|number} result - The result to display
+     * @param {Object} result - The result object to display
+     * @param {boolean} successCountEnabled - Whether success counting is enabled
      */
-    function displayResult(result) {
-        currentResultDiv.textContent = result;
+    function displayResult(result, successCountEnabled) {
+        // Show success count if enabled
+        if (successCountEnabled) {
+            successResultDiv.textContent = `${result.successCount} successes`;
+            successResultDiv.style.display = 'block';
+        } else {
+            successResultDiv.style.display = 'none';
+        }
+
+        // Always show sum
+        sumResultDiv.textContent = result.total;
+
+        // Show individual rolls
+        rollsResultDiv.textContent = `[${result.rolls.join(', ')}]`;
+        rollsResultDiv.style.display = 'block';
     }
 
     /**

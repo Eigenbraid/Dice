@@ -45,38 +45,43 @@
             <div class="control-group">
                 <label class="checkbox-label">
                     <input type="checkbox" id="explodingEnabled">
-                    Exploding Dice
+                    Exploding Dice:
                 </label>
-                <select id="explodingMode">
-                    <option value="unlimited">Unlimited</option>
-                    <option value="once">Once</option>
-                </select>
+                <div>
+                    <select id="explodingMode">
+                        <option value="unlimited">Unlimited</option>
+                        <option value="once">Once</option>
+                    </select>
+                </div>
             </div>
 
             <div class="control-group">
                 <label class="checkbox-label">
                     <input type="checkbox" id="successCountEnabled">
-                    Count results
+                    Count results:
                 </label>
-                <select id="successComparison">
-                    <option value="atleast">at least</option>
-                    <option value="exactly">exactly</option>
-                    <option value="atmost">at most</option>
-                </select>
-                <input type="text" id="successThreshold" value="4" placeholder="threshold">
+                <div>
+                    <select id="successComparison">
+                        <option value="atleast">at least</option>
+                        <option value="exactly">exactly</option>
+                        <option value="atmost">at most</option>
+                    </select>
+                    <input type="text" id="successThreshold" value="4" placeholder="threshold">
+                </div>
             </div>
 
-            <div class="control-group drop-control">
+            <div class="control-group">
                 <label class="checkbox-label">
                     <input type="checkbox" id="dropEnabled">
-                    Drop the
+                    Drop:
                 </label>
-                <select id="dropType">
-                    <option value="lowest">lowest</option>
-                    <option value="highest">highest</option>
-                </select>
-                <input type="text" id="dropCount" value="1" placeholder="1">
-                <span>rolls</span>
+                <div>
+                    <input type="text" id="dropCount" value="1" placeholder="1" style="width: 60px;">
+                    <select id="dropType">
+                        <option value="lowest">lowest</option>
+                        <option value="highest">highest</option>
+                    </select>
+                </div>
             </div>
 
             <button id="rollButton" class="roll-button">Roll</button>
@@ -85,7 +90,9 @@
         <div id="errorMessage" class="error-message" style="display: none;"></div>
 
         <div class="result-display">
-            <div id="currentResult" class="current-result">--</div>
+            <div id="successResult" class="success-result" style="display: none;"></div>
+            <div id="sumResult" class="sum-result">--</div>
+            <div id="rollsResult" class="rolls-result" style="display: none; font-size: 0.8em; margin-top: 0.5em; color: #666;"></div>
         </div>
 
         <div class="history-section">
