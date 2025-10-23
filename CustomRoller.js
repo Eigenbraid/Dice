@@ -6,6 +6,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const rollButton = document.getElementById('rollButton');
     const numDiceInput = document.getElementById('numDice');
     const diceTypeInput = document.getElementById('diceType');
+    const rollModeRadios = document.getElementsByName('rollMode');
+    const explodingEnabledCheckbox = document.getElementById('explodingEnabled');
+    const explodingModeSelect = document.getElementById('explodingMode');
+    const successCountEnabledCheckbox = document.getElementById('successCountEnabled');
+    const successComparisonSelect = document.getElementById('successComparison');
+    const successThresholdInput = document.getElementById('successThreshold');
     const dropEnabledCheckbox = document.getElementById('dropEnabled');
     const dropTypeSelect = document.getElementById('dropType');
     const dropCountInput = document.getElementById('dropCount');
@@ -27,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
     numDiceInput.addEventListener('input', clearError);
     diceTypeInput.addEventListener('input', clearError);
     dropCountInput.addEventListener('input', clearError);
+    successThresholdInput.addEventListener('input', clearError);
 
     /**
      * Parse a dice value that might be in various formats
@@ -54,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * Validate inputs and return parsed values or error message
-     * @returns {Object} - {valid: boolean, numDice: number, diceType: number, dropEnabled: boolean, dropType: string, dropCount: number, error: string}
+     * @returns {Object} - {valid: boolean, numDice: number, diceType: number, rollMode: string, explodingEnabled: boolean, explodingMode: string, successCountEnabled: boolean, successComparison: string, successThreshold: number, dropEnabled: boolean, dropType: string, dropCount: number, error: string}
      */
     function validateInputs() {
         const numDiceValue = numDiceInput.value;
@@ -102,6 +109,48 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         }
 
+        // Get roll mode
+        let rollMode = 'normal';
+        for (const radio of rollModeRadios) {
+            if (radio.checked) {
+                rollMode = radio.value;
+                break;
+            }
+        }
+
+        // Check if exploding dice is enabled
+        const explodingEnabled = explodingEnabledCheckbox.checked;
+        const explodingMode = explodingModeSelect.value;
+
+        if (explodingEnabled && diceType < 2) {
+            return {
+                valid: false,
+                error: `Exploding dice requires at least 2 sides. You entered: ${diceType}.`
+            };
+        }
+
+        // Check if success counting is enabled
+        const successCountEnabled = successCountEnabledCheckbox.checked;
+        const successComparison = successComparisonSelect.value;
+        let successThreshold = 0;
+
+        if (successCountEnabled) {
+            // Parse success threshold
+            successThreshold = parseDiceValue(successThresholdInput.value);
+            if (successThreshold === null) {
+                return {
+                    valid: false,
+                    error: `Invalid success threshold: "${successThresholdInput.value}". Please enter a number.`
+                };
+            }
+            if (successThreshold < 1) {
+                return {
+                    valid: false,
+                    error: `Success threshold must be at least 1. You entered: ${successThreshold}.`
+                };
+            }
+        }
+
         // Check if drop is enabled
         const dropEnabled = dropEnabledCheckbox.checked;
         let dropCount = 0;
@@ -136,6 +185,12 @@ document.addEventListener('DOMContentLoaded', function() {
             valid: true,
             numDice: numDice,
             diceType: diceType,
+            rollMode: rollMode,
+            explodingEnabled: explodingEnabled,
+            explodingMode: explodingMode,
+            successCountEnabled: successCountEnabled,
+            successComparison: successComparison,
+            successThreshold: successThreshold,
             dropEnabled: dropEnabled,
             dropType: dropType,
             dropCount: dropCount
@@ -175,19 +230,106 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const numDice = validation.numDice;
         const diceType = validation.diceType;
+        const rollMode = validation.rollMode;
+        const explodingEnabled = validation.explodingEnabled;
+        const explodingMode = validation.explodingMode;
+        const successCountEnabled = validation.successCountEnabled;
+        const successComparison = validation.successComparison;
+        const successThreshold = validation.successThreshold;
         const dropEnabled = validation.dropEnabled;
         const dropType = validation.dropType;
         const dropCount = validation.dropCount;
 
-        // Roll the dice and get individual results
+        // Perform the roll(s)
+        if (rollMode === 'advantage' || rollMode === 'disadvantage') {
+            // Roll twice
+            const result1 = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode, dropEnabled, dropType, dropCount, successCountEnabled, successComparison, successThreshold);
+            const result2 = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode, dropEnabled, dropType, dropCount, successCountEnabled, successComparison, successThreshold);
+
+            // Choose which result to use based on roll mode
+            let chosenResult, otherResult;
+            if (rollMode === 'advantage') {
+                // Choose higher result (based on success count if enabled, otherwise sum)
+                if (successCountEnabled) {
+                    if (result1.successCount >= result2.successCount) {
+                        chosenResult = result1;
+                        otherResult = result2;
+                    } else {
+                        chosenResult = result2;
+                        otherResult = result1;
+                    }
+                } else {
+                    if (result1.total >= result2.total) {
+                        chosenResult = result1;
+                        otherResult = result2;
+                    } else {
+                        chosenResult = result2;
+                        otherResult = result1;
+                    }
+                }
+            } else { // disadvantage
+                // Choose lower result (based on success count if enabled, otherwise sum)
+                if (successCountEnabled) {
+                    if (result1.successCount <= result2.successCount) {
+                        chosenResult = result1;
+                        otherResult = result2;
+                    } else {
+                        chosenResult = result2;
+                        otherResult = result1;
+                    }
+                } else {
+                    if (result1.total <= result2.total) {
+                        chosenResult = result1;
+                        otherResult = result2;
+                    } else {
+                        chosenResult = result2;
+                        otherResult = result1;
+                    }
+                }
+            }
+
+            // Update the display
+            if (successCountEnabled) {
+                displayResult(`${chosenResult.successCount} (sum: ${chosenResult.total})`);
+            } else {
+                displayResult(chosenResult.total);
+            }
+
+            // Add to history with both rolls
+            addToHistory(numDice, diceType, chosenResult, otherResult, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
+        } else {
+            // Normal roll - just once
+            const result = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode, dropEnabled, dropType, dropCount, successCountEnabled, successComparison, successThreshold);
+
+            // Update the display
+            if (successCountEnabled) {
+                displayResult(`${result.successCount} (sum: ${result.total})`);
+            } else {
+                displayResult(result.total);
+            }
+
+            // Add to history
+            addToHistory(numDice, diceType, result, null, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
+        }
+    }
+
+    /**
+     * Perform a single roll with all modifiers
+     * @returns {Object} - {rolls: Array, keptRolls: Array, droppedRolls: Array, total: number, successCount: number}
+     */
+    function performSingleRoll(numDice, diceType, explodingEnabled, explodingMode, dropEnabled, dropType, dropCount, successCountEnabled, successComparison, successThreshold) {
+        // Roll the dice with exploding if enabled
         const rolls = [];
         for (let i = 0; i < numDice; i++) {
-            rolls.push(rollSingleDie(diceType));
+            if (explodingEnabled) {
+                rolls.push(rollExplodingDie(diceType, explodingMode));
+            } else {
+                rolls.push(rollSingleDie(diceType));
+            }
         }
 
         let keptRolls = rolls;
         let droppedRolls = [];
-        let total;
 
         if (dropEnabled) {
             // Create array of {value, index} to track which rolls are which
@@ -207,19 +349,32 @@ document.addEventListener('DOMContentLoaded', function() {
             // Extract values
             droppedRolls = droppedIndexed.map(r => r.value);
             keptRolls = keptIndexed.map(r => r.value);
-
-            // Calculate total from kept rolls only
-            total = keptRolls.reduce((sum, roll) => sum + roll, 0);
-        } else {
-            // Calculate total from all rolls
-            total = rolls.reduce((sum, roll) => sum + roll, 0);
         }
 
-        // Update the display
-        displayResult(total);
+        // Calculate total from kept rolls
+        const total = keptRolls.reduce((sum, roll) => sum + roll, 0);
 
-        // Add to history
-        addToHistory(numDice, diceType, rolls, keptRolls, droppedRolls, total, dropEnabled, dropType, dropCount);
+        // Calculate success count if enabled
+        let successCount = 0;
+        if (successCountEnabled) {
+            for (const roll of keptRolls) {
+                if (successComparison === 'atleast' && roll >= successThreshold) {
+                    successCount++;
+                } else if (successComparison === 'exactly' && roll === successThreshold) {
+                    successCount++;
+                } else if (successComparison === 'atmost' && roll <= successThreshold) {
+                    successCount++;
+                }
+            }
+        }
+
+        return {
+            rolls: rolls,
+            keptRolls: keptRolls,
+            droppedRolls: droppedRolls,
+            total: total,
+            successCount: successCount
+        };
     }
 
     /**
@@ -232,40 +387,125 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Display the current roll result
-     * @param {number} total - The total to display
+     * Roll an exploding die
+     * @param {number} sides - Number of sides on the die
+     * @param {string} mode - 'unlimited' or 'once'
+     * @returns {number} - Total value (including explosions)
      */
-    function displayResult(total) {
-        currentResultDiv.textContent = total;
+    function rollExplodingDie(sides, mode) {
+        let firstRoll = rollSingleDie(sides);
+        let total = firstRoll;
+
+        if (mode === 'once') {
+            // Only explode once
+            if (firstRoll === sides) {
+                total += rollSingleDie(sides);
+            }
+        } else { // unlimited
+            // Keep exploding while last roll was max
+            let lastRoll = firstRoll;
+            while (lastRoll === sides) {
+                lastRoll = rollSingleDie(sides);
+                total += lastRoll;
+            }
+        }
+
+        return total;
+    }
+
+    /**
+     * Display the current roll result
+     * @param {string|number} result - The result to display
+     */
+    function displayResult(result) {
+        currentResultDiv.textContent = result;
     }
 
     /**
      * Add a roll to the history log
      * @param {number} numDice - Number of dice rolled
      * @param {number} diceType - Type of dice (number of sides)
-     * @param {Array} allRolls - Array of all roll results
-     * @param {Array} keptRolls - Array of kept roll results
-     * @param {Array} droppedRolls - Array of dropped roll results
-     * @param {number} total - Sum of kept rolls
+     * @param {Object} chosenResult - The result that was chosen (or only result for normal rolls)
+     * @param {Object|null} otherResult - The other result for advantage/disadvantage (null for normal)
+     * @param {string} rollMode - 'normal', 'advantage', or 'disadvantage'
+     * @param {boolean} explodingEnabled - Whether exploding was enabled
+     * @param {boolean} successCountEnabled - Whether success counting was enabled
+     * @param {string} successComparison - Type of comparison for success counting
+     * @param {number} successThreshold - Threshold for success counting
      * @param {boolean} dropEnabled - Whether drop was enabled
      * @param {string} dropType - Type of drop (highest/lowest)
      * @param {number} dropCount - Number of dice dropped
      */
-    function addToHistory(numDice, diceType, allRolls, keptRolls, droppedRolls, total, dropEnabled, dropType, dropCount) {
+    function addToHistory(numDice, diceType, chosenResult, otherResult, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount) {
         // Create history entry element
         const entry = document.createElement('div');
         entry.className = 'history-entry';
 
-        if (dropEnabled) {
-            // Format: "Rolled 4d6, drop lowest 1: (3, 6, 1, 4) → kept (3, 6, 4) = 13"
-            const allRollsString = allRolls.join(', ');
-            const keptRollsString = keptRolls.join(', ');
-            entry.textContent = `Rolled ${numDice}d${diceType}, drop ${dropType} ${dropCount}: (${allRollsString}) → kept (${keptRollsString}) = ${total}`;
+        // Build the description
+        let description = `Rolled ${numDice}d${diceType}`;
+
+        // Add mode if not normal
+        if (rollMode === 'advantage') {
+            description += ' with Advantage';
+        } else if (rollMode === 'disadvantage') {
+            description += ' with Disadvantage';
+        }
+
+        // Add exploding info
+        if (explodingEnabled) {
+            description += ' (exploding)';
+        }
+
+        // Create main text element
+        const mainText = document.createElement('div');
+        mainText.textContent = description;
+
+        // Helper function to format a single result
+        function formatResult(result) {
+            const details = document.createElement('div');
+            details.style.fontSize = '0.9em';
+            details.style.marginLeft = '1em';
+            details.style.color = '#666';
+
+            let text = `  Rolls: [${result.rolls.join(', ')}]`;
+
+            if (dropEnabled && result.droppedRolls.length > 0) {
+                text += `\n  Dropped: [${result.droppedRolls.join(', ')}]`;
+                text += `\n  Kept: [${result.keptRolls.join(', ')}]`;
+            }
+
+            text += `\n  Sum: ${result.total}`;
+
+            if (successCountEnabled) {
+                const comparisonText = successComparison === 'atleast' ? '≥' :
+                                      successComparison === 'exactly' ? '=' : '≤';
+                text += `\n  Successes (${comparisonText}${successThreshold}): ${result.successCount}`;
+            }
+
+            details.textContent = text;
+            return details;
+        }
+
+        entry.appendChild(mainText);
+
+        // Show both rolls if advantage/disadvantage
+        if (otherResult) {
+            const chosenLabel = document.createElement('div');
+            chosenLabel.style.marginTop = '0.3em';
+            chosenLabel.style.fontWeight = 'bold';
+            chosenLabel.textContent = '→ Chosen:';
+            entry.appendChild(chosenLabel);
+            entry.appendChild(formatResult(chosenResult));
+
+            const otherLabel = document.createElement('div');
+            otherLabel.style.marginTop = '0.3em';
+            otherLabel.style.fontWeight = 'normal';
+            otherLabel.textContent = '  Other:';
+            entry.appendChild(otherLabel);
+            entry.appendChild(formatResult(otherResult));
         } else {
-            // Format the individual rolls
-            const rollsString = allRolls.join(', ');
-            // Create the text: "Rolled 3d6 (3, 6, 1) = 10"
-            entry.textContent = `Rolled ${numDice}d${diceType} (${rollsString}) = ${total}`;
+            // Just show the one result
+            entry.appendChild(formatResult(chosenResult));
         }
 
         // Add to the beginning of history (most recent first)
