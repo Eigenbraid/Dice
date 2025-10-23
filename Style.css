@@ -116,7 +116,7 @@ input[type="text"] {
     border-radius: 15px;
     padding: 40px;
     margin: 0 auto 30px auto;
-    max-width: 300px;
+    max-width: 500px;
     text-align: center;
 }
 
@@ -125,6 +125,8 @@ input[type="text"] {
     font-weight: bold;
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .dice-display {
