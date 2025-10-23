@@ -319,7 +319,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (explodingEnabled) {
                 rolls.push(rollExplodingDie(diceType, explodingMode));
             } else {
-                rolls.push(rollSingleDie(diceType));
+                // Wrap regular roll in same structure as exploding
+                const value = rollSingleDie(diceType);
+                rolls.push({
+                    value: value,
+                    display: String(value),
+                    breakdown: [value]
+                });
             }
         }
 
@@ -327,8 +333,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let droppedRolls = [];
 
         if (dropEnabled) {
-            // Create array of {value, index} to track which rolls are which
-            const indexedRolls = rolls.map((value, index) => ({value, index}));
+            // Create array of {roll, value, index} to track which rolls are which
+            const indexedRolls = rolls.map((roll, index) => ({roll: roll, value: roll.value, index}));
 
             // Sort based on drop type
             if (dropType === 'lowest') {
@@ -341,23 +347,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const droppedIndexed = indexedRolls.slice(0, dropCount);
             const keptIndexed = indexedRolls.slice(dropCount);
 
-            // Extract values
-            droppedRolls = droppedIndexed.map(r => r.value);
-            keptRolls = keptIndexed.map(r => r.value);
+            // Extract roll objects
+            droppedRolls = droppedIndexed.map(r => r.roll);
+            keptRolls = keptIndexed.map(r => r.roll);
         }
 
         // Calculate total from kept rolls
-        const total = keptRolls.reduce((sum, roll) => sum + roll, 0);
+        const total = keptRolls.reduce((sum, roll) => sum + roll.value, 0);
 
         // Calculate success count if enabled
         let successCount = 0;
         if (successCountEnabled) {
             for (const roll of keptRolls) {
-                if (successComparison === 'atleast' && roll >= successThreshold) {
+                if (successComparison === 'atleast' && roll.value >= successThreshold) {
                     successCount++;
-                } else if (successComparison === 'exactly' && roll === successThreshold) {
+                } else if (successComparison === 'exactly' && roll.value === successThreshold) {
                     successCount++;
-                } else if (successComparison === 'atmost' && roll <= successThreshold) {
+                } else if (successComparison === 'atmost' && roll.value <= successThreshold) {
                     successCount++;
                 }
             }
@@ -385,27 +391,36 @@ document.addEventListener('DOMContentLoaded', function() {
      * Roll an exploding die
      * @param {number} sides - Number of sides on the die
      * @param {string} mode - 'unlimited' or 'once'
-     * @returns {number} - Total value (including explosions)
+     * @returns {Object} - {value: total, display: string, breakdown: array}
      */
     function rollExplodingDie(sides, mode) {
+        let breakdown = [];
         let firstRoll = rollSingleDie(sides);
+        breakdown.push(firstRoll);
         let total = firstRoll;
 
         if (mode === 'once') {
             // Only explode once
             if (firstRoll === sides) {
-                total += rollSingleDie(sides);
+                const nextRoll = rollSingleDie(sides);
+                breakdown.push(nextRoll);
+                total += nextRoll;
             }
         } else { // unlimited
             // Keep exploding while last roll was max
             let lastRoll = firstRoll;
             while (lastRoll === sides) {
                 lastRoll = rollSingleDie(sides);
+                breakdown.push(lastRoll);
                 total += lastRoll;
             }
         }
 
-        return total;
+        return {
+            value: total,
+            display: breakdown.join('+'),
+            breakdown: breakdown
+        };
     }
 
     /**
@@ -436,16 +451,16 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create HTML to bold successful dice
             const diceElements = result.rolls.map(roll => {
                 const isSuccess = checkSuccess(roll, successThreshold, successComparison);
-                return isSuccess ? `<b>${roll}</b>` : roll;
+                return isSuccess ? `<b>${roll.display}</b>` : roll.display;
             });
             diceText += `[${diceElements.join(', ')}]`;
         } else {
-            diceText += `[${result.rolls.join(', ')}]`;
+            diceText += `[${result.rolls.map(r => r.display).join(', ')}]`;
         }
 
         // Add drop info if applicable
         if (dropEnabled && result.droppedRolls.length > 0) {
-            diceText += ` → keep [${result.keptRolls.join(', ')}]`;
+            diceText += ` → keep [${result.keptRolls.map(r => r.display).join(', ')}]`;
         }
 
         rollsResultDiv.innerHTML = diceText;
@@ -459,16 +474,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Create HTML to bold successful dice
                 const diceElements = otherResult.rolls.map(roll => {
                     const isSuccess = checkSuccess(roll, successThreshold, successComparison);
-                    return isSuccess ? `<b>${roll}</b>` : roll;
+                    return isSuccess ? `<b>${roll.display}</b>` : roll.display;
                 });
                 discardedText += `[${diceElements.join(', ')}]`;
             } else {
-                discardedText += `[${otherResult.rolls.join(', ')}]`;
+                discardedText += `[${otherResult.rolls.map(r => r.display).join(', ')}]`;
             }
 
             // Add drop info if applicable
             if (dropEnabled && otherResult.droppedRolls.length > 0) {
-                discardedText += ` → keep [${otherResult.keptRolls.join(', ')}]`;
+                discardedText += ` → keep [${otherResult.keptRolls.map(r => r.display).join(', ')}]`;
             }
 
             discardedResultDiv.innerHTML = discardedText;
@@ -480,18 +495,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /**
      * Check if a roll is a success
-     * @param {number} roll - The roll value
+     * @param {Object} roll - The roll object with value property
      * @param {number} threshold - Success threshold
      * @param {string} comparison - Comparison type
      * @returns {boolean} - Whether the roll is a success
      */
     function checkSuccess(roll, threshold, comparison) {
+        const value = roll.value;
         if (comparison === 'atleast') {
-            return roll >= threshold;
+            return value >= threshold;
         } else if (comparison === 'exactly') {
-            return roll === threshold;
+            return value === threshold;
         } else { // atmost
-            return roll <= threshold;
+            return value <= threshold;
         }
     }
 
@@ -562,11 +578,11 @@ document.addEventListener('DOMContentLoaded', function() {
             let lines = [];
 
             // Show individual rolls
-            lines.push(`Rolls: [${result.rolls.join(', ')}]`);
+            lines.push(`Rolls: [${result.rolls.map(r => r.display).join(', ')}]`);
 
             // Show dropped rolls if applicable
             if (dropEnabled && result.droppedRolls.length > 0) {
-                lines.push(`Dropped: [${result.droppedRolls.join(', ')}]`);
+                lines.push(`Dropped: [${result.droppedRolls.map(r => r.display).join(', ')}]`);
             }
 
             // Show success count first (on its own line)
