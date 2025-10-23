@@ -1,37 +1,63 @@
 // Major Arcana cards (0-21)
 const majorArcana = [
-    { number: 0, name: "The Fool" },
-    { number: 1, name: "The Magician" },
-    { number: 2, name: "The High Priestess" },
-    { number: 3, name: "The Empress" },
-    { number: 4, name: "The Emperor" },
-    { number: 5, name: "The Hierophant" },
-    { number: 6, name: "The Lovers" },
-    { number: 7, name: "The Chariot" },
-    { number: 8, name: "Strength" },
-    { number: 9, name: "The Hermit" },
-    { number: 10, name: "Wheel of Fortune" },
-    { number: 11, name: "Justice" },
-    { number: 12, name: "The Hanged Man" },
-    { number: 13, name: "Death" },
-    { number: 14, name: "Temperance" },
-    { number: 15, name: "The Devil" },
-    { number: 16, name: "The Tower" },
-    { number: 17, name: "The Star" },
-    { number: 18, name: "The Moon" },
-    { number: 19, name: "The Sun" },
-    { number: 20, name: "Judgement" },
-    { number: 21, name: "The World" }
+    { number: 0, name: "The Fool", type: "major" },
+    { number: 1, name: "The Magician", type: "major" },
+    { number: 2, name: "The High Priestess", type: "major" },
+    { number: 3, name: "The Empress", type: "major" },
+    { number: 4, name: "The Emperor", type: "major" },
+    { number: 5, name: "The Hierophant", type: "major" },
+    { number: 6, name: "The Lovers", type: "major" },
+    { number: 7, name: "The Chariot", type: "major" },
+    { number: 8, name: "Strength", type: "major" },
+    { number: 9, name: "The Hermit", type: "major" },
+    { number: 10, name: "Wheel of Fortune", type: "major" },
+    { number: 11, name: "Justice", type: "major" },
+    { number: 12, name: "The Hanged Man", type: "major" },
+    { number: 13, name: "Death", type: "major" },
+    { number: 14, name: "Temperance", type: "major" },
+    { number: 15, name: "The Devil", type: "major" },
+    { number: 16, name: "The Tower", type: "major" },
+    { number: 17, name: "The Star", type: "major" },
+    { number: 18, name: "The Moon", type: "major" },
+    { number: 19, name: "The Sun", type: "major" },
+    { number: 20, name: "Judgement", type: "major" },
+    { number: 21, name: "The World", type: "major" }
 ];
+
+// Minor Arcana cards
+const minorArcana = [];
+const suits = ["Wands", "Cups", "Swords", "Pentacles"];
+const ranks = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"];
+
+// Generate Minor Arcana
+suits.forEach(suit => {
+    ranks.forEach(rank => {
+        minorArcana.push({
+            suit: suit,
+            rank: rank,
+            name: `${rank} of ${suit}`,
+            type: "minor"
+        });
+    });
+});
 
 // State
 let currentDeck = [];
 let readingHistory = [];
 let handCounter = 0;
 
-// Initialize deck
-function createDeck() {
-    return [...majorArcana];
+// Initialize deck based on selected type
+function createDeck(deckType = 'major') {
+    switch(deckType) {
+        case 'both':
+            return [...majorArcana, ...minorArcana];
+        case 'major':
+            return [...majorArcana];
+        case 'minor':
+            return [...minorArcana];
+        default:
+            return [...majorArcana];
+    }
 }
 
 // Shuffle deck using Fisher-Yates algorithm
@@ -53,13 +79,31 @@ function drawCard() {
 
 // Format card for display
 function formatCard(card) {
-    return `${card.number}. ${card.name}`;
+    if (card.type === 'major') {
+        return `${card.number}. ${card.name}`;
+    } else {
+        return card.name;
+    }
+}
+
+// Get selected deck type
+function getSelectedDeckType() {
+    const radios = document.getElementsByName('deckType');
+    for (const radio of radios) {
+        if (radio.checked) {
+            return radio.value;
+        }
+    }
+    return 'major'; // default
 }
 
 // Perform a new reading
 function performReading() {
+    // Get selected deck type
+    const deckType = getSelectedDeckType();
+
     // Create and shuffle a fresh deck
-    currentDeck = shuffleDeck(createDeck());
+    currentDeck = shuffleDeck(createDeck(deckType));
 
     // Draw three cards
     const pastCard = drawCard();
