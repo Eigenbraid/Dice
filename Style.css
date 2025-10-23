@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2d5016 0%, #1a3a0f 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -24,13 +24,13 @@ body {
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #2d5016;
     margin-bottom: 30px;
     font-size: 2.5em;
 }
 
 h2 {
-    color: #555;
+    color: #5d4e37;
     margin-bottom: 15px;
     font-size: 1.2em;
 }
@@ -68,12 +68,12 @@ select {
 }
 
 select:hover {
-    border-color: #667eea;
+    border-color: #5a7a47;
 }
 
 select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #5a7a47;
 }
 
 .roll-button {
@@ -81,7 +81,7 @@ select:focus {
     font-size: 1.2em;
     font-weight: bold;
     color: white;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    background: linear-gradient(135deg, #4a7c3c 0%, #2d5016 100%);
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -89,7 +89,7 @@ select:focus {
 }
 
 .roll-button:hover {
-    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 5px 15px rgba(74, 124, 60, 0.4);
 }
 
 .roll-button:active {
@@ -97,7 +97,7 @@ select:focus {
 }
 
 .result-display {
-    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    background: linear-gradient(135deg, #c9923a 0%, #a67a2f 100%);
     border-radius: 15px;
     padding: 40px;
     margin: 0 auto 30px auto;
@@ -149,7 +149,7 @@ select:focus {
 .history-entry {
     padding: 10px 15px;
     background: white;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #5a7a47;
     margin-bottom: 10px;
     border-radius: 5px;
     color: #555;
@@ -171,28 +171,21 @@ select:focus {
 }
 
 .roll-history::-webkit-scrollbar-thumb {
-    background: #667eea;
+    background: #5a7a47;
     border-radius: 10px;
 }
 
 .roll-history::-webkit-scrollbar-thumb:hover {
-    background: #764ba2;
+    background: #4a6a37;
 }
 
 /* Link containers for index page */
 .link-container {
-    border: 2px solid #667eea;
+    border: 2px solid #8b9a7d;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
     background: white;
-    transition: all 0.3s ease;
-}
-
-.link-container:hover {
-    border-color: #764ba2;
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
-    transform: translateY(-2px);
 }
 
 .link-container h2 {
@@ -200,14 +193,14 @@ select:focus {
 }
 
 .link-container a {
-    color: #667eea;
+    color: #4a7c3c;
     text-decoration: none;
     font-weight: bold;
     font-size: 1.3em;
 }
 
 .link-container a:hover {
-    color: #764ba2;
+    color: #2d5016;
     text-decoration: underline;
 }
 
@@ -225,7 +218,7 @@ select:focus {
 }
 
 .section h2 {
-    color: #667eea;
+    color: #5d4e37;
     margin-bottom: 15px;
 }
 
@@ -241,11 +234,12 @@ select:focus {
 }
 
 .section a {
-    color: #667eea;
+    color: #4a7c3c;
     text-decoration: none;
 }
 
 .section a:hover {
+    color: #2d5016;
     text-decoration: underline;
 }
 
