@@ -282,13 +282,14 @@ input[type="text"] {
     text-decoration: none;
     transition: all 0.3s ease;
     cursor: pointer;
+    user-select: text;
 }
 
 .link-container:hover {
     transform: translateY(-4px);
     box-shadow: 0 6px 20px rgba(122, 105, 82, 0.3);
     border-color: #4a7c3c;
-    background: #fafaf8;
+    background: linear-gradient(135deg, rgba(74, 124, 60, 0.03) 0%, rgba(45, 80, 22, 0.03) 100%);
 }
 
 .link-container:active {
