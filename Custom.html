@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Dice Roller</title>
+    <link rel="stylesheet" href="Style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Custom Dice Roller</h1>
+            <a href="Index.html" class="close-button" aria-label="Close">✕</a>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="numDice">Number of Dice:</label>
+                <input type="text" id="numDice" value="3" placeholder="e.g., 3">
+            </div>
+
+            <div class="control-group">
+                <label for="diceType">Number of Sides:</label>
+                <input type="text" id="diceType" value="6" placeholder="e.g., 6 or d6">
+            </div>
+
+            <div class="control-group drop-control">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="dropEnabled">
+                    Drop the
+                </label>
+                <select id="dropType">
+                    <option value="lowest">lowest</option>
+                    <option value="highest">highest</option>
+                </select>
+                <input type="text" id="dropCount" value="1" placeholder="1">
+                <span>rolls</span>
+            </div>
+
+            <button id="rollButton" class="roll-button">Roll</button>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <div class="result-display">
+            <div id="currentResult" class="current-result">--</div>
+        </div>
+
+        <div class="history-section">
+            <h2>Roll History</h2>
+            <div id="rollHistory" class="roll-history"></div>
+        </div>
+    </div>
+
+    <script src="CustomRoller.js"></script>
+</body>
+</html>

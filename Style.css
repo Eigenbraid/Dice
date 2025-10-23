@@ -22,11 +22,49 @@ body {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
 h1 {
     text-align: center;
     color: #7a2a1f;
-    margin-bottom: 30px;
+    margin: 0;
     font-size: 2.5em;
+    flex: 1;
+}
+
+.close-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(122, 42, 31, 0.1);
+    color: #7a2a1f;
+    text-decoration: none;
+    border-radius: 50%;
+    font-size: 1.5em;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.close-button:hover {
+    background: rgba(122, 42, 31, 0.2);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.close-button:active {
+    transform: translateY(-50%) scale(0.95);
 }
 
 h2 {
@@ -51,13 +89,50 @@ h2 {
     gap: 8px;
 }
 
+.drop-control {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+}
+
+.drop-control input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.drop-control input[type="text"] {
+    width: 60px;
+    min-width: 60px;
+}
+
+.drop-control select {
+    width: auto;
+    min-width: 100px;
+}
+
+.drop-control span {
+    color: #555;
+    font-weight: 600;
+}
+
 label {
     font-weight: 600;
     color: #555;
     font-size: 1em;
 }
 
-select {
+select, input[type="text"] {
     padding: 12px;
     font-size: 1em;
     border: 2px solid #ddd;
@@ -67,13 +142,28 @@ select {
     transition: border-color 0.3s ease;
 }
 
-select:hover {
+select:hover, input[type="text"]:hover {
     border-color: #5a7a47;
 }
 
-select:focus {
+select:focus, input[type="text"]:focus {
     outline: none;
     border-color: #5a7a47;
+}
+
+input[type="text"] {
+    cursor: text;
+    min-width: 120px;
+}
+
+.error-message {
+    background: #ffebee;
+    border: 2px solid #ef5350;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    color: #c62828;
+    font-weight: 500;
 }
 
 .roll-button {
@@ -101,7 +191,7 @@ select:focus {
     border-radius: 15px;
     padding: 40px;
     margin: 0 auto 30px auto;
-    max-width: 300px;
+    max-width: 500px;
     text-align: center;
 }
 
@@ -110,6 +200,8 @@ select:focus {
     font-weight: bold;
     color: white;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .dice-display {
@@ -181,27 +273,38 @@ select:focus {
 
 /* Link containers for index page */
 .link-container {
+    display: block;
     border: 3px solid #7a6952;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
     background: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    user-select: text;
+}
+
+.link-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(122, 105, 82, 0.3);
+    border-color: #4a7c3c;
+    background: linear-gradient(135deg, rgba(74, 124, 60, 0.03) 0%, rgba(45, 80, 22, 0.03) 100%);
+}
+
+.link-container:active {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(122, 105, 82, 0.2);
 }
 
 .link-container h2 {
-    margin-bottom: 10px;
-}
-
-.link-container a {
     color: #4a7c3c;
-    text-decoration: none;
-    font-weight: bold;
+    margin-bottom: 10px;
     font-size: 1.3em;
 }
 
-.link-container a:hover {
+.link-container:hover h2 {
     color: #2d5016;
-    text-decoration: underline;
 }
 
 .link-container p {
@@ -265,5 +368,11 @@ select:focus {
 
     .current-result {
         font-size: 3em;
+    }
+
+    .close-button {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3em;
     }
 }
