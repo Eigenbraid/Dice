@@ -24,7 +24,7 @@ body {
 
 h1 {
     text-align: center;
-    color: #2d5016;
+    color: #4a3a2a;
     margin-bottom: 30px;
     font-size: 2.5em;
 }
@@ -97,7 +97,7 @@ select:focus {
 }
 
 .result-display {
-    background: linear-gradient(135deg, #c9923a 0%, #a67a2f 100%);
+    background: linear-gradient(135deg, #e8762e 0%, #d96619 100%);
     border-radius: 15px;
     padding: 40px;
     margin: 0 auto 30px auto;
@@ -181,7 +181,7 @@ select:focus {
 
 /* Link containers for index page */
 .link-container {
-    border: 2px solid #8b9a7d;
+    border: 3px solid #7a6952;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
