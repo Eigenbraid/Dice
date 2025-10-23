@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roller</title>
+    <link rel="stylesheet" href="Style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Dice Roller</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="numDice">Number of Dice:</label>
+                <select id="numDice">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="diceType">Type of Dice:</label>
+                <select id="diceType">
+                    <option value="4">d4</option>
+                    <option value="6">d6</option>
+                    <option value="8">d8</option>
+                    <option value="10">d10</option>
+                    <option value="12">d12</option>
+                    <option value="20">d20</option>
+                    <option value="100">d100</option>
+                </select>
+            </div>
+
+            <button id="rollButton" class="roll-button">Roll</button>
+        </div>
+
+        <div class="result-display">
+            <div id="currentResult" class="current-result">--</div>
+        </div>
+
+        <div class="history-section">
+            <h2>Roll History</h2>
+            <div id="rollHistory" class="roll-history"></div>
+        </div>
+    </div>
+
+    <script src="DiceRoller.js"></script>
+</body>
+</html>
