@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fate Dice Roller</title>
+    <link rel="stylesheet" href="Style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Fate Dice Roller</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Rolling:</label>
+                <span style="font-weight: bold; font-size: 1.2em;">4dF</span>
+            </div>
+
+            <button id="rollButton" class="roll-button">Roll</button>
+        </div>
+
+        <div class="result-display">
+            <div id="currentResult" class="current-result">--</div>
+        </div>
+
+        <div class="history-section">
+            <h2>Roll History</h2>
+            <div id="rollHistory" class="roll-history"></div>
+        </div>
+    </div>
+
+    <script>
+        // Fate Dice Roller - Always rolls 4dF
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to DOM elements
+            const rollButton = document.getElementById('rollButton');
+            const currentResultDiv = document.getElementById('currentResult');
+            const rollHistoryDiv = document.getElementById('rollHistory');
+
+            // Add click event listener to roll button
+            rollButton.addEventListener('click', rollDice);
+
+            // Also allow rolling with Enter key
+            document.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    rollDice();
+                }
+            });
+
+            /**
+             * Main dice rolling function for Fate dice
+             */
+            function rollDice() {
+                // Always roll 4 Fate dice
+                const numDice = 4;
+                const rolls = [];
+
+                // Roll each Fate die
+                for (let i = 0; i < numDice; i++) {
+                    rolls.push(rollFateDie());
+                }
+
+                // Calculate total (sum of -1, 0, +1 values)
+                const total = rolls.reduce((sum, roll) => sum + roll.value, 0);
+
+                // Update the display
+                displayResult(total);
+
+                // Add to history
+                addToHistory(rolls, total);
+            }
+
+            /**
+             * Roll a single Fate die
+             * @returns {Object} - Object with value (-1, 0, 1) and symbol (-, blank, +)
+             */
+            function rollFateDie() {
+                const result = Math.floor(Math.random() * 3); // 0, 1, or 2
+
+                switch(result) {
+                    case 0:
+                        return { value: -1, symbol: '-' };
+                    case 1:
+                        return { value: 0, symbol: ' ' };
+                    case 2:
+                        return { value: 1, symbol: '+' };
+                }
+            }
+
+            /**
+             * Display the current roll result
+             * @param {number} total - The total to display
+             */
+            function displayResult(total) {
+                // Format with + or - sign
+                if (total > 0) {
+                    currentResultDiv.textContent = '+' + total;
+                } else if (total === 0) {
+                    currentResultDiv.textContent = '0';
+                } else {
+                    currentResultDiv.textContent = total.toString();
+                }
+            }
+
+            /**
+             * Add a roll to the history log
+             * @param {Array} rolls - Array of roll objects with value and symbol
+             * @param {number} total - Sum of all rolls
+             */
+            function addToHistory(rolls, total) {
+                // Create history entry element
+                const entry = document.createElement('div');
+                entry.className = 'history-entry';
+
+                // Format the individual rolls as symbols
+                const rollsString = rolls.map(r => r.symbol).join(', ');
+
+                // Format total with sign
+                let totalString;
+                if (total > 0) {
+                    totalString = '+' + total;
+                } else if (total === 0) {
+                    totalString = '0';
+                } else {
+                    totalString = total.toString();
+                }
+
+                // Create the text: "Rolled 4dF (+, -, , +) = +1"
+                entry.textContent = `Rolled 4dF (${rollsString}) = ${totalString}`;
+
+                // Add to the beginning of history (most recent first)
+                rollHistoryDiv.insertBefore(entry, rollHistoryDiv.firstChild);
+            }
+        });
+    </script>
+</body>
+</html>
