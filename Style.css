@@ -273,27 +273,37 @@ input[type="text"] {
 
 /* Link containers for index page */
 .link-container {
+    display: block;
     border: 3px solid #7a6952;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
     background: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.link-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(122, 105, 82, 0.3);
+    border-color: #4a7c3c;
+    background: #fafaf8;
+}
+
+.link-container:active {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(122, 105, 82, 0.2);
 }
 
 .link-container h2 {
-    margin-bottom: 10px;
-}
-
-.link-container a {
     color: #4a7c3c;
-    text-decoration: none;
-    font-weight: bold;
+    margin-bottom: 10px;
     font-size: 1.3em;
 }
 
-.link-container a:hover {
+.link-container:hover h2 {
     color: #2d5016;
-    text-decoration: underline;
 }
 
 .link-container p {
