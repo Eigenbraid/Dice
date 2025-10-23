@@ -21,6 +21,19 @@
                 <input type="text" id="diceType" value="6" placeholder="e.g., 6 or d6">
             </div>
 
+            <div class="control-group drop-control">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="dropEnabled">
+                    Drop the
+                </label>
+                <select id="dropType">
+                    <option value="lowest">lowest</option>
+                    <option value="highest">highest</option>
+                </select>
+                <input type="text" id="dropCount" value="1" placeholder="1">
+                <span>rolls</span>
+            </div>
+
             <button id="rollButton" class="roll-button">Roll</button>
         </div>
 
