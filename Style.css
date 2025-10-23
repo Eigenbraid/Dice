@@ -10,8 +10,7 @@ body {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    padding: 20px;
+    padding: 40px 20px;
 }
 
 .container {
@@ -38,9 +37,11 @@ h2 {
 
 .controls {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
+    gap: 15px;
     margin-bottom: 30px;
+    align-items: flex-end;
+    flex-wrap: wrap;
 }
 
 .control-group {
@@ -79,16 +80,15 @@ select:focus {
     font-size: 1.2em;
     font-weight: bold;
     color: white;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.1s ease, box-shadow 0.3s ease;
-    margin-top: 10px;
 }
 
 .roll-button:hover {
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
 }
 
 .roll-button:active {
@@ -96,10 +96,11 @@ select:focus {
 }
 
 .result-display {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
     border-radius: 15px;
     padding: 40px;
-    margin-bottom: 30px;
+    margin: 0 auto 30px auto;
+    max-width: 300px;
     text-align: center;
 }
 
