@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Update the display
-            displayResult(chosenResult, successCountEnabled);
+            displayResult(chosenResult, successCountEnabled, successThreshold, successComparison, dropEnabled);
 
             // Add to history with both rolls
             addToHistory(numDice, diceType, chosenResult, otherResult, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode, dropEnabled, dropType, dropCount, successCountEnabled, successComparison, successThreshold);
 
             // Update the display
-            displayResult(result, successCountEnabled);
+            displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled);
 
             // Add to history
             addToHistory(numDice, diceType, result, null, rollMode, explodingEnabled, successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
@@ -411,22 +411,60 @@ document.addEventListener('DOMContentLoaded', function() {
      * Display the current roll result
      * @param {Object} result - The result object to display
      * @param {boolean} successCountEnabled - Whether success counting is enabled
+     * @param {number} successThreshold - Threshold for success counting
+     * @param {string} successComparison - Comparison type for success counting
+     * @param {boolean} dropEnabled - Whether drop is enabled
      */
-    function displayResult(result, successCountEnabled) {
+    function displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled) {
         // Show success count if enabled
         if (successCountEnabled) {
-            successResultDiv.textContent = `${result.successCount} successes`;
+            successResultDiv.textContent = `Successes: ${result.successCount}`;
             successResultDiv.style.display = 'block';
         } else {
             successResultDiv.style.display = 'none';
         }
 
-        // Always show sum
-        sumResultDiv.textContent = result.total;
+        // Always show sum with label
+        sumResultDiv.textContent = `Sum: ${result.total}`;
 
-        // Show individual rolls
-        rollsResultDiv.textContent = `[${result.rolls.join(', ')}]`;
+        // Build dice display with success highlighting
+        let diceText = 'Dice: ';
+
+        if (successCountEnabled) {
+            // Create HTML to bold successful dice
+            const diceElements = result.rolls.map(roll => {
+                const isSuccess = checkSuccess(roll, successThreshold, successComparison);
+                return isSuccess ? `<b>${roll}</b>` : roll;
+            });
+            diceText += `[${diceElements.join(', ')}]`;
+        } else {
+            diceText += `[${result.rolls.join(', ')}]`;
+        }
+
+        // Add drop info if applicable
+        if (dropEnabled && result.droppedRolls.length > 0) {
+            diceText += ` → keep [${result.keptRolls.join(', ')}]`;
+        }
+
+        rollsResultDiv.innerHTML = diceText;
         rollsResultDiv.style.display = 'block';
+    }
+
+    /**
+     * Check if a roll is a success
+     * @param {number} roll - The roll value
+     * @param {number} threshold - Success threshold
+     * @param {string} comparison - Comparison type
+     * @returns {boolean} - Whether the roll is a success
+     */
+    function checkSuccess(roll, threshold, comparison) {
+        if (comparison === 'atleast') {
+            return roll >= threshold;
+        } else if (comparison === 'exactly') {
+            return roll === threshold;
+        } else { // atmost
+            return roll <= threshold;
+        }
     }
 
     /**
