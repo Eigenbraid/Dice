@@ -57,7 +57,7 @@ label {
     font-size: 1em;
 }
 
-select {
+select, input[type="text"] {
     padding: 12px;
     font-size: 1em;
     border: 2px solid #ddd;
@@ -67,13 +67,28 @@ select {
     transition: border-color 0.3s ease;
 }
 
-select:hover {
+select:hover, input[type="text"]:hover {
     border-color: #5a7a47;
 }
 
-select:focus {
+select:focus, input[type="text"]:focus {
     outline: none;
     border-color: #5a7a47;
+}
+
+input[type="text"] {
+    cursor: text;
+    min-width: 120px;
+}
+
+.error-message {
+    background: #ffebee;
+    border: 2px solid #ef5350;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    color: #c62828;
+    font-weight: 500;
 }
 
 .roll-button {
