@@ -29,14 +29,15 @@
         }
 
         .card-display {
-            background: white;
-            border: 3px solid #7a6952;
-            border-radius: 12px;
+            background: transparent;
+            border: none;
             padding: 20px;
             min-height: 80px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 15px;
             font-size: 1em;
             color: #555;
             font-weight: 500;
@@ -45,15 +46,33 @@
             cursor: pointer;
         }
 
-        .card-display:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(122, 105, 82, 0.2);
-            border-color: #4a7c3c;
+        .card-image {
+            max-width: 150px;
+            max-height: 250px;
+            width: auto;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
         }
 
-        .card-display.filled {
-            background: linear-gradient(135deg, rgba(74, 124, 60, 0.05) 0%, rgba(45, 80, 22, 0.05) 100%);
-            border-color: #4a7c3c;
+        .card-image.reversed {
+            transform: rotate(180deg);
+        }
+
+        .card-name {
+            font-size: 0.95em;
+            color: #5a1010;
+            font-weight: 600;
+        }
+
+        .card-display:hover .card-image {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-display:hover .card-image.reversed {
+            transform: rotate(180deg) scale(1.05);
         }
 
         .history-hand {
@@ -143,6 +162,21 @@
             transform: scale(1.2);
         }
 
+        .modal-card-image {
+            max-width: 250px;
+            max-height: 400px;
+            width: auto;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .modal-card-image.reversed {
+            transform: rotate(180deg);
+        }
+
         .modal-card-name {
             color: #5a1010;
             font-size: 1.8em;
@@ -189,9 +223,19 @@
                 min-width: 100%;
             }
 
+            .card-image {
+                max-width: 120px;
+                max-height: 200px;
+            }
+
             .modal-content {
                 width: 95%;
                 padding: 20px;
+            }
+
+            .modal-card-image {
+                max-width: 180px;
+                max-height: 300px;
             }
 
             .modal-card-name {
@@ -213,7 +257,7 @@
 
         <div class="controls">
 			<button id="newReadingButton" class="roll-button">New Reading</button>
-		
+
             <div class="control-group">
                 <div class="control-group-inline">
 					<label>Deck Type:</label>
@@ -230,6 +274,13 @@
                         Minor Arcana
                     </label>
                 </div>
+            </div>
+
+            <div class="control-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="includeReversed" checked>
+                    Include Reversed Cards
+                </label>
             </div>
         </div>
 
@@ -258,6 +309,7 @@
     <div id="cardModal" class="modal">
         <div class="modal-content">
             <button class="modal-close" id="modalClose">&times;</button>
+            <img id="modalCardImage" class="modal-card-image" src="" alt="">
             <div class="modal-card-name" id="modalCardName"></div>
             <div class="modal-card-orientation" id="modalCardOrientation"></div>
             <div class="modal-card-meaning" id="modalCardMeaning"></div>
