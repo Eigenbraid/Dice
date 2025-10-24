@@ -79,10 +79,14 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // Import Fate dice logic and history utilities
+        import { rollFateDice, formatFateTotal, getFateSymbol } from './Fate.js';
+        import { createHistoryEntry, addToHistory } from './HistoryLog.js';
+
         // Fate Dice Roller - Always rolls 4dF
         document.addEventListener('DOMContentLoaded', function() {
-            // Get references to DOM elements
+            // Get references to DOM elements (UI layer)
             const rollButton = document.getElementById('rollButton');
             const currentResultDiv = document.getElementById('currentResult');
             const diceDisplayDiv = document.getElementById('diceDisplay');
@@ -94,7 +98,7 @@
             initializeDiceDisplay();
 
             // Add click event listener to roll button
-            rollButton.addEventListener('click', rollDice);
+            rollButton.addEventListener('click', handleRoll);
 
             // Add click event listener to statistics toggle
             statsToggle.addEventListener('click', function() {
@@ -108,7 +112,7 @@
             // Also allow rolling with Enter key
             document.addEventListener('keypress', function(event) {
                 if (event.key === 'Enter') {
-                    rollDice();
+                    handleRoll();
                 }
             });
 
@@ -125,59 +129,29 @@
             }
 
             /**
-             * Main dice rolling function for Fate dice
+             * Handle roll button click
+             * UI orchestration: call logic, update display
              */
-            function rollDice() {
-                // Always roll 4 Fate dice
-                const numDice = 4;
-                const rolls = [];
-
-                // Roll each Fate die
-                for (let i = 0; i < numDice; i++) {
-                    rolls.push(rollFateDie());
-                }
-
-                // Calculate total (sum of -1, 0, +1 values)
-                const total = rolls.reduce((sum, roll) => sum + roll.value, 0);
+            function handleRoll() {
+                // Call pure dice rolling function
+                const result = rollFateDice(4);
 
                 // Update the display
-                displayResult(rolls, total);
+                displayResult(result.rolls, result.total);
 
-                // Add to history
-                addToHistory(rolls, total);
-            }
-
-            /**
-             * Roll a single Fate die
-             * @returns {Object} - Object with value (-1, 0, 1) and symbol (-, blank, +)
-             */
-            function rollFateDie() {
-                const result = Math.floor(Math.random() * 3); // 0, 1, or 2
-
-                switch(result) {
-                    case 0:
-                        return { value: -1, symbol: '-' };
-                    case 1:
-                        return { value: 0, symbol: ' ' };
-                    case 2:
-                        return { value: 1, symbol: '+' };
-                }
+                // Format and add to history
+                const historyText = `Rolled ${result.rolls.length}dF (${result.symbols}) = ${formatFateTotal(result.total)}`;
+                const entry = createHistoryEntry(historyText);
+                addToHistory(rollHistoryDiv, entry);
             }
 
             /**
              * Display the current roll result
-             * @param {Array} rolls - Array of roll objects with value and symbol
-             * @param {number} total - The total to display
+             * UI layer function - updates DOM only
              */
             function displayResult(rolls, total) {
                 // Format with + or - sign
-                if (total > 0) {
-                    currentResultDiv.textContent = '+' + total;
-                } else if (total === 0) {
-                    currentResultDiv.textContent = '0';
-                } else {
-                    currentResultDiv.textContent = total.toString();
-                }
+                currentResultDiv.textContent = formatFateTotal(total);
 
                 // Clear previous dice
                 diceDisplayDiv.innerHTML = '';
@@ -186,48 +160,9 @@
                 rolls.forEach(roll => {
                     const die = document.createElement('div');
                     die.className = 'fate-die';
-
-                    // Set the symbol based on the roll
-                    if (roll.value === 1) {
-                        die.textContent = '➕';
-                    } else if (roll.value === -1) {
-                        die.textContent = '➖';
-                    } else {
-                        die.textContent = '';  // Blank for 0
-                    }
-
+                    die.textContent = getFateSymbol(roll.value);
                     diceDisplayDiv.appendChild(die);
                 });
-            }
-
-            /**
-             * Add a roll to the history log
-             * @param {Array} rolls - Array of roll objects with value and symbol
-             * @param {number} total - Sum of all rolls
-             */
-            function addToHistory(rolls, total) {
-                // Create history entry element
-                const entry = document.createElement('div');
-                entry.className = 'history-entry';
-
-                // Format the individual rolls as symbols
-                const rollsString = rolls.map(r => r.symbol).join(', ');
-
-                // Format total with sign
-                let totalString;
-                if (total > 0) {
-                    totalString = '+' + total;
-                } else if (total === 0) {
-                    totalString = '0';
-                } else {
-                    totalString = total.toString();
-                }
-
-                // Create the text: "Rolled 4dF (+, -, , +) = +1"
-                entry.textContent = `Rolled 4dF (${rollsString}) = ${totalString}`;
-
-                // Add to the beginning of history (most recent first)
-                rollHistoryDiv.insertBefore(entry, rollHistoryDiv.firstChild);
             }
         });
     </script>

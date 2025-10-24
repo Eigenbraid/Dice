@@ -1,5 +1,16 @@
+/**
+ * Tarot.js - Tarot card reading system
+ *
+ * Pure functions and data for Tarot card readings.
+ * Uses CardLibrary.js for deck mechanics.
+ *
+ * Includes full 78-card deck: 22 Major Arcana + 56 Minor Arcana
+ */
+
+import { createDeck, shuffleDeck, drawCard } from './CardLibrary.js';
+
 // Major Arcana cards (0-21) with meanings
-const majorArcana = [
+export const majorArcana = [
     { number: 0, name: "The Fool", type: "major",
       upright: "New beginnings, innocence, spontaneity, free spirit, adventure",
       reversed: "Recklessness, taking foolish risks, naivety, poor judgment" },
@@ -68,7 +79,7 @@ const majorArcana = [
       reversed: "Seeking personal closure, short-cuts, delays, incompletion" }
 ];
 
-// Minor Arcana meanings
+// Minor Arcana meanings by suit and rank
 const minorMeanings = {
     "Wands": {
         "Ace": { upright: "Inspiration, new opportunities, growth, potential", reversed: "Emerging idea, lack of direction, delays, distractions" },
@@ -136,12 +147,11 @@ const minorMeanings = {
     }
 };
 
-// Minor Arcana cards
-const minorArcana = [];
+// Generate Minor Arcana cards
+export const minorArcana = [];
 const suits = ["Wands", "Cups", "Swords", "Pentacles"];
 const ranks = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Page", "Knight", "Queen", "King"];
 
-// Generate Minor Arcana with meanings
 suits.forEach(suit => {
     ranks.forEach(rank => {
         minorArcana.push({
@@ -155,53 +165,90 @@ suits.forEach(suit => {
     });
 });
 
-// State
-let currentDeck = [];
-let readingHistory = [];
-let handCounter = 0;
-let currentCards = {
-    past: null,
-    present: null,
-    future: null
-};
-
-// Initialize deck based on selected type
-function createDeck(deckType = 'major') {
-    switch(deckType) {
+/**
+ * Create a tarot deck based on type
+ * @param {string} [deckType='major'] - 'major', 'minor', or 'both'
+ * @returns {Array} - Array of card objects
+ */
+export function createTarotDeck(deckType = 'major') {
+    switch (deckType) {
         case 'both':
-            return [...majorArcana, ...minorArcana];
+            return createDeck([...majorArcana, ...minorArcana]);
         case 'major':
-            return [...majorArcana];
+            return createDeck(majorArcana);
         case 'minor':
-            return [...minorArcana];
+            return createDeck(minorArcana);
         default:
-            return [...majorArcana];
+            return createDeck(majorArcana);
     }
 }
 
-// Shuffle deck using Fisher-Yates algorithm
-function shuffleDeck(deck) {
-    for (let i = deck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
-    return deck;
-}
+/**
+ * Draw a tarot card with optional reversed orientation
+ * @param {Array} deck - The deck to draw from
+ * @param {boolean} [allowReversed=false] - Whether cards can be reversed
+ * @returns {Object|null} - The drawn card with isReversed property, or null if deck empty
+ */
+export function drawTarotCard(deck, allowReversed = false) {
+    const card = drawCard(deck);
 
-// Draw a card from the deck (without replacement)
-function drawCard() {
-    if (currentDeck.length === 0) {
+    if (!card) {
         return null;
     }
-    const card = currentDeck.pop();
+
+    // Create a copy of the card object to avoid mutating the original
     // 50% chance of card being reversed if option is enabled
-    const includeReversed = document.getElementById('includeReversed').checked;
-    card.isReversed = includeReversed && Math.random() < 0.5;
-    return card;
+    return {
+        ...card,
+        isReversed: allowReversed && Math.random() < 0.5
+    };
 }
 
-// Get image path for a card
-function getCardImagePath(card) {
+/**
+ * Perform a three-card spread (Past, Present, Future)
+ * @param {string} [deckType='major'] - Type of deck to use
+ * @param {boolean} [allowReversed=false] - Whether to allow reversed cards
+ * @returns {Object} - { past: Object, present: Object, future: Object }
+ */
+export function performThreeCardSpread(deckType = 'major', allowReversed = false) {
+    const deck = shuffleDeck(createTarotDeck(deckType));
+
+    const past = drawTarotCard(deck, allowReversed);
+    const present = drawTarotCard(deck, allowReversed);
+    const future = drawTarotCard(deck, allowReversed);
+
+    return { past, present, future };
+}
+
+/**
+ * Format a tarot card for display
+ * @param {Object} card - The card object
+ * @returns {string} - Formatted string like "0. The Fool" or "Ace of Wands (Reversed)"
+ */
+export function formatTarotCard(card) {
+    if (!card) {
+        return '--';
+    }
+
+    let cardName;
+    if (card.type === 'major') {
+        cardName = `${card.number}. ${card.name}`;
+    } else {
+        cardName = card.name;
+    }
+
+    if (card.isReversed) {
+        return `${cardName} (Reversed)`;
+    }
+    return cardName;
+}
+
+/**
+ * Get the image path for a tarot card
+ * @param {Object} card - The card object
+ * @returns {string} - Path to the card image
+ */
+export function getCardImagePath(card) {
     if (card.type === 'major') {
         // Major Arcana: e.g., "00-TheFool.png"
         const number = String(card.number).padStart(2, '0');
@@ -220,194 +267,25 @@ function getCardImagePath(card) {
     }
 }
 
-// Format card for display
-function formatCard(card) {
-    let cardName;
-    if (card.type === 'major') {
-        cardName = `${card.number}. ${card.name}`;
-    } else {
-        cardName = card.name;
+/**
+ * Get the meaning of a tarot card
+ * @param {Object} card - The card object
+ * @returns {Object} - { orientation: string, meaning: string }
+ */
+export function getCardMeaning(card) {
+    if (!card) {
+        return { orientation: '', meaning: '' };
     }
 
     if (card.isReversed) {
-        return `${cardName} (Reversed)`;
-    }
-    return cardName;
-}
-
-// Get selected deck type
-function getSelectedDeckType() {
-    const radios = document.getElementsByName('deckType');
-    for (const radio of radios) {
-        if (radio.checked) {
-            return radio.value;
-        }
-    }
-    return 'major'; // default
-}
-
-// Perform a new reading
-function performReading() {
-    // Get selected deck type
-    const deckType = getSelectedDeckType();
-
-    // Create and shuffle a fresh deck
-    currentDeck = shuffleDeck(createDeck(deckType));
-
-    // Draw three cards
-    const pastCard = drawCard();
-    const presentCard = drawCard();
-    const futureCard = drawCard();
-
-    // Store current cards
-    currentCards.past = pastCard;
-    currentCards.present = presentCard;
-    currentCards.future = futureCard;
-
-    // Update display
-    updateCardDisplay('pastCard', pastCard);
-    updateCardDisplay('presentCard', presentCard);
-    updateCardDisplay('futureCard', futureCard);
-
-    // Add to history
-    handCounter++;
-    addToHistory(handCounter, pastCard, presentCard, futureCard);
-}
-
-// Update card display
-function updateCardDisplay(elementId, card) {
-    const element = document.getElementById(elementId);
-    if (card) {
-        element.innerHTML = '';
-
-        // Create image element
-        const img = document.createElement('img');
-        img.src = getCardImagePath(card);
-        img.alt = formatCard(card);
-        img.className = 'card-image';
-        if (card.isReversed) {
-            img.classList.add('reversed');
-        }
-
-        // Create text element for card name
-        const text = document.createElement('div');
-        text.className = 'card-name';
-        text.textContent = formatCard(card);
-
-        element.appendChild(img);
-        element.appendChild(text);
+        return {
+            orientation: 'Reversed',
+            meaning: card.reversed
+        };
     } else {
-        element.textContent = '--';
+        return {
+            orientation: 'Upright',
+            meaning: card.upright
+        };
     }
 }
-
-// Add reading to history
-function addToHistory(handNumber, pastCard, presentCard, futureCard) {
-    const reading = {
-        hand: handNumber,
-        cards: [pastCard, presentCard, futureCard]
-    };
-
-    readingHistory.unshift(reading);
-    updateHistoryDisplay();
-}
-
-// Update history display
-function updateHistoryDisplay() {
-    const historyContainer = document.getElementById('readingHistory');
-    historyContainer.innerHTML = '';
-
-    readingHistory.forEach(reading => {
-        const handDiv = document.createElement('div');
-        handDiv.className = 'history-hand';
-
-        const title = document.createElement('div');
-        title.className = 'history-hand-title';
-        title.textContent = `Hand ${reading.hand}`;
-
-        const cardList = document.createElement('ul');
-        reading.cards.forEach(card => {
-            const li = document.createElement('li');
-            li.textContent = formatCard(card);
-            cardList.appendChild(li);
-        });
-
-        handDiv.appendChild(title);
-        handDiv.appendChild(cardList);
-        historyContainer.appendChild(handDiv);
-    });
-}
-
-// Modal functions
-function openCardModal(card, position) {
-    if (!card) return;
-
-    const modal = document.getElementById('cardModal');
-    const cardImage = document.getElementById('modalCardImage');
-    const cardName = document.getElementById('modalCardName');
-    const cardOrientation = document.getElementById('modalCardOrientation');
-    const cardMeaning = document.getElementById('modalCardMeaning');
-
-    // Set card image
-    cardImage.src = getCardImagePath(card);
-    cardImage.alt = formatCard(card);
-    if (card.isReversed) {
-        cardImage.classList.add('reversed');
-    } else {
-        cardImage.classList.remove('reversed');
-    }
-
-    // Set card name
-    let name = card.type === 'major' ? `${card.number}. ${card.name}` : card.name;
-    cardName.textContent = name;
-
-    // Set orientation and meaning
-    if (card.isReversed) {
-        cardOrientation.textContent = 'Reversed';
-        cardMeaning.textContent = card.reversed;
-    } else {
-        cardOrientation.textContent = 'Upright';
-        cardMeaning.textContent = card.upright;
-    }
-
-    // Show modal
-    modal.classList.add('active');
-}
-
-function closeCardModal() {
-    const modal = document.getElementById('cardModal');
-    modal.classList.remove('active');
-}
-
-// Event listeners
-document.getElementById('newReadingButton').addEventListener('click', performReading);
-
-// Card click handlers
-document.getElementById('pastCard').addEventListener('click', function() {
-    openCardModal(currentCards.past, 'past');
-});
-
-document.getElementById('presentCard').addEventListener('click', function() {
-    openCardModal(currentCards.present, 'present');
-});
-
-document.getElementById('futureCard').addEventListener('click', function() {
-    openCardModal(currentCards.future, 'future');
-});
-
-// Modal close handlers
-document.getElementById('modalClose').addEventListener('click', closeCardModal);
-
-document.getElementById('cardModal').addEventListener('click', function(event) {
-    // Close modal if clicking outside the modal content
-    if (event.target === this) {
-        closeCardModal();
-    }
-});
-
-// Close modal with Escape key
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeCardModal();
-    }
-});
