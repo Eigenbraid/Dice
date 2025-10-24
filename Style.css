@@ -3,6 +3,7 @@
    ======================================== */
 
 /* Default Theme: Autumn */
+html,
 :root {
     /* Background colors */
     --bg-gradient-start: #105610;
