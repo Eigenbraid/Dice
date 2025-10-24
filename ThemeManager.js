@@ -28,19 +28,32 @@ function getCurrentTheme() {
 }
 
 /**
- * Applies a theme to the document body
+ * Applies a theme to the document element
  * @param {string} theme - The theme name to apply
  */
 function applyTheme(theme) {
-    // Remove all theme classes
+    console.log('Applying theme:', theme);
+
+    // Apply to html element (works even before body exists)
+    const htmlElement = document.documentElement;
+
+    // Remove all theme classes from both html and body
     Object.values(THEMES).forEach(t => {
-        document.body.classList.remove(`${t}-theme`);
+        htmlElement.classList.remove(`${t}-theme`);
+        if (document.body) {
+            document.body.classList.remove(`${t}-theme`);
+        }
     });
 
     // Apply new theme class (except for autumn which is default)
     if (theme !== THEMES.AUTUMN) {
-        document.body.classList.add(`${theme}-theme`);
+        htmlElement.classList.add(`${theme}-theme`);
+        console.log('Added class to html:', `${theme}-theme`);
+    } else {
+        console.log('Using default autumn theme (no class)');
     }
+
+    console.log('HTML classes:', htmlElement.className);
 }
 
 /**
@@ -99,6 +112,7 @@ function createThemeSelector() {
 
     // Add event listener
     select.addEventListener('change', (e) => {
+        console.log('Theme dropdown changed to:', e.target.value);
         setTheme(e.target.value);
     });
 

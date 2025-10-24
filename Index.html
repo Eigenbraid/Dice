@@ -6,9 +6,14 @@
     <title>Dice Rollers</title>
     <link rel="stylesheet" href="Style.css">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script type="module">
-        import { initializeTheme } from './ThemeManager.js';
-        initializeTheme();
+    <script>
+        // Apply theme immediately to prevent flash of unstyled content
+        (function() {
+            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
+            if (theme && theme !== 'autumn') {
+                document.documentElement.classList.add(theme + '-theme');
+            }
+        })();
     </script>
 </head>
 <body>

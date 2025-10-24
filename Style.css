@@ -75,6 +75,7 @@
 }
 
 /* Light Theme */
+html.light-theme,
 body.light-theme {
     --bg-gradient-start: #f5f5f5;
     --bg-gradient-end: #e0e0e0;
@@ -117,6 +118,7 @@ body.light-theme {
 }
 
 /* Dark Theme */
+html.dark-theme,
 body.dark-theme {
     --bg-gradient-start: #1a1a1a;
     --bg-gradient-end: #2d2d2d;
@@ -169,6 +171,7 @@ body.dark-theme {
 }
 
 /* Winter Theme */
+html.winter-theme,
 body.winter-theme {
     --bg-gradient-start: #e3f2fd;
     --bg-gradient-end: #90caf9;
@@ -211,6 +214,7 @@ body.winter-theme {
 }
 
 /* Spring Theme */
+html.spring-theme,
 body.spring-theme {
     --bg-gradient-start: #e8f5e9;
     --bg-gradient-end: #c8e6c9;
@@ -253,6 +257,7 @@ body.spring-theme {
 }
 
 /* Summer Theme */
+html.summer-theme,
 body.summer-theme {
     --bg-gradient-start: #fff3e0;
     --bg-gradient-end: #ffe0b2;
