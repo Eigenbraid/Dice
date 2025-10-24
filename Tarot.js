@@ -194,8 +194,9 @@ function drawCard() {
         return null;
     }
     const card = currentDeck.pop();
-    // 50% chance of card being reversed
-    card.isReversed = Math.random() < 0.5;
+    // 50% chance of card being reversed if option is enabled
+    const includeReversed = document.getElementById('includeReversed').checked;
+    card.isReversed = includeReversed && Math.random() < 0.5;
     return card;
 }
 
