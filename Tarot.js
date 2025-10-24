@@ -199,6 +199,26 @@ function drawCard() {
     return card;
 }
 
+// Get image path for a card
+function getCardImagePath(card) {
+    if (card.type === 'major') {
+        // Major Arcana: e.g., "00-TheFool.png"
+        const number = String(card.number).padStart(2, '0');
+        const name = card.name.replace(/\s+/g, ''); // Remove spaces
+        return `img/Tarot/${number}-${name}.png`;
+    } else {
+        // Minor Arcana: e.g., "Wands01.png", "Cups11.png"
+        const rankNumbers = {
+            "Ace": "01", "Two": "02", "Three": "03", "Four": "04",
+            "Five": "05", "Six": "06", "Seven": "07", "Eight": "08",
+            "Nine": "09", "Ten": "10", "Page": "11", "Knight": "12",
+            "Queen": "13", "King": "14"
+        };
+        const number = rankNumbers[card.rank];
+        return `img/Tarot/${card.suit}${number}.png`;
+    }
+}
+
 // Format card for display
 function formatCard(card) {
     let cardName;
@@ -257,7 +277,24 @@ function performReading() {
 function updateCardDisplay(elementId, card) {
     const element = document.getElementById(elementId);
     if (card) {
-        element.textContent = formatCard(card);
+        element.innerHTML = '';
+
+        // Create image element
+        const img = document.createElement('img');
+        img.src = getCardImagePath(card);
+        img.alt = formatCard(card);
+        img.className = 'card-image';
+        if (card.isReversed) {
+            img.classList.add('reversed');
+        }
+
+        // Create text element for card name
+        const text = document.createElement('div');
+        text.className = 'card-name';
+        text.textContent = formatCard(card);
+
+        element.appendChild(img);
+        element.appendChild(text);
         element.classList.add('filled');
     } else {
         element.textContent = '--';
@@ -307,9 +344,19 @@ function openCardModal(card, position) {
     if (!card) return;
 
     const modal = document.getElementById('cardModal');
+    const cardImage = document.getElementById('modalCardImage');
     const cardName = document.getElementById('modalCardName');
     const cardOrientation = document.getElementById('modalCardOrientation');
     const cardMeaning = document.getElementById('modalCardMeaning');
+
+    // Set card image
+    cardImage.src = getCardImagePath(card);
+    cardImage.alt = formatCard(card);
+    if (card.isReversed) {
+        cardImage.classList.add('reversed');
+    } else {
+        cardImage.classList.remove('reversed');
+    }
 
     // Set card name
     let name = card.type === 'major' ? `${card.number}. ${card.name}` : card.name;
