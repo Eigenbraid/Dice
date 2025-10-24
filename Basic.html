@@ -6,6 +6,15 @@
     <title>Dice Roller</title>
     <link rel="stylesheet" href="Style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script>
+        // Apply theme immediately to prevent flash of unstyled content
+        (function() {
+            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
+            if (theme && theme !== 'autumn') {
+                document.documentElement.classList.add(theme + '-theme');
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -61,9 +70,12 @@
         // Import dice rolling logic and history utilities
         import { rollDice, formatDiceRoll } from './DiceLibrary.js';
         import { createHistoryEntry, addToHistory } from './HistoryLog.js';
+        import { addThemeSelector } from './ThemeManager.js';
 
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Add theme selector to the page
+            addThemeSelector();
             // Get references to DOM elements (UI layer)
             const rollButton = document.getElementById('rollButton');
             const numDiceSelect = document.getElementById('numDice');

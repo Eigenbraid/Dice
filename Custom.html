@@ -6,6 +6,15 @@
     <title>Custom Dice Roller</title>
     <link rel="stylesheet" href="Style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script>
+        // Apply theme immediately to prevent flash of unstyled content
+        (function() {
+            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
+            if (theme && theme !== 'autumn') {
+                document.documentElement.classList.add(theme + '-theme');
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -95,5 +104,9 @@
     </div>
 
     <script src="CustomRoller.js"></script>
+    <script type="module">
+        import { addThemeSelector } from './ThemeManager.js';
+        document.addEventListener('DOMContentLoaded', addThemeSelector);
+    </script>
 </body>
 </html>

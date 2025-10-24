@@ -6,10 +6,21 @@
     <title>Dice Rollers</title>
     <link rel="stylesheet" href="Style.css">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script>
+        // Apply theme immediately to prevent flash of unstyled content
+        (function() {
+            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
+            if (theme && theme !== 'autumn') {
+                document.documentElement.classList.add(theme + '-theme');
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Dice Rollers</h1>
+        <div class="header">
+            <h1>Dice Rollers</h1>
+        </div>
 
         <!-- Basic Dice Roller Link -->
         <a href="Basic.html" class="link-container">
@@ -69,5 +80,10 @@
             <p style="margin-top: 10px;">Provided as-is with no warranties, express or implied. Use at your own risk.</p>
         </div>
     </div>
+
+    <script type="module">
+        import { addThemeSelector } from './ThemeManager.js';
+        document.addEventListener('DOMContentLoaded', addThemeSelector);
+    </script>
 </body>
 </html>
