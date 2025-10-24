@@ -37,7 +37,7 @@ describe('rollFateDie', () => {
             if (roll.value === -1) {
                 expect(roll.symbol).toBe('-');
             } else if (roll.value === 0) {
-                expect(roll.symbol).toBe(' ');
+                expect(roll.symbol).toBe('0');
             } else if (roll.value === 1) {
                 expect(roll.symbol).toBe('+');
             }
@@ -119,7 +119,7 @@ describe('formatFateRoll', () => {
             rolls: [
                 { value: 1, symbol: '+' },
                 { value: -1, symbol: '-' },
-                { value: 0, symbol: ' ' },
+                { value: 0, symbol: '0' },
                 { value: 1, symbol: '+' }
             ],
             total: 1
@@ -127,7 +127,7 @@ describe('formatFateRoll', () => {
 
         const formatted = formatFateRoll(result);
 
-        expect(formatted).toBe('Rolled 4dF (+, -, , +) = +1');
+        expect(formatted).toBe('Rolled 4dF (+, -, 0, +) = +1');
     });
 
     it('handles different totals correctly', () => {

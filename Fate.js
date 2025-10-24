@@ -9,7 +9,7 @@
 
 /**
  * Roll a single Fate die
- * @returns {Object} - { value: number (-1, 0, 1), symbol: string (-, ' ', +) }
+ * @returns {Object} - { value: number (-1, 0, 1), symbol: string (-, 0, +) }
  */
 export function rollFateDie() {
     const result = Math.floor(Math.random() * 3); // 0, 1, or 2
@@ -18,12 +18,12 @@ export function rollFateDie() {
         case 0:
             return { value: -1, symbol: '-' };
         case 1:
-            return { value: 0, symbol: ' ' };
+            return { value: 0, symbol: '0' };
         case 2:
             return { value: 1, symbol: '+' };
         default:
             // Should never happen, but TypeScript-friendly
-            return { value: 0, symbol: ' ' };
+            return { value: 0, symbol: '0' };
     }
 }
 

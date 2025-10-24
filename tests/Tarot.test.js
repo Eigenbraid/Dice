@@ -146,16 +146,23 @@ describe('drawTarotCard', () => {
     it('sometimes reverses when allowReversed is true', () => {
         // Draw many cards to ensure we hit both outcomes
         const cards = [];
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 200; i++) {
             const deck = createTarotDeck('major');
             cards.push(drawTarotCard(deck, true));
         }
 
-        const hasReversed = cards.some(card => card.isReversed === true);
-        const hasUpright = cards.some(card => card.isReversed === false);
+        const reversedCount = cards.filter(card => card.isReversed === true).length;
+        const uprightCount = cards.filter(card => card.isReversed === false).length;
 
-        expect(hasReversed).toBe(true);
-        expect(hasUpright).toBe(true);
+        // With 200 draws at 50% probability, we should have at least some of each
+        // Probability of getting 0 of either is (0.5)^200 which is essentially 0
+        expect(reversedCount).toBeGreaterThan(0);
+        expect(uprightCount).toBeGreaterThan(0);
+
+        // And the reversal rate should be roughly 50% (between 35% and 65% is very safe)
+        const reversalRate = reversedCount / cards.length;
+        expect(reversalRate).toBeGreaterThan(0.35);
+        expect(reversalRate).toBeLessThan(0.65);
     });
 
     it('returns null for empty deck', () => {
