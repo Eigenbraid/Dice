@@ -6,6 +6,10 @@
     <title>Custom Dice Roller</title>
     <link rel="stylesheet" href="Style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script type="module">
+        import { initializeTheme } from './ThemeManager.js';
+        initializeTheme();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -95,5 +99,9 @@
     </div>
 
     <script src="CustomRoller.js"></script>
+    <script type="module">
+        import { addThemeSelector } from './ThemeManager.js';
+        document.addEventListener('DOMContentLoaded', addThemeSelector);
+    </script>
 </body>
 </html>

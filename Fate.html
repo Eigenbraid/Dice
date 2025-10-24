@@ -6,6 +6,10 @@
     <title>Fate Dice Roller</title>
     <link rel="stylesheet" href="Style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script type="module">
+        import { initializeTheme } from './ThemeManager.js';
+        initializeTheme();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -83,9 +87,13 @@
         // Import Fate dice logic and history utilities
         import { rollFateDice, formatFateTotal, getFateSymbol } from './Fate.js';
         import { createHistoryEntry, addToHistory } from './HistoryLog.js';
+        import { addThemeSelector } from './ThemeManager.js';
 
         // Fate Dice Roller - Always rolls 4dF
         document.addEventListener('DOMContentLoaded', function() {
+            // Add theme selector to the page
+            addThemeSelector();
+
             // Get references to DOM elements (UI layer)
             const rollButton = document.getElementById('rollButton');
             const currentResultDiv = document.getElementById('currentResult');
