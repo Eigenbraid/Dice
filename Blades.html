@@ -37,6 +37,69 @@
             <div id="diceDisplay" class="dice-display"></div>
         </div>
 
+        <div class="statistics-section">
+            <h2 id="statsToggle" class="stats-toggle">
+                <span class="info-icon">ⓘ</span> Statistics
+            </h2>
+            <div id="statsContent" class="stats-content" style="display: none;">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Pool</th>
+                            <th>Failure</th>
+                            <th>Mixed</th>
+                            <th>Success</th>
+                            <th>Critical</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>75%</td>
+                            <td>22%</td>
+                            <td>3%</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>50%</td>
+                            <td>33%</td>
+                            <td>17%</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>25%</td>
+                            <td>44%</td>
+                            <td>28%</td>
+                            <td>3%</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>13%</td>
+                            <td>45%</td>
+                            <td>35%</td>
+                            <td>7%</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>6%</td>
+                            <td>42%</td>
+                            <td>39%</td>
+                            <td>13%</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>3%</td>
+                            <td>37%</td>
+                            <td>40%</td>
+                            <td>20%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="history-section">
             <h2>Roll History</h2>
             <div id="rollHistory" class="roll-history"></div>
@@ -53,9 +116,20 @@
             const outcomeTextDiv = document.getElementById('outcomeText');
             const diceDisplayDiv = document.getElementById('diceDisplay');
             const rollHistoryDiv = document.getElementById('rollHistory');
+            const statsToggle = document.getElementById('statsToggle');
+            const statsContent = document.getElementById('statsContent');
 
             // Add click event listener to roll button
             rollButton.addEventListener('click', rollDice);
+
+            // Add click event listener to statistics toggle
+            statsToggle.addEventListener('click', function() {
+                if (statsContent.style.display === 'none') {
+                    statsContent.style.display = 'block';
+                } else {
+                    statsContent.style.display = 'none';
+                }
+            });
 
             // Also allow rolling with Enter key
             document.addEventListener('keypress', function(event) {
@@ -240,6 +314,58 @@
             border: 2px solid #333;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .statistics-section {
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .stats-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .stats-toggle:hover {
+            opacity: 0.7;
+        }
+
+        .info-icon {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+
+        .stats-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px auto;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .stats-table th,
+        .stats-table td {
+            padding: 8px 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-table th {
+            background-color: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+        }
+
+        .stats-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
     </style>
 </body>
