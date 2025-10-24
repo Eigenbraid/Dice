@@ -196,10 +196,12 @@ export function drawTarotCard(deck, allowReversed = false) {
         return null;
     }
 
+    // Create a copy of the card object to avoid mutating the original
     // 50% chance of card being reversed if option is enabled
-    card.isReversed = allowReversed && Math.random() < 0.5;
-
-    return card;
+    return {
+        ...card,
+        isReversed: allowReversed && Math.random() < 0.5
+    };
 }
 
 /**
