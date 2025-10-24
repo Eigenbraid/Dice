@@ -21,6 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const discardedResultDiv = document.getElementById('discardedResult');
     const rollHistoryDiv = document.getElementById('rollHistory');
     const errorMessageDiv = document.getElementById('errorMessage');
+    const shareButton = document.getElementById('shareButton');
+    const shareMessageDiv = document.getElementById('shareMessage');
+
+    // Parse URL parameters on page load
+    loadConfigurationFromURL();
 
     // Add click event listener to roll button
     rollButton.addEventListener('click', rollDice);
@@ -31,6 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
             rollDice();
         }
     });
+
+    // Add click event listener to share button
+    shareButton.addEventListener('click', shareConfiguration);
 
     // Clear error message when user starts typing
     numDiceInput.addEventListener('input', clearError);
@@ -215,6 +223,143 @@ document.addEventListener('DOMContentLoaded', function() {
     function clearError() {
         errorMessageDiv.style.display = 'none';
         errorMessageDiv.textContent = '';
+    }
+
+    /**
+     * Load configuration from URL parameters
+     */
+    function loadConfigurationFromURL() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        // Set number of dice
+        if (urlParams.has('Number')) {
+            numDiceInput.value = urlParams.get('Number');
+        }
+
+        // Set number of sides
+        if (urlParams.has('Sides')) {
+            diceTypeInput.value = urlParams.get('Sides');
+        }
+
+        // Set roll mode
+        if (urlParams.has('Advantage')) {
+            document.querySelector('input[name="rollMode"][value="advantage"]').checked = true;
+        } else if (urlParams.has('Disadvantage')) {
+            document.querySelector('input[name="rollMode"][value="disadvantage"]').checked = true;
+        }
+
+        // Set exploding dice
+        if (urlParams.has('Exploding')) {
+            explodingEnabledCheckbox.checked = true;
+            explodingModeSelect.value = 'unlimited';
+        } else if (urlParams.has('ExplodingOnce')) {
+            explodingEnabledCheckbox.checked = true;
+            explodingModeSelect.value = 'once';
+        }
+
+        // Set drop dice
+        if (urlParams.has('DropLowest')) {
+            dropEnabledCheckbox.checked = true;
+            dropTypeSelect.value = 'lowest';
+            dropCountInput.value = urlParams.get('DropLowest');
+        } else if (urlParams.has('DropHighest')) {
+            dropEnabledCheckbox.checked = true;
+            dropTypeSelect.value = 'highest';
+            dropCountInput.value = urlParams.get('DropHighest');
+        }
+
+        // Set success counting
+        if (urlParams.has('CountAtLeast')) {
+            successCountEnabledCheckbox.checked = true;
+            successComparisonSelect.value = 'atleast';
+            successThresholdInput.value = urlParams.get('CountAtLeast');
+        } else if (urlParams.has('CountExactly')) {
+            successCountEnabledCheckbox.checked = true;
+            successComparisonSelect.value = 'exactly';
+            successThresholdInput.value = urlParams.get('CountExactly');
+        } else if (urlParams.has('CountAtMost')) {
+            successCountEnabledCheckbox.checked = true;
+            successComparisonSelect.value = 'atmost';
+            successThresholdInput.value = urlParams.get('CountAtMost');
+        }
+    }
+
+    /**
+     * Generate shareable URL from current configuration
+     */
+    function shareConfiguration() {
+        const params = new URLSearchParams();
+
+        // Add number of dice
+        const numDice = numDiceInput.value.trim();
+        if (numDice) {
+            params.append('Number', numDice);
+        }
+
+        // Add number of sides
+        const sides = diceTypeInput.value.trim();
+        if (sides) {
+            params.append('Sides', sides);
+        }
+
+        // Add roll mode (only if not normal)
+        const rollMode = document.querySelector('input[name="rollMode"]:checked').value;
+        if (rollMode === 'advantage') {
+            params.append('Advantage', '');
+        } else if (rollMode === 'disadvantage') {
+            params.append('Disadvantage', '');
+        }
+
+        // Add exploding dice
+        if (explodingEnabledCheckbox.checked) {
+            if (explodingModeSelect.value === 'once') {
+                params.append('ExplodingOnce', '');
+            } else {
+                params.append('Exploding', '');
+            }
+        }
+
+        // Add drop dice
+        if (dropEnabledCheckbox.checked) {
+            const dropCount = dropCountInput.value.trim();
+            if (dropTypeSelect.value === 'lowest') {
+                params.append('DropLowest', dropCount);
+            } else {
+                params.append('DropHighest', dropCount);
+            }
+        }
+
+        // Add success counting
+        if (successCountEnabledCheckbox.checked) {
+            const threshold = successThresholdInput.value.trim();
+            const comparison = successComparisonSelect.value;
+            if (comparison === 'atleast') {
+                params.append('CountAtLeast', threshold);
+            } else if (comparison === 'exactly') {
+                params.append('CountExactly', threshold);
+            } else if (comparison === 'atmost') {
+                params.append('CountAtMost', threshold);
+            }
+        }
+
+        // Generate full URL
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            // Show success message
+            shareMessageDiv.textContent = 'Configuration URL copied to clipboard!';
+            shareMessageDiv.style.display = 'block';
+
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                shareMessageDiv.style.display = 'none';
+            }, 3000);
+        }).catch(err => {
+            // Fallback: show the URL in an alert if clipboard fails
+            alert('Share this URL: ' + shareUrl);
+        });
     }
 
     /**
