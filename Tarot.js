@@ -295,10 +295,8 @@ function updateCardDisplay(elementId, card) {
 
         element.appendChild(img);
         element.appendChild(text);
-        element.classList.add('filled');
     } else {
         element.textContent = '--';
-        element.classList.remove('filled');
     }
 }
 
