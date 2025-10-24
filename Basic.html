@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dice Roller</title>
     <link rel="stylesheet" href="Style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
     <div class="container">
@@ -14,9 +15,9 @@
         </div>
 
         <div class="controls">
-            <div class="control-group">
-                <label for="numDice">Number of Dice:</label>
-                <select id="numDice">
+            <div class="control-group-inline" style="margin: 0 auto;">
+                <label for="numDice" style="font-size: 1.4em;">Number:</label>
+                <select id="numDice" style="width:60px; margin-right:15px;">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -28,11 +29,8 @@
                     <option value="9">9</option>
                     <option value="10">10</option>
                 </select>
-            </div>
-
-            <div class="control-group">
-                <label for="diceType">Type of Dice:</label>
-                <select id="diceType">
+				<label for="diceType" style="font-size: 1.4em;">Type:</label>
+                <select id="diceType" style="width:60px; margin-right:15px;">
                     <option value="4">d4</option>
                     <option value="6">d6</option>
                     <option value="8">d8</option>
@@ -41,6 +39,9 @@
                     <option value="20">d20</option>
                     <option value="100">d100</option>
                 </select>
+            </div>
+
+            <div class="control-group-inline" style="margin: 0 auto;">
             </div>
 
             <button id="rollButton" class="roll-button">Roll</button>
