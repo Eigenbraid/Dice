@@ -23,6 +23,56 @@
             <div id="diceDisplay" class="dice-display"></div>
         </div>
 
+        <div class="statistics-section">
+            <h2 id="statsToggle" class="stats-toggle">
+                <span class="info-icon">ⓘ</span> Statistics
+            </h2>
+            <div id="statsContent" class="stats-content" style="display: none;">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Result</th>
+                            <th>+4</th>
+                            <th>+3</th>
+                            <th>+2</th>
+                            <th>+1</th>
+                            <th>0</th>
+                            <th>-1</th>
+                            <th>-2</th>
+                            <th>-3</th>
+                            <th>-4</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Individual</strong></td>
+                            <td>1%</td>
+                            <td>5%</td>
+                            <td>12%</td>
+                            <td>20%</td>
+                            <td>23%</td>
+                            <td>20%</td>
+                            <td>12%</td>
+                            <td>5%</td>
+                            <td>1%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cumulative</strong></td>
+                            <td>1%</td>
+                            <td>6%</td>
+                            <td>19%</td>
+                            <td>38%</td>
+                            <td>62%</td>
+                            <td>81%</td>
+                            <td>94%</td>
+                            <td>99%</td>
+                            <td>100%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="history-section">
             <h2>Roll History</h2>
             <div id="rollHistory" class="roll-history"></div>
@@ -37,12 +87,23 @@
             const currentResultDiv = document.getElementById('currentResult');
             const diceDisplayDiv = document.getElementById('diceDisplay');
             const rollHistoryDiv = document.getElementById('rollHistory');
+            const statsToggle = document.getElementById('statsToggle');
+            const statsContent = document.getElementById('statsContent');
 
             // Initialize with blank dice on page load
             initializeDiceDisplay();
 
             // Add click event listener to roll button
             rollButton.addEventListener('click', rollDice);
+
+            // Add click event listener to statistics toggle
+            statsToggle.addEventListener('click', function() {
+                if (statsContent.style.display === 'none') {
+                    statsContent.style.display = 'block';
+                } else {
+                    statsContent.style.display = 'none';
+                }
+            });
 
             // Also allow rolling with Enter key
             document.addEventListener('keypress', function(event) {
@@ -170,5 +231,63 @@
             }
         });
     </script>
+
+    <style>
+        .statistics-section {
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        .stats-toggle {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .stats-toggle:hover {
+            opacity: 0.7;
+        }
+
+        .info-icon {
+            font-size: 1.2em;
+            margin-right: 5px;
+        }
+
+        .stats-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px auto;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .stats-table th,
+        .stats-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stats-table th {
+            background-color: rgba(255, 255, 255, 0.1);
+            font-weight: bold;
+        }
+
+        .stats-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-table tbody td:first-child {
+            text-align: left;
+        }
+    </style>
 </body>
 </html>
