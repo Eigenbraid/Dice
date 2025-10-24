@@ -57,6 +57,62 @@
         </div>
     </div>
 
-    <script src="DiceRoller.js"></script>
+    <script type="module">
+        // Import dice rolling logic and history utilities
+        import { rollDice, formatDiceRoll } from './DiceLibrary.js';
+        import { createHistoryEntry, addToHistory } from './HistoryLog.js';
+
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to DOM elements (UI layer)
+            const rollButton = document.getElementById('rollButton');
+            const numDiceSelect = document.getElementById('numDice');
+            const diceTypeSelect = document.getElementById('diceType');
+            const currentResultDiv = document.getElementById('currentResult');
+            const rollHistoryDiv = document.getElementById('rollHistory');
+
+            // Add click event listener to roll button
+            rollButton.addEventListener('click', handleRoll);
+
+            // Also allow rolling with Enter key
+            document.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    handleRoll();
+                }
+            });
+
+            /**
+             * Handle roll button click
+             * This is the UI orchestration layer:
+             * 1. Get values from inputs
+             * 2. Call pure dice logic
+             * 3. Update DOM with results
+             */
+            function handleRoll() {
+                // 1. Get values from UI
+                const numDice = parseInt(numDiceSelect.value);
+                const diceType = parseInt(diceTypeSelect.value);
+
+                // 2. Call pure dice rolling function
+                const result = rollDice(numDice, diceType);
+
+                // 3. Update UI with results
+                displayResult(result.total);
+
+                // 4. Format and add to history
+                const historyText = formatDiceRoll(numDice, diceType, result.rolls, result.total);
+                const entry = createHistoryEntry(historyText);
+                addToHistory(rollHistoryDiv, entry);
+            }
+
+            /**
+             * Display the current roll result
+             * UI layer function - updates DOM only
+             */
+            function displayResult(total) {
+                currentResultDiv.textContent = total;
+            }
+        });
+    </script>
 </body>
 </html>
