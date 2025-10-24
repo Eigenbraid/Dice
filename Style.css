@@ -6,298 +6,303 @@
 html,
 :root {
     /* Background colors */
-    --bg-gradient-start: #105610;
-    --bg-gradient-end: #a94610;
-    --container-bg: rgba(255, 255, 255, 0.95);
-    --result-gradient-start: #e8762e;
-    --result-gradient-end: #d96619;
+    --bg-gradient-start: #105610 !important;
+    --bg-gradient-end: #a94610 !important;
+    --container-bg: rgba(255, 255, 255, 0.95) !important;
+    --result-gradient-start: #e8762e !important;
+    --result-gradient-end: #d96619 !important;
 
     /* Text colors */
-    --heading-primary: #7a2a1f;
-    --heading-secondary: #5a1010;
-    --heading-tertiary: #5d4e37;
-    --text-primary: #555;
-    --text-secondary: #666;
-    --text-light: #999;
-    --text-white: white;
+    --heading-primary: #7a2a1f !important;
+    --heading-secondary: #5a1010 !important;
+    --heading-tertiary: #5d4e37 !important;
+    --text-primary: #555 !important;
+    --text-secondary: #666 !important;
+    --text-light: #999 !important;
+    --text-white: white !important;
 
     /* Accent colors */
-    --accent-primary: #4a7c3c;
-    --accent-primary-dark: #2d5016;
-    --accent-secondary: #5a7a47;
-    --accent-tertiary: #7a6952;
+    --accent-primary: #4a7c3c !important;
+    --accent-primary-dark: #2d5016 !important;
+    --accent-secondary: #5a7a47 !important;
+    --accent-tertiary: #7a6952 !important;
 
     /* Button colors */
-    --button-gradient-start: #4a7c3c;
-    --button-gradient-end: #2d5016;
-    --button-shadow: rgba(74, 124, 60, 0.4);
+    --button-gradient-start: #4a7c3c !important;
+    --button-gradient-end: #2d5016 !important;
+    --button-shadow: rgba(74, 124, 60, 0.4) !important;
 
     /* Border colors */
-    --border-light: #eee;
-    --border-medium: #ddd;
-    --border-accent: #5a7a47;
+    --border-light: #eee !important;
+    --border-medium: #ddd !important;
+    --border-accent: #5a7a47 !important;
 
     /* Background variations */
-    --bg-light: #f9f9f9;
-    --bg-white: white;
-    --bg-hover: #f0f5ef;
+    --bg-light: #f9f9f9 !important;
+    --bg-white: white !important;
+    --bg-hover: #f0f5ef !important;
 
     /* Error colors */
-    --error-bg: #ffebee;
-    --error-border: #ef5350;
-    --error-text: #c62828;
+    --error-bg: #ffebee !important;
+    --error-border: #ef5350 !important;
+    --error-text: #c62828 !important;
 
     /* Fate die */
-    --fate-die-bg: #611;
+    --fate-die-bg: #611 !important;
 
     /* Scrollbar colors */
-    --scrollbar-track: #f1f1f1;
-    --scrollbar-thumb: #5a7a47;
-    --scrollbar-thumb-hover: #4a6a37;
+    --scrollbar-track: #f1f1f1 !important;
+    --scrollbar-thumb: #5a7a47 !important;
+    --scrollbar-thumb-hover: #4a6a37 !important;
 
     /* Shadows */
-    --shadow-primary: rgba(0, 0, 0, 0.3);
-    --shadow-secondary: rgba(0, 0, 0, 0.2);
+    --shadow-primary: rgba(0, 0, 0, 0.3) !important;
+    --shadow-secondary: rgba(0, 0, 0, 0.2) !important;
 
     /* Close button */
-    --close-btn-bg: rgba(122, 42, 31, 0.1);
-    --close-btn-bg-hover: rgba(122, 42, 31, 0.2);
-    --close-btn-color: #7a2a1f;
+    --close-btn-bg: rgba(122, 42, 31, 0.1) !important;
+    --close-btn-bg-hover: rgba(122, 42, 31, 0.2) !important;
+    --close-btn-color: #7a2a1f !important;
 
     /* Link container hover gradient */
-    --link-hover-gradient-start: rgba(74, 124, 60, 0.03);
-    --link-hover-gradient-end: rgba(45, 80, 22, 0.03);
+    --link-hover-gradient-start: rgba(74, 124, 60, 0.03) !important;
+    --link-hover-gradient-end: rgba(45, 80, 22, 0.03) !important;
 
     /* History */
-    --history-border-shadow: rgba(90, 122, 71, 0.15);
+    --history-border-shadow: rgba(90, 122, 71, 0.15) !important;
 
     /* Result text shadow */
-    --result-text-shadow: rgba(0, 0, 0, 0.2);
+    --result-text-shadow: rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Light Theme */
 html.light-theme,
+html.light-theme:root,
 body.light-theme {
-    --bg-gradient-start: #f5f5f5;
-    --bg-gradient-end: #e0e0e0;
-    --container-bg: rgba(255, 255, 255, 0.98);
-    --result-gradient-start: #FF9800;
-    --result-gradient-end: #F57C00;
+    --bg-gradient-start: #f5f5f5 !important;
+    --bg-gradient-end: #e0e0e0 !important;
+    --container-bg: rgba(255, 255, 255, 0.98) !important;
+    --result-gradient-start: #FF9800 !important;
+    --result-gradient-end: #F57C00 !important;
 
-    --heading-primary: #333;
-    --heading-secondary: #444;
-    --heading-tertiary: #555;
-    --text-primary: #444;
-    --text-secondary: #666;
+    --heading-primary: #333 !important;
+    --heading-secondary: #444 !important;
+    --heading-tertiary: #555 !important;
+    --text-primary: #444 !important;
+    --text-secondary: #666 !important;
 
-    --accent-primary: #2196F3;
-    --accent-primary-dark: #1976D2;
-    --accent-secondary: #1e88e5;
-    --accent-tertiary: #90a4ae;
+    --accent-primary: #2196F3 !important;
+    --accent-primary-dark: #1976D2 !important;
+    --accent-secondary: #1e88e5 !important;
+    --accent-tertiary: #90a4ae !important;
 
-    --button-gradient-start: #2196F3;
-    --button-gradient-end: #1976D2;
-    --button-shadow: rgba(33, 150, 243, 0.4);
+    --button-gradient-start: #2196F3 !important;
+    --button-gradient-end: #1976D2 !important;
+    --button-shadow: rgba(33, 150, 243, 0.4) !important;
 
-    --border-accent: #1e88e5;
+    --border-accent: #1e88e5 !important;
 
-    --bg-hover: #e3f2fd;
+    --bg-hover: #e3f2fd !important;
 
-    --fate-die-bg: #1976D2;
+    --fate-die-bg: #1976D2 !important;
 
-    --scrollbar-thumb: #2196F3;
-    --scrollbar-thumb-hover: #1976D2;
+    --scrollbar-thumb: #2196F3 !important;
+    --scrollbar-thumb-hover: #1976D2 !important;
 
-    --close-btn-bg: rgba(33, 33, 33, 0.08);
-    --close-btn-bg-hover: rgba(33, 33, 33, 0.15);
-    --close-btn-color: #333;
+    --close-btn-bg: rgba(33, 33, 33, 0.08) !important;
+    --close-btn-bg-hover: rgba(33, 33, 33, 0.15) !important;
+    --close-btn-color: #333 !important;
 
-    --link-hover-gradient-start: rgba(33, 150, 243, 0.03);
-    --link-hover-gradient-end: rgba(25, 118, 210, 0.03);
+    --link-hover-gradient-start: rgba(33, 150, 243, 0.03) !important;
+    --link-hover-gradient-end: rgba(25, 118, 210, 0.03) !important;
 
-    --history-border-shadow: rgba(33, 150, 243, 0.15);
+    --history-border-shadow: rgba(33, 150, 243, 0.15) !important;
 }
 
 /* Dark Theme */
 html.dark-theme,
+html.dark-theme:root,
 body.dark-theme {
-    --bg-gradient-start: #1a1a1a;
-    --bg-gradient-end: #2d2d2d;
-    --container-bg: rgba(40, 40, 40, 0.95);
-    --result-gradient-start: #FFC107;
-    --result-gradient-end: #FFA000;
+    --bg-gradient-start: #1a1a1a !important;
+    --bg-gradient-end: #2d2d2d !important;
+    --container-bg: rgba(40, 40, 40, 0.95) !important;
+    --result-gradient-start: #FFC107 !important;
+    --result-gradient-end: #FFA000 !important;
 
-    --heading-primary: #fff;
-    --heading-secondary: #eee;
-    --heading-tertiary: #ddd;
-    --text-primary: #ccc;
-    --text-secondary: #aaa;
-    --text-light: #888;
+    --heading-primary: #fff !important;
+    --heading-secondary: #eee !important;
+    --heading-tertiary: #ddd !important;
+    --text-primary: #ccc !important;
+    --text-secondary: #aaa !important;
+    --text-light: #888 !important;
 
-    --accent-primary: #4CAF50;
-    --accent-primary-dark: #388E3C;
-    --accent-secondary: #66bb6a;
-    --accent-tertiary: #757575;
+    --accent-primary: #4CAF50 !important;
+    --accent-primary-dark: #388E3C !important;
+    --accent-secondary: #66bb6a !important;
+    --accent-tertiary: #757575 !important;
 
-    --button-gradient-start: #4CAF50;
-    --button-gradient-end: #388E3C;
-    --button-shadow: rgba(76, 175, 80, 0.4);
+    --button-gradient-start: #4CAF50 !important;
+    --button-gradient-end: #388E3C !important;
+    --button-shadow: rgba(76, 175, 80, 0.4) !important;
 
-    --border-light: #444;
-    --border-medium: #555;
-    --border-accent: #66bb6a;
+    --border-light: #444 !important;
+    --border-medium: #555 !important;
+    --border-accent: #66bb6a !important;
 
-    --bg-light: #2a2a2a;
-    --bg-white: #333;
-    --bg-hover: #3a3a3a;
+    --bg-light: #2a2a2a !important;
+    --bg-white: #333 !important;
+    --bg-hover: #3a3a3a !important;
 
-    --error-bg: #3d1f1f;
-    --error-border: #c62828;
-    --error-text: #ef5350;
+    --error-bg: #3d1f1f !important;
+    --error-border: #c62828 !important;
+    --error-text: #ef5350 !important;
 
-    --fate-die-bg: #1b5e20;
+    --fate-die-bg: #1b5e20 !important;
 
-    --scrollbar-track: #2a2a2a;
-    --scrollbar-thumb: #4CAF50;
-    --scrollbar-thumb-hover: #388E3C;
+    --scrollbar-track: #2a2a2a !important;
+    --scrollbar-thumb: #4CAF50 !important;
+    --scrollbar-thumb-hover: #388E3C !important;
 
-    --close-btn-bg: rgba(255, 255, 255, 0.1);
-    --close-btn-bg-hover: rgba(255, 255, 255, 0.15);
-    --close-btn-color: #fff;
+    --close-btn-bg: rgba(255, 255, 255, 0.1) !important;
+    --close-btn-bg-hover: rgba(255, 255, 255, 0.15) !important;
+    --close-btn-color: #fff !important;
 
-    --link-hover-gradient-start: rgba(76, 175, 80, 0.05);
-    --link-hover-gradient-end: rgba(56, 142, 60, 0.05);
+    --link-hover-gradient-start: rgba(76, 175, 80, 0.05) !important;
+    --link-hover-gradient-end: rgba(56, 142, 60, 0.05) !important;
 
-    --history-border-shadow: rgba(76, 175, 80, 0.2);
+    --history-border-shadow: rgba(76, 175, 80, 0.2) !important;
 }
 
 /* Winter Theme */
 html.winter-theme,
+html.winter-theme:root,
 body.winter-theme {
-    --bg-gradient-start: #e3f2fd;
-    --bg-gradient-end: #90caf9;
-    --container-bg: rgba(255, 255, 255, 0.97);
-    --result-gradient-start: #00bcd4;
-    --result-gradient-end: #0097a7;
+    --bg-gradient-start: #e3f2fd !important;
+    --bg-gradient-end: #90caf9 !important;
+    --container-bg: rgba(255, 255, 255, 0.97) !important;
+    --result-gradient-start: #00bcd4 !important;
+    --result-gradient-end: #0097a7 !important;
 
-    --heading-primary: #1a237e;
-    --heading-secondary: #283593;
-    --heading-tertiary: #3949ab;
-    --text-primary: #333;
-    --text-secondary: #555;
+    --heading-primary: #1a237e !important;
+    --heading-secondary: #283593 !important;
+    --heading-tertiary: #3949ab !important;
+    --text-primary: #333 !important;
+    --text-secondary: #555 !important;
 
-    --accent-primary: #5e35b1;
-    --accent-primary-dark: #4527a0;
-    --accent-secondary: #7e57c2;
-    --accent-tertiary: #7986cb;
+    --accent-primary: #5e35b1 !important;
+    --accent-primary-dark: #4527a0 !important;
+    --accent-secondary: #7e57c2 !important;
+    --accent-tertiary: #7986cb !important;
 
-    --button-gradient-start: #5e35b1;
-    --button-gradient-end: #4527a0;
-    --button-shadow: rgba(94, 53, 177, 0.4);
+    --button-gradient-start: #5e35b1 !important;
+    --button-gradient-end: #4527a0 !important;
+    --button-shadow: rgba(94, 53, 177, 0.4) !important;
 
-    --border-accent: #7e57c2;
+    --border-accent: #7e57c2 !important;
 
-    --bg-hover: #e8eaf6;
+    --bg-hover: #e8eaf6 !important;
 
-    --fate-die-bg: #283593;
+    --fate-die-bg: #283593 !important;
 
-    --scrollbar-thumb: #5e35b1;
-    --scrollbar-thumb-hover: #4527a0;
+    --scrollbar-thumb: #5e35b1 !important;
+    --scrollbar-thumb-hover: #4527a0 !important;
 
-    --close-btn-bg: rgba(26, 35, 126, 0.08);
-    --close-btn-bg-hover: rgba(26, 35, 126, 0.15);
-    --close-btn-color: #1a237e;
+    --close-btn-bg: rgba(26, 35, 126, 0.08) !important;
+    --close-btn-bg-hover: rgba(26, 35, 126, 0.15) !important;
+    --close-btn-color: #1a237e !important;
 
-    --link-hover-gradient-start: rgba(94, 53, 177, 0.03);
-    --link-hover-gradient-end: rgba(69, 39, 160, 0.03);
+    --link-hover-gradient-start: rgba(94, 53, 177, 0.03) !important;
+    --link-hover-gradient-end: rgba(69, 39, 160, 0.03) !important;
 
-    --history-border-shadow: rgba(94, 53, 177, 0.15);
+    --history-border-shadow: rgba(94, 53, 177, 0.15) !important;
 }
 
 /* Spring Theme */
 html.spring-theme,
+html.spring-theme:root,
 body.spring-theme {
-    --bg-gradient-start: #e8f5e9;
-    --bg-gradient-end: #c8e6c9;
-    --container-bg: rgba(255, 255, 255, 0.97);
-    --result-gradient-start: #ec407a;
-    --result-gradient-end: #d81b60;
+    --bg-gradient-start: #e8f5e9 !important;
+    --bg-gradient-end: #c8e6c9 !important;
+    --container-bg: rgba(255, 255, 255, 0.97) !important;
+    --result-gradient-start: #ec407a !important;
+    --result-gradient-end: #d81b60 !important;
 
-    --heading-primary: #2e7d32;
-    --heading-secondary: #388e3c;
-    --heading-tertiary: #43a047;
-    --text-primary: #424242;
-    --text-secondary: #616161;
+    --heading-primary: #2e7d32 !important;
+    --heading-secondary: #388e3c !important;
+    --heading-tertiary: #43a047 !important;
+    --text-primary: #424242 !important;
+    --text-secondary: #616161 !important;
 
-    --accent-primary: #66bb6a;
-    --accent-primary-dark: #43a047;
-    --accent-secondary: #81c784;
-    --accent-tertiary: #a5d6a7;
+    --accent-primary: #66bb6a !important;
+    --accent-primary-dark: #43a047 !important;
+    --accent-secondary: #81c784 !important;
+    --accent-tertiary: #a5d6a7 !important;
 
-    --button-gradient-start: #66bb6a;
-    --button-gradient-end: #43a047;
-    --button-shadow: rgba(102, 187, 106, 0.4);
+    --button-gradient-start: #66bb6a !important;
+    --button-gradient-end: #43a047 !important;
+    --button-shadow: rgba(102, 187, 106, 0.4) !important;
 
-    --border-accent: #81c784;
+    --border-accent: #81c784 !important;
 
-    --bg-hover: #f1f8e9;
+    --bg-hover: #f1f8e9 !important;
 
-    --fate-die-bg: #388e3c;
+    --fate-die-bg: #388e3c !important;
 
-    --scrollbar-thumb: #66bb6a;
-    --scrollbar-thumb-hover: #43a047;
+    --scrollbar-thumb: #66bb6a !important;
+    --scrollbar-thumb-hover: #43a047 !important;
 
-    --close-btn-bg: rgba(46, 125, 50, 0.08);
-    --close-btn-bg-hover: rgba(46, 125, 50, 0.15);
-    --close-btn-color: #2e7d32;
+    --close-btn-bg: rgba(46, 125, 50, 0.08) !important;
+    --close-btn-bg-hover: rgba(46, 125, 50, 0.15) !important;
+    --close-btn-color: #2e7d32 !important;
 
-    --link-hover-gradient-start: rgba(102, 187, 106, 0.05);
-    --link-hover-gradient-end: rgba(67, 160, 71, 0.05);
+    --link-hover-gradient-start: rgba(102, 187, 106, 0.05) !important;
+    --link-hover-gradient-end: rgba(67, 160, 71, 0.05) !important;
 
-    --history-border-shadow: rgba(102, 187, 106, 0.15);
+    --history-border-shadow: rgba(102, 187, 106, 0.15) !important;
 }
 
 /* Summer Theme */
 html.summer-theme,
+html.summer-theme:root,
 body.summer-theme {
-    --bg-gradient-start: #fff3e0;
-    --bg-gradient-end: #ffe0b2;
-    --container-bg: rgba(255, 255, 255, 0.97);
-    --result-gradient-start: #42a5f5;
-    --result-gradient-end: #1e88e5;
+    --bg-gradient-start: #fff3e0 !important;
+    --bg-gradient-end: #ffe0b2 !important;
+    --container-bg: rgba(255, 255, 255, 0.97) !important;
+    --result-gradient-start: #42a5f5 !important;
+    --result-gradient-end: #1e88e5 !important;
 
-    --heading-primary: #e65100;
-    --heading-secondary: #ef6c00;
-    --heading-tertiary: #f57c00;
-    --text-primary: #424242;
-    --text-secondary: #616161;
+    --heading-primary: #e65100 !important;
+    --heading-secondary: #ef6c00 !important;
+    --heading-tertiary: #f57c00 !important;
+    --text-primary: #424242 !important;
+    --text-secondary: #616161 !important;
 
-    --accent-primary: #ffa726;
-    --accent-primary-dark: #f57c00;
-    --accent-secondary: #ffb74d;
-    --accent-tertiary: #ffcc80;
+    --accent-primary: #ffa726 !important;
+    --accent-primary-dark: #f57c00 !important;
+    --accent-secondary: #ffb74d !important;
+    --accent-tertiary: #ffcc80 !important;
 
-    --button-gradient-start: #ffa726;
-    --button-gradient-end: #f57c00;
-    --button-shadow: rgba(255, 167, 38, 0.4);
+    --button-gradient-start: #ffa726 !important;
+    --button-gradient-end: #f57c00 !important;
+    --button-shadow: rgba(255, 167, 38, 0.4) !important;
 
-    --border-accent: #ffb74d;
+    --border-accent: #ffb74d !important;
 
-    --bg-hover: #fff8e1;
+    --bg-hover: #fff8e1 !important;
 
-    --fate-die-bg: #f57c00;
+    --fate-die-bg: #f57c00 !important;
 
-    --scrollbar-thumb: #ffa726;
-    --scrollbar-thumb-hover: #f57c00;
+    --scrollbar-thumb: #ffa726 !important;
+    --scrollbar-thumb-hover: #f57c00 !important;
 
-    --close-btn-bg: rgba(230, 81, 0, 0.08);
-    --close-btn-bg-hover: rgba(230, 81, 0, 0.15);
-    --close-btn-color: #e65100;
+    --close-btn-bg: rgba(230, 81, 0, 0.08) !important;
+    --close-btn-bg-hover: rgba(230, 81, 0, 0.15) !important;
+    --close-btn-color: #e65100 !important;
 
-    --link-hover-gradient-start: rgba(255, 167, 38, 0.05);
-    --link-hover-gradient-end: rgba(245, 124, 0, 0.05);
+    --link-hover-gradient-start: rgba(255, 167, 38, 0.05) !important;
+    --link-hover-gradient-end: rgba(245, 124, 0, 0.05) !important;
 
-    --history-border-shadow: rgba(255, 167, 38, 0.15);
+    --history-border-shadow: rgba(255, 167, 38, 0.15) !important;
 }
 
 /* ========================================
