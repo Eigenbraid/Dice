@@ -42,6 +42,13 @@
             font-weight: 500;
             text-align: center;
             transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card-display:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(122, 105, 82, 0.2);
+            border-color: #4a7c3c;
         }
 
         .card-display.filled {
@@ -55,6 +62,15 @@
             border-left: 4px solid #5a7a47;
             margin-bottom: 15px;
             border-radius: 5px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .history-hand:hover {
+            background: #f0f5ef;
+            border: 2px solid #5a7a47;
+            border-left: 4px solid #5a7a47;
+            box-shadow: 0 2px 8px rgba(90, 122, 71, 0.15);
         }
 
         .history-hand-title {
@@ -75,6 +91,95 @@
             margin: 5px 0;
         }
 
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #7a2a1f;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 5px 10px;
+            line-height: 1;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #5a1010;
+            transform: scale(1.2);
+        }
+
+        .modal-card-name {
+            color: #5a1010;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-right: 40px;
+        }
+
+        .modal-card-orientation {
+            color: #7a2a1f;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .modal-card-meaning {
+            color: #555;
+            font-size: 1.1em;
+            line-height: 1.8;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 600px) {
             .cards-container {
                 flex-direction: column;
@@ -82,6 +187,19 @@
 
             .card-position {
                 min-width: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .modal-card-name {
+                font-size: 1.4em;
+            }
+
+            .modal-card-meaning {
+                font-size: 1em;
             }
         }
     </style>
@@ -133,6 +251,16 @@
         <div class="history-section">
             <h2>Reading History</h2>
             <div id="readingHistory" class="roll-history"></div>
+        </div>
+    </div>
+
+    <!-- Card Description Modal -->
+    <div id="cardModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-card-name" id="modalCardName"></div>
+            <div class="modal-card-orientation" id="modalCardOrientation"></div>
+            <div class="modal-card-meaning" id="modalCardMeaning"></div>
         </div>
     </div>
 
