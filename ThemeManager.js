@@ -90,14 +90,14 @@ function createThemeSelector() {
     select.id = 'theme-selector';
     select.className = 'theme-selector';
 
-    // Add options
+    // Add options in seasonal order: Autumn, Winter, Spring, Summer, then Light/Dark
     const options = [
         { value: THEMES.AUTUMN, label: 'Autumn' },
-        { value: THEMES.LIGHT, label: 'Light' },
-        { value: THEMES.DARK, label: 'Dark' },
         { value: THEMES.WINTER, label: 'Winter' },
         { value: THEMES.SPRING, label: 'Spring' },
-        { value: THEMES.SUMMER, label: 'Summer' }
+        { value: THEMES.SUMMER, label: 'Summer' },
+        { value: THEMES.LIGHT, label: 'Light' },
+        { value: THEMES.DARK, label: 'Dark' }
     ];
 
     options.forEach(option => {
@@ -128,6 +128,24 @@ function addThemeSelector() {
     const header = document.querySelector('.header');
 
     if (header) {
+        // Check if there's already a header-top-row, if not create one
+        let topRow = header.querySelector('.header-top-row');
+        if (!topRow) {
+            topRow = document.createElement('div');
+            topRow.className = 'header-top-row';
+
+            // Find the close button if it exists and move it to top row
+            const closeButton = header.querySelector('.close-button');
+
+            // Insert top row at the beginning of header
+            header.insertBefore(topRow, header.firstChild);
+
+            // Move close button to top row if it exists
+            if (closeButton) {
+                topRow.appendChild(closeButton);
+            }
+        }
+
         // Create a wrapper for the theme selector
         const wrapper = document.createElement('div');
         wrapper.className = 'theme-selector-wrapper';
@@ -142,8 +160,8 @@ function addThemeSelector() {
         wrapper.appendChild(label);
         wrapper.appendChild(selector);
 
-        // Insert at the beginning of the header
-        header.insertBefore(wrapper, header.firstChild);
+        // Insert at the beginning of the top row
+        topRow.insertBefore(wrapper, topRow.firstChild);
     } else {
         console.warn('Could not find .header element to add theme selector');
     }

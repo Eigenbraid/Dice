@@ -177,8 +177,8 @@ body.dark-theme {
 html.winter-theme,
 html.winter-theme:root,
 body.winter-theme {
-    --bg-gradient-start: #e3f2fd !important;
-    --bg-gradient-end: #90caf9 !important;
+    --bg-gradient-start: #d0e8f5 !important;
+    --bg-gradient-end: #7fb3d5 !important;
     --container-bg: rgba(255, 255, 255, 0.97) !important;
     --result-gradient-start: #00bcd4 !important;
     --result-gradient-end: #0097a7 !important;
@@ -192,7 +192,7 @@ body.winter-theme {
     --accent-primary: #5e35b1 !important;
     --accent-primary-dark: #4527a0 !important;
     --accent-secondary: #7e57c2 !important;
-    --accent-tertiary: #7986cb !important;
+    --accent-tertiary: #00d4ff !important;
 
     --button-gradient-start: #5e35b1 !important;
     --button-gradient-end: #4527a0 !important;
@@ -221,8 +221,8 @@ body.winter-theme {
 html.spring-theme,
 html.spring-theme:root,
 body.spring-theme {
-    --bg-gradient-start: #e8f5e9 !important;
-    --bg-gradient-end: #c8e6c9 !important;
+    --bg-gradient-start: #c8e6c9 !important;
+    --bg-gradient-end: #81c784 !important;
     --container-bg: rgba(255, 255, 255, 0.97) !important;
     --result-gradient-start: #ec407a !important;
     --result-gradient-end: #d81b60 !important;
@@ -236,7 +236,7 @@ body.spring-theme {
     --accent-primary: #66bb6a !important;
     --accent-primary-dark: #43a047 !important;
     --accent-secondary: #81c784 !important;
-    --accent-tertiary: #a5d6a7 !important;
+    --accent-tertiary: #ffd700 !important;
 
     --button-gradient-start: #66bb6a !important;
     --button-gradient-end: #43a047 !important;
@@ -265,8 +265,8 @@ body.spring-theme {
 html.summer-theme,
 html.summer-theme:root,
 body.summer-theme {
-    --bg-gradient-start: #fff3e0 !important;
-    --bg-gradient-end: #ffe0b2 !important;
+    --bg-gradient-start: #ffe0b2 !important;
+    --bg-gradient-end: #ffb74d !important;
     --container-bg: rgba(255, 255, 255, 0.97) !important;
     --result-gradient-start: #42a5f5 !important;
     --result-gradient-end: #1e88e5 !important;
@@ -280,7 +280,7 @@ body.summer-theme {
     --accent-primary: #ffa726 !important;
     --accent-primary-dark: #f57c00 !important;
     --accent-secondary: #ffb74d !important;
-    --accent-tertiary: #ffcc80 !important;
+    --accent-tertiary: #ff6b6b !important;
 
     --button-gradient-start: #ffa726 !important;
     --button-gradient-end: #f57c00 !important;
@@ -335,10 +335,15 @@ body {
 
 .header {
     display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.header-top-row {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
-    position: relative;
 }
 
 .theme-selector-wrapper {
@@ -358,6 +363,7 @@ body {
     border: 2px solid var(--border-medium);
     border-radius: 6px;
     background: var(--bg-white);
+    color: var(--text-primary);
     cursor: pointer;
     transition: border-color 0.3s ease;
 }
@@ -376,14 +382,9 @@ h1 {
     color: var(--heading-primary);
     margin: 0;
     font-size: 2.5em;
-    flex: 1;
 }
 
 .close-button {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
     width: 40px;
     height: 40px;
     display: flex;
@@ -401,11 +402,11 @@ h1 {
 
 .close-button:hover {
     background: var(--close-btn-bg-hover);
-    transform: translateY(-50%) scale(1.1);
+    transform: scale(1.1);
 }
 
 .close-button:active {
-    transform: translateY(-50%) scale(0.95);
+    transform: scale(0.95);
 }
 
 h2 {
@@ -516,6 +517,7 @@ select, input[type="text"] {
     border: 2px solid var(--border-medium);
     border-radius: 8px;
     background: var(--bg-white);
+    color: var(--text-primary);
     cursor: pointer;
     transition: border-color 0.3s ease;
 }
