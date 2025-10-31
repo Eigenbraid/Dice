@@ -217,6 +217,25 @@ body.winter-theme {
     --history-border-shadow: rgba(94, 53, 177, 0.15) !important;
 }
 
+/* Winter Theme Snowflakes */
+html.winter-theme body::before {
+    content: '❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    font-size: 1.2em;
+    line-height: 2.5;
+    word-spacing: 2em;
+    opacity: 0.15;
+    color: rgba(255, 255, 255, 0.9);
+    z-index: 0;
+    overflow: hidden;
+    text-align: justify;
+}
+
 /* Spring Theme */
 html.spring-theme,
 html.spring-theme:root,
@@ -331,6 +350,8 @@ body {
     max-width: 600px;
     width: 100%;
     box-shadow: 0 20px 60px var(--shadow-primary);
+    position: relative;
+    z-index: 1;
 }
 
 .header {
