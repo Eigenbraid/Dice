@@ -103,15 +103,589 @@
         </div>
     </div>
 
-    <script src="CustomRoller.js"></script>
     <script type="module">
+        // Import dice rolling logic
+        import { rollSingleDie, rollExploding, dropDice, countSuccesses } from './DiceLibrary.js';
         import { addThemeSelector } from './ThemeManager.js';
         import { createSeasonalEffects } from './Snowflakes.js';
 
         // Make createSeasonalEffects available globally for the animated checkbox
         window.createSeasonalEffects = createSeasonalEffects;
 
-        document.addEventListener('DOMContentLoaded', addThemeSelector);
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add theme selector to the page
+            addThemeSelector();
+
+            // Get references to DOM elements
+            const rollButton = document.getElementById('rollButton');
+            const numDiceInput = document.getElementById('numDice');
+            const diceTypeInput = document.getElementById('diceType');
+            const rollModeRadios = document.getElementsByName('rollMode');
+            const explodingEnabledCheckbox = document.getElementById('explodingEnabled');
+            const explodingModeSelect = document.getElementById('explodingMode');
+            const successCountEnabledCheckbox = document.getElementById('successCountEnabled');
+            const successComparisonSelect = document.getElementById('successComparison');
+            const successThresholdInput = document.getElementById('successThreshold');
+            const dropEnabledCheckbox = document.getElementById('dropEnabled');
+            const dropTypeSelect = document.getElementById('dropType');
+            const dropCountInput = document.getElementById('dropCount');
+            const successResultDiv = document.getElementById('successResult');
+            const sumResultDiv = document.getElementById('sumResult');
+            const rollsResultDiv = document.getElementById('rollsResult');
+            const discardedResultDiv = document.getElementById('discardedResult');
+            const rollHistoryDiv = document.getElementById('rollHistory');
+            const errorMessageDiv = document.getElementById('errorMessage');
+            const shareButton = document.getElementById('shareButton');
+            const shareMessageDiv = document.getElementById('shareMessage');
+
+            // Parse URL parameters on page load
+            loadConfigurationFromURL();
+
+            // Add click event listener to roll button
+            rollButton.addEventListener('click', performRoll);
+
+            // Also allow rolling with Enter key
+            document.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    performRoll();
+                }
+            });
+
+            // Add click event listener to share button
+            shareButton.addEventListener('click', shareConfiguration);
+
+            // Clear error message when user starts typing
+            numDiceInput.addEventListener('input', clearError);
+            diceTypeInput.addEventListener('input', clearError);
+            dropCountInput.addEventListener('input', clearError);
+            successThresholdInput.addEventListener('input', clearError);
+
+            /**
+             * Parse a dice value that might be in various formats
+             * @param {string} value - The value to parse (e.g., "20", "d20")
+             * @returns {number|null} - Parsed number or null if invalid
+             */
+            function parseDiceValue(value) {
+                value = value.trim();
+                const diceMatch = value.match(/^d(\d+)$/i);
+                if (diceMatch) {
+                    return parseInt(diceMatch[1]);
+                }
+                const numMatch = value.match(/^\d+$/);
+                if (numMatch) {
+                    return parseInt(value);
+                }
+                return null;
+            }
+
+            /**
+             * Validate inputs and return parsed values or error message
+             */
+            function validateInputs() {
+                const numDiceValue = numDiceInput.value;
+                const diceTypeValue = diceTypeInput.value;
+
+                // Parse number of dice
+                const numDice = parseDiceValue(numDiceValue);
+                if (numDice === null) {
+                    return { valid: false, error: `Invalid number of dice: "${numDiceValue}". Please enter a number (e.g., 3) or use dice notation without a number (e.g., d3).` };
+                }
+                if (numDice < 1) {
+                    return { valid: false, error: `Number of dice must be at least 1. You entered: ${numDice}.` };
+                }
+                if (numDice > 1000) {
+                    return { valid: false, error: `Number of dice is too large (maximum 1000). You entered: ${numDice}.` };
+                }
+
+                // Parse dice type
+                const diceType = parseDiceValue(diceTypeValue);
+                if (diceType === null) {
+                    return { valid: false, error: `Invalid number of sides: "${diceTypeValue}". Please enter a number (e.g., 20) or dice notation (e.g., d20).` };
+                }
+                if (diceType < 2) {
+                    return { valid: false, error: `Number of sides must be at least 2. You entered: ${diceType}.` };
+                }
+                if (diceType > 1000000) {
+                    return { valid: false, error: `Number of sides is too large (maximum 1,000,000). You entered: ${diceType}.` };
+                }
+
+                // Get roll mode
+                let rollMode = 'normal';
+                for (const radio of rollModeRadios) {
+                    if (radio.checked) {
+                        rollMode = radio.value;
+                        break;
+                    }
+                }
+
+                // Check if exploding dice is enabled
+                const explodingEnabled = explodingEnabledCheckbox.checked;
+                const explodingMode = explodingModeSelect.value === 'once' ? 'standard' : 'compound';
+
+                if (explodingEnabled && diceType < 2) {
+                    return { valid: false, error: `Exploding dice requires at least 2 sides. You entered: ${diceType}.` };
+                }
+
+                // Check if success counting is enabled
+                const successCountEnabled = successCountEnabledCheckbox.checked;
+                const successComparison = successComparisonSelect.value;
+                let successThreshold = 0;
+
+                if (successCountEnabled) {
+                    successThreshold = parseDiceValue(successThresholdInput.value);
+                    if (successThreshold === null) {
+                        return { valid: false, error: `Invalid success threshold: "${successThresholdInput.value}". Please enter a number.` };
+                    }
+                    if (successThreshold < 1) {
+                        return { valid: false, error: `Success threshold must be at least 1. You entered: ${successThreshold}.` };
+                    }
+                }
+
+                // Check if drop is enabled
+                const dropEnabled = dropEnabledCheckbox.checked;
+                let dropCount = 0;
+                let dropType = 'lowest';
+
+                if (dropEnabled) {
+                    dropCount = parseDiceValue(dropCountInput.value);
+                    if (dropCount === null) {
+                        return { valid: false, error: `Invalid drop count: "${dropCountInput.value}". Please enter a number.` };
+                    }
+                    if (dropCount < 1) {
+                        return { valid: false, error: `Drop count must be at least 1. You entered: ${dropCount}.` };
+                    }
+                    if (dropCount >= numDice) {
+                        return { valid: false, error: `Drop count (${dropCount}) must be less than the number of dice (${numDice}). You need at least one die remaining after dropping.` };
+                    }
+                    dropType = dropTypeSelect.value;
+                }
+
+                return {
+                    valid: true,
+                    numDice,
+                    diceType,
+                    rollMode,
+                    explodingEnabled,
+                    explodingMode,
+                    successCountEnabled,
+                    successComparison,
+                    successThreshold,
+                    dropEnabled,
+                    dropType,
+                    dropCount
+                };
+            }
+
+            /**
+             * Display error message
+             */
+            function showError(message) {
+                errorMessageDiv.textContent = message;
+                errorMessageDiv.style.display = 'block';
+            }
+
+            /**
+             * Clear error message
+             */
+            function clearError() {
+                errorMessageDiv.style.display = 'none';
+                errorMessageDiv.textContent = '';
+            }
+
+            /**
+             * Load configuration from URL parameters
+             */
+            function loadConfigurationFromURL() {
+                const urlParams = new URLSearchParams(window.location.search);
+
+                if (urlParams.has('Number')) {
+                    numDiceInput.value = urlParams.get('Number');
+                }
+                if (urlParams.has('Sides')) {
+                    diceTypeInput.value = urlParams.get('Sides');
+                }
+                if (urlParams.has('Advantage')) {
+                    document.querySelector('input[name="rollMode"][value="advantage"]').checked = true;
+                } else if (urlParams.has('Disadvantage')) {
+                    document.querySelector('input[name="rollMode"][value="disadvantage"]').checked = true;
+                }
+                if (urlParams.has('Exploding')) {
+                    explodingEnabledCheckbox.checked = true;
+                    explodingModeSelect.value = 'unlimited';
+                } else if (urlParams.has('ExplodingOnce')) {
+                    explodingEnabledCheckbox.checked = true;
+                    explodingModeSelect.value = 'once';
+                }
+                if (urlParams.has('DropLowest')) {
+                    dropEnabledCheckbox.checked = true;
+                    dropTypeSelect.value = 'lowest';
+                    dropCountInput.value = urlParams.get('DropLowest');
+                } else if (urlParams.has('DropHighest')) {
+                    dropEnabledCheckbox.checked = true;
+                    dropTypeSelect.value = 'highest';
+                    dropCountInput.value = urlParams.get('DropHighest');
+                }
+                if (urlParams.has('CountAtLeast')) {
+                    successCountEnabledCheckbox.checked = true;
+                    successComparisonSelect.value = 'atleast';
+                    successThresholdInput.value = urlParams.get('CountAtLeast');
+                } else if (urlParams.has('CountExactly')) {
+                    successCountEnabledCheckbox.checked = true;
+                    successComparisonSelect.value = 'exactly';
+                    successThresholdInput.value = urlParams.get('CountExactly');
+                } else if (urlParams.has('CountAtMost')) {
+                    successCountEnabledCheckbox.checked = true;
+                    successComparisonSelect.value = 'atmost';
+                    successThresholdInput.value = urlParams.get('CountAtMost');
+                }
+            }
+
+            /**
+             * Generate shareable URL from current configuration
+             */
+            function shareConfiguration() {
+                const params = new URLSearchParams();
+
+                const numDice = numDiceInput.value.trim();
+                if (numDice) params.append('Number', numDice);
+
+                const sides = diceTypeInput.value.trim();
+                if (sides) params.append('Sides', sides);
+
+                const rollMode = document.querySelector('input[name="rollMode"]:checked').value;
+                if (rollMode === 'advantage') {
+                    params.append('Advantage', '');
+                } else if (rollMode === 'disadvantage') {
+                    params.append('Disadvantage', '');
+                }
+
+                if (explodingEnabledCheckbox.checked) {
+                    if (explodingModeSelect.value === 'once') {
+                        params.append('ExplodingOnce', '');
+                    } else {
+                        params.append('Exploding', '');
+                    }
+                }
+
+                if (dropEnabledCheckbox.checked) {
+                    const dropCount = dropCountInput.value.trim();
+                    if (dropTypeSelect.value === 'lowest') {
+                        params.append('DropLowest', dropCount);
+                    } else {
+                        params.append('DropHighest', dropCount);
+                    }
+                }
+
+                if (successCountEnabledCheckbox.checked) {
+                    const threshold = successThresholdInput.value.trim();
+                    const comparison = successComparisonSelect.value;
+                    if (comparison === 'atleast') {
+                        params.append('CountAtLeast', threshold);
+                    } else if (comparison === 'exactly') {
+                        params.append('CountExactly', threshold);
+                    } else if (comparison === 'atmost') {
+                        params.append('CountAtMost', threshold);
+                    }
+                }
+
+                const baseUrl = window.location.origin + window.location.pathname;
+                const shareUrl = params.toString() ? `${baseUrl}?${params.toString()}` : baseUrl;
+
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    shareMessageDiv.textContent = 'Configuration URL copied to clipboard!';
+                    shareMessageDiv.style.display = 'block';
+                    setTimeout(() => {
+                        shareMessageDiv.style.display = 'none';
+                    }, 3000);
+                }).catch(err => {
+                    alert('Share this URL: ' + shareUrl);
+                });
+            }
+
+            /**
+             * Main dice rolling function
+             */
+            function performRoll() {
+                clearError();
+
+                const validation = validateInputs();
+                if (!validation.valid) {
+                    showError(validation.error);
+                    return;
+                }
+
+                const { numDice, diceType, rollMode, explodingEnabled, explodingMode,
+                        successCountEnabled, successComparison, successThreshold,
+                        dropEnabled, dropType, dropCount } = validation;
+
+                // Perform roll(s)
+                if (rollMode === 'advantage' || rollMode === 'disadvantage') {
+                    const result1 = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
+                                                       dropEnabled, dropType, dropCount, successCountEnabled,
+                                                       successComparison, successThreshold);
+                    const result2 = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
+                                                       dropEnabled, dropType, dropCount, successCountEnabled,
+                                                       successComparison, successThreshold);
+
+                    let chosenResult, otherResult;
+                    const compareValue = successCountEnabled ? 'successCount' : 'total';
+
+                    if (rollMode === 'advantage') {
+                        if (result1[compareValue] >= result2[compareValue]) {
+                            chosenResult = result1;
+                            otherResult = result2;
+                        } else {
+                            chosenResult = result2;
+                            otherResult = result1;
+                        }
+                    } else { // disadvantage
+                        if (result1[compareValue] <= result2[compareValue]) {
+                            chosenResult = result1;
+                            otherResult = result2;
+                        } else {
+                            chosenResult = result2;
+                            otherResult = result1;
+                        }
+                    }
+
+                    displayResult(chosenResult, successCountEnabled, successThreshold, successComparison, dropEnabled, otherResult);
+                    addToHistory(numDice, diceType, chosenResult, otherResult, rollMode, explodingEnabled,
+                                successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
+                } else {
+                    const result = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
+                                                      dropEnabled, dropType, dropCount, successCountEnabled,
+                                                      successComparison, successThreshold);
+                    displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled, null);
+                    addToHistory(numDice, diceType, result, null, rollMode, explodingEnabled,
+                                successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
+                }
+            }
+
+            /**
+             * Perform a single roll with all modifiers
+             */
+            function performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
+                                      dropEnabled, dropType, dropCount, successCountEnabled,
+                                      successComparison, successThreshold) {
+                let rolls;
+
+                // Roll dice with or without exploding
+                if (explodingEnabled) {
+                    const result = rollExploding(numDice, diceType, explodingMode);
+                    // Convert to display format
+                    rolls = result.rolls.map(value => ({
+                        value: value,
+                        display: String(value),
+                        breakdown: [value]
+                    }));
+                } else {
+                    rolls = [];
+                    for (let i = 0; i < numDice; i++) {
+                        const value = rollSingleDie(diceType);
+                        rolls.push({
+                            value: value,
+                            display: String(value),
+                            breakdown: [value]
+                        });
+                    }
+                }
+
+                let keptRolls = rolls;
+                let droppedRolls = [];
+
+                // Apply drop mechanic if enabled
+                if (dropEnabled) {
+                    const rollValues = rolls.map(r => r.value);
+                    const dropResult = dropDice(rollValues, dropCount, dropType);
+
+                    // Map back to roll objects
+                    const keptSet = new Set(dropResult.keptRolls);
+                    const droppedSet = new Set(dropResult.droppedRolls);
+                    keptRolls = [];
+                    droppedRolls = [];
+
+                    // Preserve order and handle duplicates
+                    const keptCopy = [...dropResult.keptRolls];
+                    const droppedCopy = [...dropResult.droppedRolls];
+
+                    for (const roll of rolls) {
+                        const keptIndex = keptCopy.indexOf(roll.value);
+                        const droppedIndex = droppedCopy.indexOf(roll.value);
+
+                        if (keptIndex !== -1) {
+                            keptRolls.push(roll);
+                            keptCopy.splice(keptIndex, 1);
+                        } else if (droppedIndex !== -1) {
+                            droppedRolls.push(roll);
+                            droppedCopy.splice(droppedIndex, 1);
+                        }
+                    }
+                }
+
+                // Calculate total
+                const total = keptRolls.reduce((sum, roll) => sum + roll.value, 0);
+
+                // Calculate success count if enabled
+                let successCount = 0;
+                if (successCountEnabled) {
+                    const rollValues = keptRolls.map(r => r.value);
+                    const comparisonMap = {
+                        'atleast': '>=',
+                        'exactly': '==',
+                        'atmost': '<='
+                    };
+                    const result = countSuccesses(rollValues, successThreshold, comparisonMap[successComparison]);
+                    successCount = result.successCount;
+                }
+
+                return {
+                    rolls,
+                    keptRolls,
+                    droppedRolls,
+                    total,
+                    successCount
+                };
+            }
+
+            /**
+             * Display the current roll result
+             */
+            function displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled, otherResult) {
+                if (successCountEnabled) {
+                    successResultDiv.textContent = `Successes: ${result.successCount}`;
+                    successResultDiv.style.display = 'block';
+                } else {
+                    successResultDiv.style.display = 'none';
+                }
+
+                sumResultDiv.textContent = `Sum: ${result.total}`;
+
+                let diceText = 'Dice: ';
+                if (successCountEnabled) {
+                    const diceElements = result.rolls.map(roll => {
+                        const isSuccess = checkSuccess(roll, successThreshold, successComparison);
+                        return isSuccess ? `<b>${roll.display}</b>` : roll.display;
+                    });
+                    diceText += `[${diceElements.join(', ')}]`;
+                } else {
+                    diceText += `[${result.rolls.map(r => r.display).join(', ')}]`;
+                }
+
+                if (dropEnabled && result.droppedRolls.length > 0) {
+                    diceText += `<br>→ keep [${result.keptRolls.map(r => r.display).join(', ')}]`;
+                }
+
+                rollsResultDiv.innerHTML = diceText;
+                rollsResultDiv.style.display = 'block';
+
+                if (otherResult) {
+                    let discardedText = 'Discarded: ';
+                    if (successCountEnabled) {
+                        const diceElements = otherResult.rolls.map(roll => {
+                            const isSuccess = checkSuccess(roll, successThreshold, successComparison);
+                            return isSuccess ? `<b>${roll.display}</b>` : roll.display;
+                        });
+                        discardedText += `[${diceElements.join(', ')}]`;
+                    } else {
+                        discardedText += `[${otherResult.rolls.map(r => r.display).join(', ')}]`;
+                    }
+
+                    if (dropEnabled && otherResult.droppedRolls.length > 0) {
+                        discardedText += `<br>→ keep [${otherResult.keptRolls.map(r => r.display).join(', ')}]`;
+                    }
+
+                    discardedResultDiv.innerHTML = discardedText;
+                    discardedResultDiv.style.display = 'block';
+                } else {
+                    discardedResultDiv.style.display = 'none';
+                }
+            }
+
+            /**
+             * Check if a roll is a success
+             */
+            function checkSuccess(roll, threshold, comparison) {
+                const value = roll.value;
+                if (comparison === 'atleast') return value >= threshold;
+                if (comparison === 'exactly') return value === threshold;
+                return value <= threshold; // atmost
+            }
+
+            /**
+             * Add a roll to the history log
+             */
+            function addToHistory(numDice, diceType, chosenResult, otherResult, rollMode, explodingEnabled,
+                                 successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount) {
+                const entry = document.createElement('div');
+                entry.className = 'history-entry';
+
+                const configParts = [];
+                configParts.push(`Rolling ${numDice}d${diceType}`);
+
+                if (rollMode === 'advantage') {
+                    configParts.push('Advantage');
+                } else if (rollMode === 'disadvantage') {
+                    configParts.push('Disadvantage');
+                }
+                if (dropEnabled) {
+                    configParts.push(`Drop ${dropCount} ${dropType}`);
+                }
+                if (explodingEnabled) {
+                    configParts.push('Exploding');
+                }
+                if (successCountEnabled) {
+                    const comparisonText = successComparison === 'atleast' ? 'at least' :
+                                          successComparison === 'exactly' ? 'exactly' : 'at most';
+                    configParts.push(`Success Count (${comparisonText} ${successThreshold})`);
+                }
+
+                const configDiv = document.createElement('div');
+                configDiv.style.marginBottom = '0.3em';
+                configDiv.textContent = configParts.join(', ');
+                entry.appendChild(configDiv);
+
+                function formatResult(result) {
+                    const details = document.createElement('div');
+                    details.style.fontSize = '0.9em';
+                    details.style.marginLeft = '1em';
+                    details.style.color = '#666';
+
+                    let lines = [];
+                    lines.push(`Rolls: [${result.rolls.map(r => r.display).join(', ')}]`);
+                    if (dropEnabled && result.droppedRolls.length > 0) {
+                        lines.push(`Dropped: [${result.droppedRolls.map(r => r.display).join(', ')}]`);
+                    }
+                    if (successCountEnabled) {
+                        lines.push(`${result.successCount} successes`);
+                    }
+                    lines.push(`Sum: ${result.total}`);
+
+                    details.textContent = lines.join('\n');
+                    return details;
+                }
+
+                if (otherResult) {
+                    const chosenLabel = document.createElement('div');
+                    chosenLabel.style.marginTop = '0.3em';
+                    chosenLabel.style.fontWeight = 'bold';
+                    chosenLabel.textContent = '→ Chosen:';
+                    entry.appendChild(chosenLabel);
+                    entry.appendChild(formatResult(chosenResult));
+
+                    const otherLabel = document.createElement('div');
+                    otherLabel.style.marginTop = '0.5em';
+                    otherLabel.style.fontWeight = 'normal';
+                    otherLabel.textContent = '  Other:';
+                    entry.appendChild(otherLabel);
+                    entry.appendChild(formatResult(otherResult));
+                } else {
+                    entry.appendChild(formatResult(chosenResult));
+                }
+
+                rollHistoryDiv.insertBefore(entry, rollHistoryDiv.firstChild);
+            }
+        });
     </script>
 </body>
 </html>

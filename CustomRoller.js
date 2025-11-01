@@ -1,4 +1,19 @@
+/**
+ * ⚠️ DEPRECATED - DO NOT USE ⚠️
+ *
+ * This file is legacy code and is no longer used.
+ * Custom.html has been refactored to use ES6 modules with DiceLibrary.js
+ *
+ * This file is kept for reference only.
+ * For new code, use DiceLibrary.js, dropDice(), countSuccesses(), and rollExploding()
+ *
+ * @deprecated Since 2025-11-01
+ * @see DiceLibrary.js
+ * @see Custom.html
+ */
+
 // CustomRoller.js - Custom dice rolling with text input and validation
+// DEPRECATED - See note above
 
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
