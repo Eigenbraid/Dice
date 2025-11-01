@@ -306,6 +306,43 @@ body.winter-theme {
     }
 }
 
+/* Stars - Twinkling stars (opacity only) */
+@keyframes startwinkle-0 {
+    0%, 100% {
+        opacity: var(--opacity);
+    }
+    50% {
+        opacity: calc(var(--opacity) * 0.3);
+    }
+}
+
+@keyframes startwinkle-1 {
+    0%, 100% {
+        opacity: var(--opacity);
+    }
+    30% {
+        opacity: calc(var(--opacity) * 0.5);
+    }
+    70% {
+        opacity: var(--opacity);
+    }
+}
+
+@keyframes startwinkle-2 {
+    0%, 100% {
+        opacity: var(--opacity);
+    }
+    25% {
+        opacity: calc(var(--opacity) * 0.2);
+    }
+    50% {
+        opacity: calc(var(--opacity) * 0.6);
+    }
+    75% {
+        opacity: calc(var(--opacity) * 0.4);
+    }
+}
+
 .seasonal-effect {
     will-change: transform;
 }
@@ -396,6 +433,67 @@ body.summer-theme {
     --link-hover-gradient-end: rgba(245, 124, 0, 0.05) !important;
 
     --history-border-shadow: rgba(255, 167, 38, 0.15) !important;
+}
+
+/* Stars Theme */
+html.stars-theme,
+html.stars-theme:root,
+body.stars-theme {
+    --bg-gradient-start: #0a0e27 !important;
+    --bg-gradient-end: #4a148c !important;
+    --container-bg: rgba(30, 20, 50, 0.92) !important;
+    --result-gradient-start: #5b21b6 !important;
+    --result-gradient-end: #4c1d95 !important;
+
+    --heading-primary: #e0e7ff !important;
+    --heading-secondary: #c7d2fe !important;
+    --heading-tertiary: #a5b4fc !important;
+    --text-primary: #d1d5db !important;
+    --text-secondary: #9ca3af !important;
+    --text-light: #6b7280 !important;
+
+    --accent-primary: #818cf8 !important;
+    --accent-primary-dark: #6366f1 !important;
+    --accent-secondary: #a5b4fc !important;
+    --accent-tertiary: #fbbf24 !important;
+
+    --button-gradient-start: #818cf8 !important;
+    --button-gradient-end: #6366f1 !important;
+    --button-shadow: rgba(129, 140, 248, 0.5) !important;
+
+    --border-light: #4b5563 !important;
+    --border-medium: #6b7280 !important;
+    --border-accent: #a5b4fc !important;
+
+    --bg-light: #1f2937 !important;
+    --bg-white: #374151 !important;
+    --bg-hover: #4b5563 !important;
+
+    --error-bg: #3d1f3d !important;
+    --error-border: #c62828 !important;
+    --error-text: #ef5350 !important;
+
+    --fate-die-bg: #4f46e5 !important;
+
+    --scrollbar-track: #1f2937 !important;
+    --scrollbar-thumb: #818cf8 !important;
+    --scrollbar-thumb-hover: #6366f1 !important;
+
+    --close-btn-bg: rgba(129, 140, 248, 0.1) !important;
+    --close-btn-bg-hover: rgba(129, 140, 248, 0.2) !important;
+    --close-btn-color: #e0e7ff !important;
+
+    --link-hover-gradient-start: rgba(129, 140, 248, 0.05) !important;
+    --link-hover-gradient-end: rgba(99, 102, 241, 0.05) !important;
+
+    --history-border-shadow: rgba(129, 140, 248, 0.2) !important;
+
+    --result-text-shadow: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Stars theme: top-to-bottom gradient instead of diagonal */
+html.stars-theme body {
+    background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%) !important;
 }
 
 /* ========================================
