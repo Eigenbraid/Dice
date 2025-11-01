@@ -4,9 +4,6 @@ node_modules/
 # Test coverage
 coverage/
 
-# Lock file (optional - can be committed if preferred)
-package-lock.json
-
 # OS files
 .DS_Store
 Thumbs.db
