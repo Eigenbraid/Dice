@@ -95,6 +95,9 @@
         import { addThemeSelector } from './ThemeManager.js';
         import { createSeasonalEffects } from './Snowflakes.js';
 
+        // Make createSeasonalEffects available globally for the animated checkbox
+        window.createSeasonalEffects = createSeasonalEffects;
+
         // Fate Dice Roller - Always rolls 4dF
         document.addEventListener('DOMContentLoaded', function() {
             // Add theme selector to the page

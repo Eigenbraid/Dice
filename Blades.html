@@ -122,6 +122,9 @@
         import { addThemeSelector } from './ThemeManager.js';
         import { createSeasonalEffects } from './Snowflakes.js';
 
+        // Make createSeasonalEffects available globally for the animated checkbox
+        window.createSeasonalEffects = createSeasonalEffects;
+
         // Blades in the Dark Dice Roller
         document.addEventListener('DOMContentLoaded', function() {
             // Add theme selector to the page

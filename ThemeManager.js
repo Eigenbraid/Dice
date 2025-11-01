@@ -16,8 +16,9 @@ const THEMES = {
 // Default theme
 const DEFAULT_THEME = THEMES.AUTUMN;
 
-// LocalStorage key
+// LocalStorage keys
 const STORAGE_KEY = 'dice-roller-theme';
+const ANIMATION_KEY = 'dice-roller-animations';
 
 /**
  * Gets the current theme from localStorage or returns default
@@ -25,6 +26,23 @@ const STORAGE_KEY = 'dice-roller-theme';
 function getCurrentTheme() {
     const savedTheme = localStorage.getItem(STORAGE_KEY);
     return savedTheme || DEFAULT_THEME;
+}
+
+/**
+ * Gets the animation preference from localStorage
+ * @returns {boolean} True if animations are enabled (default: true)
+ */
+function getAnimationsEnabled() {
+    const saved = localStorage.getItem(ANIMATION_KEY);
+    return saved === null ? true : saved === 'true';
+}
+
+/**
+ * Sets the animation preference in localStorage
+ * @param {boolean} enabled - Whether animations should be enabled
+ */
+function setAnimationsEnabled(enabled) {
+    localStorage.setItem(ANIMATION_KEY, enabled.toString());
 }
 
 /**
@@ -164,6 +182,31 @@ function addThemeSelector() {
         wrapper.appendChild(label);
         wrapper.appendChild(selector);
 
+        // Add animated checkbox
+        const animatedCheckbox = document.createElement('input');
+        animatedCheckbox.type = 'checkbox';
+        animatedCheckbox.id = 'animated-checkbox';
+        animatedCheckbox.checked = getAnimationsEnabled();
+        animatedCheckbox.style.marginLeft = '15px';
+
+        const animatedLabel = document.createElement('label');
+        animatedLabel.htmlFor = 'animated-checkbox';
+        animatedLabel.textContent = 'Animated';
+        animatedLabel.style.marginLeft = '5px';
+        animatedLabel.style.cursor = 'pointer';
+
+        // Add event listener for checkbox
+        animatedCheckbox.addEventListener('change', (e) => {
+            setAnimationsEnabled(e.target.checked);
+            // Trigger seasonal effects update
+            if (window.createSeasonalEffects) {
+                window.createSeasonalEffects();
+            }
+        });
+
+        wrapper.appendChild(animatedCheckbox);
+        wrapper.appendChild(animatedLabel);
+
         // Insert at the beginning of the top row
         topRow.insertBefore(wrapper, topRow.firstChild);
     } else {
@@ -179,5 +222,7 @@ export {
     setTheme,
     initializeTheme,
     createThemeSelector,
-    addThemeSelector
+    addThemeSelector,
+    getAnimationsEnabled,
+    setAnimationsEnabled
 };

@@ -3,6 +3,8 @@
  * Creates animated seasonal effects for different themes
  */
 
+import { getAnimationsEnabled } from './ThemeManager.js';
+
 /**
  * Creates seasonal effects based on current theme
  */
@@ -11,6 +13,11 @@ function createSeasonalEffects() {
     const existingContainer = document.getElementById('seasonal-effects-container');
     if (existingContainer) {
         existingContainer.remove();
+    }
+
+    // Check if animations are enabled
+    if (!getAnimationsEnabled()) {
+        return; // Don't create effects if animations are disabled
     }
 
     // Determine current theme
