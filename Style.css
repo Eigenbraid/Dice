@@ -217,7 +217,9 @@ body.winter-theme {
     --history-border-shadow: rgba(94, 53, 177, 0.15) !important;
 }
 
-/* Winter Theme Snowflakes - Animated falling snow with rotation */
+/* Seasonal Effects Animations */
+
+/* Winter - Snowflakes falling with rotation */
 @keyframes snowfall-0 {
     0% {
         transform: translateY(-50px) translateX(0) rotate(0deg);
@@ -254,7 +256,57 @@ body.winter-theme {
     }
 }
 
-.snowflake {
+/* Autumn - Leaves swaying back and forth */
+@keyframes leaffall-0 {
+    0% {
+        transform: translateY(-50px) translateX(0) rotate(0deg);
+    }
+    25% {
+        transform: translateY(25vh) translateX(var(--sway)) rotate(calc(var(--rotation) * 0.25));
+    }
+    50% {
+        transform: translateY(50vh) translateX(0) rotate(calc(var(--rotation) * 0.5));
+    }
+    75% {
+        transform: translateY(75vh) translateX(calc(var(--sway) * -1)) rotate(calc(var(--rotation) * 0.75));
+    }
+    100% {
+        transform: translateY(100vh) translateX(0) rotate(var(--rotation));
+    }
+}
+
+@keyframes leaffall-1 {
+    0% {
+        transform: translateY(-50px) translateX(0) rotate(0deg);
+    }
+    20% {
+        transform: translateY(20vh) translateX(calc(var(--sway) * -0.5)) rotate(calc(var(--rotation) * 0.2));
+    }
+    40% {
+        transform: translateY(40vh) translateX(var(--sway)) rotate(calc(var(--rotation) * 0.4));
+    }
+    60% {
+        transform: translateY(60vh) translateX(calc(var(--sway) * -0.8)) rotate(calc(var(--rotation) * 0.6));
+    }
+    80% {
+        transform: translateY(80vh) translateX(calc(var(--sway) * 0.6)) rotate(calc(var(--rotation) * 0.8));
+    }
+    100% {
+        transform: translateY(100vh) translateX(0) rotate(var(--rotation));
+    }
+}
+
+/* Spring - Rain falling straight down */
+@keyframes rainfall {
+    0% {
+        transform: translateY(-50px);
+    }
+    100% {
+        transform: translateY(100vh);
+    }
+}
+
+.seasonal-effect {
     will-change: transform;
 }
 

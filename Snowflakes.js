@@ -1,23 +1,37 @@
 /**
  * Snowflakes.js
- * Creates animated falling snowflakes for the Winter theme
+ * Creates animated seasonal effects for different themes
  */
 
-function createSnowflakes() {
-    // Only create snowflakes if Winter theme is active
-    if (!document.documentElement.classList.contains('winter-theme')) {
-        return;
-    }
-
-    // Remove any existing snowflake container
-    const existingContainer = document.getElementById('snowflake-container');
+/**
+ * Creates seasonal effects based on current theme
+ */
+function createSeasonalEffects() {
+    // Remove any existing effects container
+    const existingContainer = document.getElementById('seasonal-effects-container');
     if (existingContainer) {
         existingContainer.remove();
     }
 
-    // Create container for snowflakes
+    // Determine current theme
+    const htmlElement = document.documentElement;
+
+    if (htmlElement.classList.contains('winter-theme')) {
+        createWinterSnowflakes();
+    } else if (htmlElement.classList.contains('autumn-theme')) {
+        createAutumnLeaves();
+    } else if (htmlElement.classList.contains('spring-theme')) {
+        createSpringRain();
+    }
+    // Summer, Light, and Dark themes have no effects
+}
+
+/**
+ * Creates the container for seasonal effects
+ */
+function createEffectsContainer() {
     const container = document.createElement('div');
-    container.id = 'snowflake-container';
+    container.id = 'seasonal-effects-container';
     container.style.cssText = `
         position: fixed;
         top: 0;
@@ -29,57 +43,131 @@ function createSnowflakes() {
         overflow: hidden;
     `;
     document.body.appendChild(container);
+    return container;
+}
 
-    // Create 30 snowflakes with random properties
+/**
+ * Creates winter snowflakes
+ */
+function createWinterSnowflakes() {
+    const container = createEffectsContainer();
     const snowflakeCount = 30;
 
     for (let i = 0; i < snowflakeCount; i++) {
-        createSnowflake(container);
+        const element = document.createElement('div');
+        element.className = 'seasonal-effect snowflake';
+        element.textContent = '❄';
+
+        // Random properties
+        const startPositionX = Math.random() * 100;
+        const duration = 15 + Math.random() * 20;
+        const delay = Math.random() * -30;
+        const size = 0.8 + Math.random() * 1.2;
+        const opacity = 0.33 + Math.random() * 0.33;
+        const drift = -30 + Math.random() * 60;
+        const rotation = Math.random() * 360;
+        const rotationSpeed = 180 + Math.random() * 360;
+
+        element.style.cssText = `
+            position: absolute;
+            top: -50px;
+            left: ${startPositionX}vw;
+            font-size: ${size}em;
+            opacity: ${opacity};
+            color: rgba(255, 255, 255, 0.95);
+            animation: snowfall-${Math.floor(Math.random() * 3)} ${duration}s linear infinite;
+            animation-delay: ${delay}s;
+            user-select: none;
+            transform: rotate(${rotation}deg);
+        `;
+
+        element.style.setProperty('--drift', `${drift}px`);
+        element.style.setProperty('--rotation', `${rotationSpeed}deg`);
+
+        container.appendChild(element);
     }
 }
 
-function createSnowflake(container) {
-    const snowflake = document.createElement('div');
-    snowflake.className = 'snowflake';
-    snowflake.textContent = '❄';
+/**
+ * Creates autumn falling leaves
+ */
+function createAutumnLeaves() {
+    const container = createEffectsContainer();
+    const leafCount = 20;
+    const leafTypes = ['🍂', '🍃'];
 
-    // Random properties
-    const startPositionX = Math.random() * 100; // 0-100vw
-    const duration = 15 + Math.random() * 20; // 15-35 seconds
-    const delay = Math.random() * -30; // Start at different points in animation
-    const size = 0.8 + Math.random() * 1.2; // 0.8em - 2em
-    const opacity = 0.33 + Math.random() * 0.33; // 0.33 - 0.66
-    const drift = -30 + Math.random() * 60; // Horizontal drift -30px to +30px
-    const rotation = Math.random() * 360; // Starting rotation
-    const rotationSpeed = 180 + Math.random() * 360; // Rotation amount during fall
+    for (let i = 0; i < leafCount; i++) {
+        const element = document.createElement('div');
+        element.className = 'seasonal-effect autumn-leaf';
+        element.textContent = leafTypes[Math.floor(Math.random() * leafTypes.length)];
 
-    snowflake.style.cssText = `
-        position: absolute;
-        top: -50px;
-        left: ${startPositionX}vw;
-        font-size: ${size}em;
-        opacity: ${opacity};
-        color: rgba(255, 255, 255, 0.95);
-        animation: snowfall-${Math.floor(Math.random() * 3)} ${duration}s linear infinite;
-        animation-delay: ${delay}s;
-        user-select: none;
-        transform: rotate(${rotation}deg);
-    `;
+        const startPositionX = Math.random() * 100;
+        const duration = 10 + Math.random() * 15;
+        const delay = Math.random() * -20;
+        const size = 0.9 + Math.random() * 1.1;
+        const opacity = 0.4 + Math.random() * 0.3;
+        const sway = 40 + Math.random() * 40; // How far to sway
+        const rotation = Math.random() * 360;
+        const rotationSpeed = 180 + Math.random() * 540;
 
-    // Set CSS variables for this specific snowflake's animation
-    snowflake.style.setProperty('--drift', `${drift}px`);
-    snowflake.style.setProperty('--rotation', `${rotationSpeed}deg`);
+        element.style.cssText = `
+            position: absolute;
+            top: -50px;
+            left: ${startPositionX}vw;
+            font-size: ${size}em;
+            opacity: ${opacity};
+            animation: leaffall-${Math.floor(Math.random() * 2)} ${duration}s ease-in-out infinite;
+            animation-delay: ${delay}s;
+            user-select: none;
+            transform: rotate(${rotation}deg);
+        `;
 
-    container.appendChild(snowflake);
+        element.style.setProperty('--sway', `${sway}px`);
+        element.style.setProperty('--rotation', `${rotationSpeed}deg`);
+
+        container.appendChild(element);
+    }
 }
 
-// Initialize snowflakes when DOM is ready
+/**
+ * Creates spring rain
+ */
+function createSpringRain() {
+    const container = createEffectsContainer();
+    const dropCount = 40;
+
+    for (let i = 0; i < dropCount; i++) {
+        const element = document.createElement('div');
+        element.className = 'seasonal-effect raindrop';
+        element.textContent = '💧';
+
+        const startPositionX = Math.random() * 100;
+        const duration = 1 + Math.random() * 2; // Faster fall for rain
+        const delay = Math.random() * -5;
+        const size = 0.6 + Math.random() * 0.6;
+        const opacity = 0.35 + Math.random() * 0.3;
+
+        element.style.cssText = `
+            position: absolute;
+            top: -50px;
+            left: ${startPositionX}vw;
+            font-size: ${size}em;
+            opacity: ${opacity};
+            animation: rainfall ${duration}s linear infinite;
+            animation-delay: ${delay}s;
+            user-select: none;
+        `;
+
+        container.appendChild(element);
+    }
+}
+
+// Initialize effects when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', createSnowflakes);
+    document.addEventListener('DOMContentLoaded', createSeasonalEffects);
 } else {
-    createSnowflakes();
+    createSeasonalEffects();
 }
 
-// Re-create snowflakes when theme changes to Winter
-// We'll export this function so ThemeManager can call it
-export { createSnowflakes };
+// Export for ThemeManager to call when theme changes
+export { createSeasonalEffects };
