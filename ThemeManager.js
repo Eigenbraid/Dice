@@ -45,13 +45,9 @@ function applyTheme(theme) {
         }
     });
 
-    // Apply new theme class (except for autumn which is default)
-    if (theme !== THEMES.AUTUMN) {
-        htmlElement.classList.add(`${theme}-theme`);
-        console.log('Added class to html:', `${theme}-theme`);
-    } else {
-        console.log('Using default autumn theme (no class)');
-    }
+    // Apply new theme class
+    htmlElement.classList.add(`${theme}-theme`);
+    console.log('Added class to html:', `${theme}-theme`);
 
     console.log('HTML classes:', htmlElement.className);
 
