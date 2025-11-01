@@ -29,6 +29,8 @@ function createSeasonalEffects() {
         createAutumnLeaves();
     } else if (htmlElement.classList.contains('spring-theme')) {
         createSpringRain();
+    } else if (htmlElement.classList.contains('stars-theme')) {
+        createStars();
     }
     // Summer, Light, and Dark themes have no effects
 }
@@ -176,6 +178,47 @@ function createSpringRain() {
             animation-delay: ${delay}s;
             user-select: none;
         `;
+
+        container.appendChild(element);
+    }
+}
+
+/**
+ * Creates twinkling stars for the stars theme
+ */
+function createStars() {
+    const container = createEffectsContainer();
+    if (!container) return; // Body doesn't exist yet
+
+    const starCount = 60;
+
+    for (let i = 0; i < starCount; i++) {
+        const element = document.createElement('div');
+        element.className = 'seasonal-effect star';
+        element.textContent = '⭐';
+
+        // Random properties
+        const startPositionX = Math.random() * 100;
+        const startPositionY = Math.random() * 85; // Spread across top 85% of screen
+        const duration = 2 + Math.random() * 4; // 2-6 seconds twinkle cycle
+        const delay = Math.random() * -6; // Stagger the start
+        const size = 0.4 + Math.random() * 1.0; // Varying star sizes
+        const opacity = 0.4 + Math.random() * 0.6; // Base opacity 0.4-1.0
+
+        element.style.cssText = `
+            position: absolute;
+            top: ${startPositionY}vh;
+            left: ${startPositionX}vw;
+            font-size: ${size}em;
+            opacity: ${opacity};
+            color: rgba(255, 255, 200, 0.95);
+            animation: startwinkle-${Math.floor(Math.random() * 3)} ${duration}s ease-in-out infinite;
+            animation-delay: ${delay}s;
+            user-select: none;
+            pointer-events: none;
+        `;
+
+        element.style.setProperty('--opacity', opacity);
 
         container.appendChild(element);
     }

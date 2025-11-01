@@ -10,7 +10,8 @@ const THEMES = {
     DARK: 'dark',
     WINTER: 'winter',
     SPRING: 'spring',
-    SUMMER: 'summer'
+    SUMMER: 'summer',
+    STARS: 'stars'
 };
 
 // Default theme
@@ -112,12 +113,13 @@ function createThemeSelector() {
     select.id = 'theme-selector';
     select.className = 'theme-selector';
 
-    // Add options in seasonal order: Autumn, Winter, Spring, Summer, then Light/Dark
+    // Add options in seasonal order: Autumn, Winter, Spring, Summer, then Stars, Light/Dark
     const options = [
         { value: THEMES.AUTUMN, label: 'Autumn' },
         { value: THEMES.WINTER, label: 'Winter' },
         { value: THEMES.SPRING, label: 'Spring' },
         { value: THEMES.SUMMER, label: 'Summer' },
+        { value: THEMES.STARS, label: 'Stars' },
         { value: THEMES.LIGHT, label: 'Light' },
         { value: THEMES.DARK, label: 'Dark' }
     ];
