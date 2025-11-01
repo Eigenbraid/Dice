@@ -46,6 +46,49 @@ export function rollDice(numDice, diceType) {
 }
 
 /**
+ * Roll a single exploding die and return detailed breakdown
+ * @param {number} diceType - Number of sides on the die
+ * @param {string} [mode='standard'] - 'standard' (explode once) or 'compound' (keep exploding)
+ * @returns {Object} - { value: number, display: string, breakdown: number[] }
+ * @throws {Error} - If diceType is invalid
+ */
+export function rollSingleExplodingDie(diceType, mode = 'standard') {
+    if (!Number.isInteger(diceType) || diceType < 2) {
+        throw new Error(`Invalid dice type: ${diceType}. Must be at least 2.`);
+    }
+
+    const breakdown = [];
+    let total = 0;
+    let roll = rollSingleDie(diceType);
+
+    breakdown.push(roll);
+    total += roll;
+
+    // Check for explosions
+    if (mode === 'standard') {
+        // Explode only once
+        if (roll === diceType) {
+            roll = rollSingleDie(diceType);
+            breakdown.push(roll);
+            total += roll;
+        }
+    } else {
+        // Compound mode - keep exploding
+        while (roll === diceType) {
+            roll = rollSingleDie(diceType);
+            breakdown.push(roll);
+            total += roll;
+        }
+    }
+
+    return {
+        value: total,
+        display: breakdown.join('+'),
+        breakdown: breakdown
+    };
+}
+
+/**
  * Roll dice with exploding mechanic (when max value is rolled, roll again and add)
  * @param {number} numDice - Number of dice to roll
  * @param {number} diceType - Number of sides per die

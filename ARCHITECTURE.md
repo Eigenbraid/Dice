@@ -1,6 +1,6 @@
-# ES6 Module Refactoring
+# Dice Roller - Architecture Documentation
 
-This project has been refactored to use ES6 modules with proper separation of concerns.
+This document describes the architecture, code organization, and development practices for the Dice Roller project.
 
 ## Architecture
 
@@ -41,14 +41,12 @@ All HTML files now use `<script type="module">` with inline code that:
 3. Calls pure functions
 4. Updates DOM with results
 
-**Refactored:**
+**All pages refactored:**
 - ✅ Basic.html - Uses DiceLibrary + HistoryLog
 - ✅ Fate.html - Uses Fate + HistoryLog
 - ✅ Blades.html - Uses Blades + HistoryLog
 - ✅ Tarot.html - Uses Tarot + CardLibrary + HistoryLog
-
-**Not Yet Refactored:**
-- ⚠️ Custom.html - Still uses CustomRoller.js (769 lines - needs separate refactoring task)
+- ✅ Custom.html - Uses DiceLibrary + HistoryLog (refactored from legacy CustomRoller.js)
 
 ## Benefits
 
@@ -98,36 +96,49 @@ To add a new dice system or card game:
 4. Create HTML file that imports your module + HistoryLog
 5. Write tests in `tests/MyGame.test.js`
 
-## Migration Path for Custom.html
+## Deprecated Files
 
-Custom.html still needs refactoring. Suggested approach:
-
-1. Extract pure logic from CustomRoller.js to use DiceLibrary
-2. Move exploding dice logic to DiceLibrary.rollExploding()
-3. Move success counting to DiceLibrary.countSuccesses()
-4. Move drop dice logic to DiceLibrary.dropDice()
-5. Keep UI-specific formatting in inline script
-6. Use HistoryLog for history management
+**CustomRoller.js** - Legacy file, no longer used. Custom.html has been refactored to use ES6 modules with DiceLibrary. This file is kept for reference but should not be used in new code.
 
 ## File Structure
 
 ```
 Dice/
-├── DiceLibrary.js          # Core dice mechanics (pure)
-├── CardLibrary.js          # Card deck mechanics (pure)
-├── HistoryLog.js           # History display utilities (pure DOM)
-├── Fate.js                 # Fate dice (uses DiceLibrary)
-├── Blades.js               # Blades dice (uses DiceLibrary)
-├── Tarot.js                # Tarot cards (uses CardLibrary)
-├── CustomRoller.js         # ⚠️ Legacy - needs refactoring
-├── Basic.html              # ✅ Refactored - ES6 modules
-├── Fate.html               # ✅ Refactored - ES6 modules
-├── Blades.html             # ✅ Refactored - ES6 modules
-├── Tarot.html              # ✅ Refactored - ES6 modules
-├── Custom.html             # ⚠️ Still uses CustomRoller.js
-├── package.json            # NPM config with Vitest
-└── tests/
-    └── DiceLibrary.test.js # Example test file
+├── Core Libraries (Pure Logic)
+│   ├── DiceLibrary.js          # Core dice mechanics (pure functions)
+│   ├── CardLibrary.js          # Card deck mechanics (pure functions)
+│   └── HistoryLog.js           # History display utilities
+├── Domain-Specific Modules
+│   ├── Fate.js                 # Fate/Fudge dice (uses DiceLibrary)
+│   ├── Blades.js               # Blades in the Dark (uses DiceLibrary)
+│   └── Tarot.js                # Tarot cards (uses CardLibrary)
+├── UI & Theme Management
+│   ├── ThemeManager.js         # Theme switching & persistence
+│   ├── Snowflakes.js           # Seasonal animations
+│   └── Style.css               # All styling & themes
+├── HTML Pages (UI Layer)
+│   ├── Index.html              # Main landing page
+│   ├── Basic.html              # Basic dice roller
+│   ├── Fate.html               # Fate/Fudge roller
+│   ├── Blades.html             # Blades in the Dark roller
+│   ├── Tarot.html              # Tarot card reader
+│   └── Custom.html             # Custom dice roller with modifiers
+├── Configuration & Build
+│   ├── package.json            # NPM config with Vitest
+│   ├── vitest.config.js        # Vitest configuration
+│   ├── .gitignore              # Git ignore patterns
+│   └── server.py               # Local development server
+├── Tests
+│   ├── DiceLibrary.test.js     # Core dice mechanics tests
+│   ├── CardLibrary.test.js     # Card deck tests
+│   ├── Fate.test.js            # Fate dice tests
+│   ├── Blades.test.js          # Blades dice tests
+│   ├── HistoryLog.test.js      # History utilities tests
+│   └── Tarot.test.js           # Tarot card tests
+├── Documentation
+│   ├── README.md               # Project overview & quick start
+│   ├── ARCHITECTURE.md         # This file - architecture & development
+│   └── CLAUDE.md               # Guide for AI assistants
 ```
 
 ## Notes
