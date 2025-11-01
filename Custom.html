@@ -105,7 +105,7 @@
 
     <script type="module">
         // Import dice rolling logic
-        import { rollSingleDie, rollExploding, dropDice, countSuccesses } from './DiceLibrary.js';
+        import { rollSingleDie, rollSingleExplodingDie, dropDice, countSuccesses } from './DiceLibrary.js';
         import { addThemeSelector } from './ThemeManager.js';
         import { createSeasonalEffects } from './Snowflakes.js';
 
@@ -463,41 +463,6 @@
             }
 
             /**
-             * Roll a single exploding die and return breakdown
-             */
-            function rollExplodingDie(diceType, explodingMode) {
-                const breakdown = [];
-                let total = 0;
-                let roll = rollSingleDie(diceType);
-
-                breakdown.push(roll);
-                total += roll;
-
-                // Check for explosions
-                if (explodingMode === 'standard') {
-                    // Explode only once
-                    if (roll === diceType) {
-                        roll = rollSingleDie(diceType);
-                        breakdown.push(roll);
-                        total += roll;
-                    }
-                } else {
-                    // Compound mode - keep exploding
-                    while (roll === diceType) {
-                        roll = rollSingleDie(diceType);
-                        breakdown.push(roll);
-                        total += roll;
-                    }
-                }
-
-                return {
-                    value: total,
-                    display: breakdown.join('+'),
-                    breakdown: breakdown
-                };
-            }
-
-            /**
              * Perform a single roll with all modifiers
              */
             function performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
@@ -509,7 +474,7 @@
                 if (explodingEnabled) {
                     rolls = [];
                     for (let i = 0; i < numDice; i++) {
-                        rolls.push(rollExplodingDie(diceType, explodingMode));
+                        rolls.push(rollSingleExplodingDie(diceType, explodingMode));
                     }
                 } else {
                     rolls = [];

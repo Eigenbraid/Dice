@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { rollSingleDie, rollDice, formatDiceRoll, parseDiceNotation, dropDice, countSuccesses } from '../DiceLibrary.js';
+import { rollSingleDie, rollSingleExplodingDie, rollDice, formatDiceRoll, parseDiceNotation, dropDice, countSuccesses } from '../DiceLibrary.js';
 
 describe('rollSingleDie', () => {
     it('returns a value between 1 and sides', () => {
@@ -153,5 +153,81 @@ describe('countSuccesses', () => {
 
     it('throws error for invalid comparison', () => {
         expect(() => countSuccesses([1, 2], 3, '!=')).toThrow('Invalid comparison');
+    });
+});
+
+describe('rollSingleExplodingDie', () => {
+    it('returns object with value, display, and breakdown', () => {
+        const result = rollSingleExplodingDie(6);
+        expect(result).toHaveProperty('value');
+        expect(result).toHaveProperty('display');
+        expect(result).toHaveProperty('breakdown');
+        expect(Array.isArray(result.breakdown)).toBe(true);
+    });
+
+    it('does not explode when rolling below max', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        mockRandom.mockReturnValue(0.5); // Will roll 4 on d6 (0.5 * 6 = 3, floor + 1 = 4)
+
+        const result = rollSingleExplodingDie(6);
+
+        expect(result.breakdown).toHaveLength(1);
+        expect(result.value).toBe(4);
+        expect(result.display).toBe('4');
+
+        mockRandom.mockRestore();
+    });
+
+    it('explodes once in standard mode when rolling max', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        // First roll: 6 (max), second roll: 4
+        mockRandom.mockReturnValueOnce(0.99); // 6
+        mockRandom.mockReturnValueOnce(0.5);  // 4
+
+        const result = rollSingleExplodingDie(6, 'standard');
+
+        expect(result.breakdown).toEqual([6, 4]);
+        expect(result.value).toBe(10);
+        expect(result.display).toBe('6+4');
+
+        mockRandom.mockRestore();
+    });
+
+    it('keeps exploding in compound mode', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        // Rolls: 6, 6, 6, 2 (0.3 * 6 = 1.8, floor = 1, +1 = 2)
+        mockRandom.mockReturnValueOnce(0.99); // 6
+        mockRandom.mockReturnValueOnce(0.99); // 6
+        mockRandom.mockReturnValueOnce(0.99); // 6
+        mockRandom.mockReturnValueOnce(0.3);  // 2
+
+        const result = rollSingleExplodingDie(6, 'compound');
+
+        expect(result.breakdown).toEqual([6, 6, 6, 2]);
+        expect(result.value).toBe(20);
+        expect(result.display).toBe('6+6+6+2');
+
+        mockRandom.mockRestore();
+    });
+
+    it('throws error for invalid dice type', () => {
+        expect(() => rollSingleExplodingDie(1)).toThrow('Invalid dice type');
+        expect(() => rollSingleExplodingDie(0)).toThrow('Invalid dice type');
+        expect(() => rollSingleExplodingDie(-5)).toThrow('Invalid dice type');
+    });
+
+    it('works with different die sizes', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        // Roll max on d20 (20), then roll 15
+        mockRandom.mockReturnValueOnce(0.99);  // 20
+        mockRandom.mockReturnValueOnce(0.725); // 15
+
+        const result = rollSingleExplodingDie(20, 'standard');
+
+        expect(result.breakdown).toEqual([20, 15]);
+        expect(result.value).toBe(35);
+        expect(result.display).toBe('20+15');
+
+        mockRandom.mockRestore();
     });
 });
