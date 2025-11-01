@@ -177,8 +177,8 @@ body.dark-theme {
 html.winter-theme,
 html.winter-theme:root,
 body.winter-theme {
-    --bg-gradient-start: #d0e8f5 !important;
-    --bg-gradient-end: #7fb3d5 !important;
+    --bg-gradient-start: #e1f5fe !important;
+    --bg-gradient-end: #42a5f5 !important;
     --container-bg: rgba(255, 255, 255, 0.97) !important;
     --result-gradient-start: #00bcd4 !important;
     --result-gradient-end: #0097a7 !important;
@@ -314,8 +314,8 @@ body.winter-theme {
 html.spring-theme,
 html.spring-theme:root,
 body.spring-theme {
-    --bg-gradient-start: #c8e6c9 !important;
-    --bg-gradient-end: #81c784 !important;
+    --bg-gradient-start: #e8f5e9 !important;
+    --bg-gradient-end: #4caf50 !important;
     --container-bg: rgba(255, 255, 255, 0.97) !important;
     --result-gradient-start: #ec407a !important;
     --result-gradient-end: #d81b60 !important;
@@ -358,8 +358,8 @@ body.spring-theme {
 html.summer-theme,
 html.summer-theme:root,
 body.summer-theme {
-    --bg-gradient-start: #ffe0b2 !important;
-    --bg-gradient-end: #ffb74d !important;
+    --bg-gradient-start: #fff3e0 !important;
+    --bg-gradient-end: #ff9800 !important;
     --container-bg: rgba(255, 255, 255, 0.97) !important;
     --result-gradient-start: #42a5f5 !important;
     --result-gradient-end: #1e88e5 !important;
