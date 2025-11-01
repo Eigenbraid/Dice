@@ -491,6 +491,11 @@ body.stars-theme {
     --result-text-shadow: rgba(0, 0, 0, 0.4) !important;
 }
 
+/* Stars theme: top-to-bottom gradient instead of diagonal */
+body.stars-theme {
+    background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%) !important;
+}
+
 /* ========================================
    GLOBAL STYLES
    ======================================== */
