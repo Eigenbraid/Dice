@@ -217,64 +217,45 @@ body.winter-theme {
     --history-border-shadow: rgba(94, 53, 177, 0.15) !important;
 }
 
-/* Winter Theme Snowflakes - Animated falling snow */
-@keyframes snowfall {
+/* Winter Theme Snowflakes - Animated falling snow with rotation */
+@keyframes snowfall-0 {
     0% {
-        transform: translateY(-100vh) translateX(0);
+        transform: translateY(-50px) translateX(0) rotate(0deg);
     }
     100% {
-        transform: translateY(100vh) translateX(20px);
+        transform: translateY(100vh) translateX(var(--drift)) rotate(var(--rotation));
+    }
+}
+
+@keyframes snowfall-1 {
+    0% {
+        transform: translateY(-50px) translateX(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(50vh) translateX(calc(var(--drift) * 0.5)) rotate(calc(var(--rotation) * 0.5));
+    }
+    100% {
+        transform: translateY(100vh) translateX(var(--drift)) rotate(var(--rotation));
     }
 }
 
 @keyframes snowfall-2 {
     0% {
-        transform: translateY(-100vh) translateX(0);
+        transform: translateY(-50px) translateX(0) rotate(0deg);
+    }
+    33% {
+        transform: translateY(33vh) translateX(calc(var(--drift) * -0.3)) rotate(calc(var(--rotation) * 0.33));
+    }
+    66% {
+        transform: translateY(66vh) translateX(calc(var(--drift) * 0.6)) rotate(calc(var(--rotation) * 0.66));
     }
     100% {
-        transform: translateY(100vh) translateX(-15px);
+        transform: translateY(100vh) translateX(var(--drift)) rotate(var(--rotation));
     }
 }
 
-@keyframes snowfall-3 {
-    0% {
-        transform: translateY(-100vh) translateX(0);
-    }
-    100% {
-        transform: translateY(100vh) translateX(10px);
-    }
-}
-
-.winter-theme body::before,
-.winter-theme body::after {
-    content: '❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄ ❄';
-    position: fixed;
-    top: -100vh;
-    left: 0;
-    right: 0;
-    width: 100vw;
-    height: 200vh;
-    pointer-events: none;
-    font-size: 1.8em;
-    line-height: 4;
-    word-spacing: 4em;
-    letter-spacing: 3em;
-    color: rgba(255, 255, 255, 0.9);
-    z-index: 0;
-    overflow: visible;
-    white-space: pre-wrap;
-    word-break: break-all;
-    display: block;
-    animation: snowfall 20s linear infinite;
-    opacity: 0.5;
-}
-
-.winter-theme body::after {
-    animation: snowfall-2 25s linear infinite;
-    animation-delay: -10s;
-    opacity: 0.4;
-    font-size: 1.5em;
-    line-height: 5;
+.snowflake {
+    will-change: transform;
 }
 
 /* Spring Theme */

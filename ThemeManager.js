@@ -54,6 +54,22 @@ function applyTheme(theme) {
     }
 
     console.log('HTML classes:', htmlElement.className);
+
+    // Trigger snowflakes update for winter theme
+    if (theme === THEMES.WINTER) {
+        // Delay to ensure DOM is ready
+        setTimeout(() => {
+            import('./Snowflakes.js').then(module => {
+                module.createSnowflakes();
+            });
+        }, 100);
+    } else {
+        // Remove snowflakes if switching away from winter
+        const container = document.getElementById('snowflake-container');
+        if (container) {
+            container.remove();
+        }
+    }
 }
 
 /**
