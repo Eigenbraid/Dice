@@ -463,6 +463,41 @@
             }
 
             /**
+             * Roll a single exploding die and return breakdown
+             */
+            function rollExplodingDie(diceType, explodingMode) {
+                const breakdown = [];
+                let total = 0;
+                let roll = rollSingleDie(diceType);
+
+                breakdown.push(roll);
+                total += roll;
+
+                // Check for explosions
+                if (explodingMode === 'standard') {
+                    // Explode only once
+                    if (roll === diceType) {
+                        roll = rollSingleDie(diceType);
+                        breakdown.push(roll);
+                        total += roll;
+                    }
+                } else {
+                    // Compound mode - keep exploding
+                    while (roll === diceType) {
+                        roll = rollSingleDie(diceType);
+                        breakdown.push(roll);
+                        total += roll;
+                    }
+                }
+
+                return {
+                    value: total,
+                    display: breakdown.join('+'),
+                    breakdown: breakdown
+                };
+            }
+
+            /**
              * Perform a single roll with all modifiers
              */
             function performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
@@ -472,13 +507,10 @@
 
                 // Roll dice with or without exploding
                 if (explodingEnabled) {
-                    const result = rollExploding(numDice, diceType, explodingMode);
-                    // Convert to display format
-                    rolls = result.rolls.map(value => ({
-                        value: value,
-                        display: String(value),
-                        breakdown: [value]
-                    }));
+                    rolls = [];
+                    for (let i = 0; i < numDice; i++) {
+                        rolls.push(rollExplodingDie(diceType, explodingMode));
+                    }
                 } else {
                     rolls = [];
                     for (let i = 0; i < numDice; i++) {
@@ -573,7 +605,9 @@
                 }
 
                 if (dropEnabled && result.droppedRolls.length > 0) {
-                    diceText += `<br>→ keep [${result.keptRolls.map(r => r.display).join(', ')}]`;
+                    // Sort kept rolls from highest to lowest for display
+                    const sortedKept = [...result.keptRolls].sort((a, b) => b.value - a.value);
+                    diceText += `<br>→ keep [${sortedKept.map(r => r.display).join(', ')}]`;
                 }
 
                 rollsResultDiv.innerHTML = diceText;
@@ -592,7 +626,9 @@
                     }
 
                     if (dropEnabled && otherResult.droppedRolls.length > 0) {
-                        discardedText += `<br>→ keep [${otherResult.keptRolls.map(r => r.display).join(', ')}]`;
+                        // Sort kept rolls from highest to lowest for display
+                        const sortedKept = [...otherResult.keptRolls].sort((a, b) => b.value - a.value);
+                        discardedText += `<br>→ keep [${sortedKept.map(r => r.display).join(', ')}]`;
                     }
 
                     discardedResultDiv.innerHTML = discardedText;
@@ -655,6 +691,9 @@
                     lines.push(`Rolls: [${result.rolls.map(r => r.display).join(', ')}]`);
                     if (dropEnabled && result.droppedRolls.length > 0) {
                         lines.push(`Dropped: [${result.droppedRolls.map(r => r.display).join(', ')}]`);
+                        // Sort kept rolls from highest to lowest
+                        const sortedKept = [...result.keptRolls].sort((a, b) => b.value - a.value);
+                        lines.push(`Kept: [${sortedKept.map(r => r.display).join(', ')}]`);
                     }
                     if (successCountEnabled) {
                         lines.push(`${result.successCount} successes`);
