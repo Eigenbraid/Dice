@@ -492,7 +492,7 @@ body.stars-theme {
 }
 
 /* Stars theme: top-to-bottom gradient instead of diagonal */
-body.stars-theme {
+html.stars-theme body {
     background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%) !important;
 }
 
