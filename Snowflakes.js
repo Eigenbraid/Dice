@@ -30,6 +30,12 @@ function createSeasonalEffects() {
  * Creates the container for seasonal effects
  */
 function createEffectsContainer() {
+    // Guard: make sure body exists
+    if (!document.body) {
+        console.warn('createEffectsContainer called but document.body does not exist yet');
+        return null;
+    }
+
     const container = document.createElement('div');
     container.id = 'seasonal-effects-container';
     container.style.cssText = `
@@ -51,6 +57,8 @@ function createEffectsContainer() {
  */
 function createWinterSnowflakes() {
     const container = createEffectsContainer();
+    if (!container) return; // Body doesn't exist yet
+
     const snowflakeCount = 30;
 
     for (let i = 0; i < snowflakeCount; i++) {
@@ -93,6 +101,8 @@ function createWinterSnowflakes() {
  */
 function createAutumnLeaves() {
     const container = createEffectsContainer();
+    if (!container) return; // Body doesn't exist yet
+
     const leafCount = 20;
     const leafTypes = ['🍂', '🍃'];
 
@@ -134,6 +144,8 @@ function createAutumnLeaves() {
  */
 function createSpringRain() {
     const container = createEffectsContainer();
+    if (!container) return; // Body doesn't exist yet
+
     const dropCount = 40;
 
     for (let i = 0; i < dropCount; i++) {
