@@ -178,17 +178,17 @@ describe('rollSingleExplodingDie', () => {
         mockRandom.mockRestore();
     });
 
-    it('explodes once in standard mode when rolling max', () => {
+    it('explodes only once in standard mode when rolling max', () => {
         const mockRandom = vi.spyOn(Math, 'random');
-        // First roll: 6 (max), second roll: 4
+        // First roll: 6 (max), second roll: 6 (max)
         mockRandom.mockReturnValueOnce(0.99); // 6
-        mockRandom.mockReturnValueOnce(0.5);  // 4
+        mockRandom.mockReturnValueOnce(0.99);  // 6
 
         const result = rollSingleExplodingDie(6, 'standard');
 
-        expect(result.breakdown).toEqual([6, 4]);
-        expect(result.value).toBe(10);
-        expect(result.display).toBe('6+4');
+        expect(result.breakdown).toEqual([6, 6]);
+        expect(result.value).toBe(12);
+        expect(result.display).toBe('6+6');
 
         mockRandom.mockRestore();
     });

@@ -14,3 +14,6 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Local notes
+_local.md

@@ -139,8 +139,6 @@ Dice/
 │   ├── README.md               # Project overview & quick start
 │   ├── ARCHITECTURE.md         # This file - architecture & development
 │   └── CLAUDE.md               # Guide for AI assistants
-└── Deprecated
-    └── CustomRoller.js         # ⚠️ DEPRECATED - Legacy code, do not use
 ```
 
 ## Notes
