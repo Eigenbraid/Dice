@@ -185,24 +185,47 @@ function createSpringRain() {
 
 /**
  * Creates twinkling stars for the stars theme
+ * Uses a grid-based approach for more even distribution
  */
 function createStars() {
     const container = createEffectsContainer();
     if (!container) return; // Body doesn't exist yet
 
-    const starCount = 60;
+    const starCount = 120;
+    const gridCols = 12;
+    const gridRows = 10;
+    const cellWidth = 100 / gridCols;
+    const cellHeight = 85 / gridRows; // Spread across top 85% of screen
 
-    for (let i = 0; i < starCount; i++) {
+    // Create array of all grid cells
+    const cells = [];
+    for (let row = 0; row < gridRows; row++) {
+        for (let col = 0; col < gridCols; col++) {
+            cells.push({ row, col });
+        }
+    }
+
+    // Shuffle cells to randomize which ones get stars
+    for (let i = cells.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cells[i], cells[j]] = [cells[j], cells[i]];
+    }
+
+    // Place stars in first starCount cells
+    for (let i = 0; i < Math.min(starCount, cells.length); i++) {
+        const cell = cells[i];
         const element = document.createElement('div');
         element.className = 'seasonal-effect star';
         element.textContent = '⭐';
 
-        // Random properties
-        const startPositionX = Math.random() * 100;
-        const startPositionY = Math.random() * 85; // Spread across top 85% of screen
+        // Random position within the cell (with some padding from edges)
+        const padding = 0.15; // 15% padding within each cell
+        const startPositionX = cell.col * cellWidth + cellWidth * (padding + Math.random() * (1 - 2 * padding));
+        const startPositionY = cell.row * cellHeight + cellHeight * (padding + Math.random() * (1 - 2 * padding));
+
         const duration = 2 + Math.random() * 4; // 2-6 seconds twinkle cycle
         const delay = Math.random() * -6; // Stagger the start
-        const size = 0.4 + Math.random() * 1.0; // Varying star sizes
+        const size = 0.5 + Math.random() * 0.6; // Smaller size range: 0.5-1.1em
         const opacity = 0.4 + Math.random() * 0.6; // Base opacity 0.4-1.0
 
         element.style.cssText = `
