@@ -10,7 +10,7 @@
         // Apply theme immediately to prevent flash of unstyled content
         (function() {
             const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
-            if (theme && theme !== 'autumn') {
+            if (theme) {
                 document.documentElement.classList.add(theme + '-theme');
             }
         })();
@@ -330,6 +330,10 @@
         import { performThreeCardSpread, formatTarotCard, getCardImagePath, getCardMeaning } from './Tarot.js';
         import { createComplexHistoryEntry, addToHistory } from './HistoryLog.js';
         import { addThemeSelector } from './ThemeManager.js';
+        import { createSeasonalEffects } from './Snowflakes.js';
+
+        // Make createSeasonalEffects available globally for the animated checkbox
+        window.createSeasonalEffects = createSeasonalEffects;
 
         // Add theme selector to the page
         addThemeSelector();

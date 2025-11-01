@@ -10,7 +10,7 @@
         // Apply theme immediately to prevent flash of unstyled content
         (function() {
             const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
-            if (theme && theme !== 'autumn') {
+            if (theme) {
                 document.documentElement.classList.add(theme + '-theme');
             }
         })();
@@ -120,6 +120,10 @@
         import { rollBladesDice, getOutcomeColor } from './Blades.js';
         import { createHistoryEntry, addToHistory } from './HistoryLog.js';
         import { addThemeSelector } from './ThemeManager.js';
+        import { createSeasonalEffects } from './Snowflakes.js';
+
+        // Make createSeasonalEffects available globally for the animated checkbox
+        window.createSeasonalEffects = createSeasonalEffects;
 
         // Blades in the Dark Dice Roller
         document.addEventListener('DOMContentLoaded', function() {
