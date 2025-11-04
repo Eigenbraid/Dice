@@ -1,0 +1,25 @@
+{
+  "name": "name-generator",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SQLite-powered random name generation tool with hierarchical tagging",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.0.6",
+    "jsdom": "^27.1.0",
+    "sql.js": "^1.8.0",
+    "vitest": "^4.0.6"
+  },
+  "keywords": [
+    "name-generator",
+    "sqlite",
+    "random-names",
+    "rpg"
+  ],
+  "author": "",
+  "license": "MIT"
+}

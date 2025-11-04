@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Viewer</title>
+    <link rel="icon" type="image/x-icon" href="odd_turnip.ico">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Page-specific styles */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        thead {
+            background: #667eea;
+            color: white;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:hover {
+            background: #f8f9ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .null-value {
+            color: #999;
+            font-style: italic;
+        }
+
+        .tag-cell {
+            font-size: 0.85em;
+            color: #555;
+        }
+
+        .tag-cell:empty::before {
+            content: '—';
+            color: #ccc;
+        }
+
+        .filters {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-group select {
+            padding: 8px 12px;
+            font-size: 0.95em;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-group select:hover {
+            border-color: #764ba2;
+        }
+
+        .filter-group select:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Table styles */
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            background: #5568d3;
+        }
+
+        th.sortable::after {
+            content: ' ↕';
+            opacity: 0.3;
+            font-size: 0.9em;
+        }
+
+        th.sorted-asc::after {
+            content: ' ↑';
+            opacity: 1;
+        }
+
+        th.sorted-desc::after {
+            content: ' ↓';
+            opacity: 1;
+        }
+
+        /* Responsive overrides */
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="home-button">Home</a>
+            <h1>📊 Database Viewer</h1>
+            <p>Review all entries in the SQLite Database</p>
+        </header>
+
+        <div class="content">
+            <div id="status" class="status loading">
+                Loading database...
+            </div>
+
+            <div id="stats" class="stats" style="display: none;"></div>
+
+            <div class="filters" style="display: none;" id="filters">
+                <div class="filter-group">
+                    <label for="positionFilter">Position:</label>
+                    <select id="positionFilter">
+                        <option value="">All Positions</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="genderFilter">Gender:</label>
+                    <select id="genderFilter">
+                        <option value="">All Genders</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="sourceFilter">Source:</label>
+                    <select id="sourceFilter">
+                        <option value="">All Sources</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="resultsCount" style="display: none; margin: 20px 0; padding: 15px; background: #f8f9ff; border-radius: 8px; text-align: center; font-size: 1.1em; font-weight: 600; color: #667eea;">
+            </div>
+
+            <div class="table-container">
+                <table id="namesTable" style="display: none;">
+                    <thead>
+                        <tr id="tableHeaders"></tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div>Powered by SQL.js | Name Generator Database</div>
+            <a href="https://www.oddturnip.com" target="_blank" class="oddturnip-link">
+                <img src="odd_turnip.png" alt="OddTurnip Logo">
+                <span>OddTurnip.com</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script src="DataAccess.js"></script>
+    <script>
+        // Use the centralized DataAccess module
+        const DB = window.NameGeneratorDB;
+        let currentData = { columns: [], rows: [] };
+        let currentSort = { column: null, direction: 'asc' };
+
+        /**
+         * Build query using the DataAccess module.
+         * @returns {string} SQL query string
+         */
+        function buildQuery() {
+            const positionFilter = document.getElementById('positionFilter').value;
+            const genderFilter = document.getElementById('genderFilter').value;
+            const sourceFilter = document.getElementById('sourceFilter').value;
+
+            // Use the centralized query builder!
+            return DB.buildNameViewerQuery({
+                position: positionFilter || undefined,
+                gender: genderFilter || undefined,
+                source: sourceFilter || undefined
+            });
+        }
+
+        function displayTable() {
+            const headersEl = document.getElementById('tableHeaders');
+            const bodyEl = document.getElementById('tableBody');
+            const tableEl = document.getElementById('namesTable');
+            const tagColumns = ['sources', 'vibes', 'themes'];
+
+            // Display headers with sortable class
+            headersEl.innerHTML = currentData.columns.map((col, index) => {
+                let className = 'sortable';
+                if (currentSort.column === index) {
+                    className += currentSort.direction === 'asc' ? ' sorted-asc' : ' sorted-desc';
+                }
+                return `<th class="${className}" data-column="${index}">${col}</th>`;
+            }).join('');
+
+            // Add click handlers to headers
+            headersEl.querySelectorAll('th').forEach(th => {
+                th.addEventListener('click', () => {
+                    const columnIndex = parseInt(th.getAttribute('data-column'));
+                    sortByColumn(columnIndex);
+                });
+            });
+
+            // Display rows
+            bodyEl.innerHTML = currentData.rows.map(row => {
+                return '<tr>' + row.map((cell, index) => {
+                    const colName = currentData.columns[index];
+                    const isTagColumn = tagColumns.includes(colName);
+
+                    if (cell === null || cell === '') {
+                        if (isTagColumn) {
+                            return '<td class="tag-cell"></td>';
+                        }
+                        return '<td class="null-value">NULL</td>';
+                    }
+
+                    if (isTagColumn) {
+                        return `<td class="tag-cell">${cell}</td>`;
+                    }
+
+                    return `<td>${cell}</td>`;
+                }).join('') + '</tr>';
+            }).join('');
+
+            tableEl.style.display = 'table';
+        }
+
+        function sortByColumn(columnIndex) {
+            // Toggle sort direction if clicking the same column
+            if (currentSort.column === columnIndex) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = columnIndex;
+                currentSort.direction = 'asc';
+            }
+
+            // Sort the rows
+            currentData.rows.sort((a, b) => {
+                let valA = a[columnIndex];
+                let valB = b[columnIndex];
+
+                // Handle nulls
+                if (valA === null || valA === '') valA = '';
+                if (valB === null || valB === '') valB = '';
+
+                // Try numeric comparison for numeric-looking values
+                const numA = parseFloat(valA);
+                const numB = parseFloat(valB);
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    return currentSort.direction === 'asc' ? numA - numB : numB - numA;
+                }
+
+                // String comparison
+                const comparison = String(valA).localeCompare(String(valB));
+                return currentSort.direction === 'asc' ? comparison : -comparison;
+            });
+
+            displayTable();
+        }
+
+        async function loadNames() {
+            const statusEl = document.getElementById('status');
+            const resultsCountEl = document.getElementById('resultsCount');
+            const db = DB.getDatabase();
+
+            try {
+                statusEl.textContent = 'Querying names...';
+                const query = buildQuery();
+                const result = db.exec(query);
+
+                if (result.length === 0 || result[0].values.length === 0) {
+                    statusEl.className = 'status';
+                    statusEl.textContent = 'No names found matching the filters.';
+                    currentData = { columns: [], rows: [] };
+                    document.getElementById('tableBody').innerHTML = '';
+                    resultsCountEl.textContent = 'No results match the current filters';
+                    resultsCountEl.style.display = 'block';
+                    return;
+                }
+
+                // Store the data
+                currentData = {
+                    columns: result[0].columns,
+                    rows: result[0].values
+                };
+
+                // Reset sort
+                currentSort = { column: null, direction: 'asc' };
+
+                displayTable();
+
+                // Update status
+                statusEl.className = 'status success';
+                statusEl.textContent = `✓ Successfully loaded ${currentData.rows.length} names from the database!`;
+
+                // Update results count
+                const count = currentData.rows.length;
+                resultsCountEl.textContent = `Showing ${count} ${count === 1 ? 'name' : 'names'}`;
+                resultsCountEl.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading names:', error);
+                statusEl.className = 'status error';
+                statusEl.textContent = `✗ Error loading names: ${error.message}`;
+                document.getElementById('resultsCount').style.display = 'none';
+            }
+        }
+
+        async function loadDatabase() {
+            const statusEl = document.getElementById('status');
+            const statsEl = document.getElementById('stats');
+            const filtersEl = document.getElementById('filters');
+
+            try {
+                // Initialize database using DataAccess module
+                statusEl.textContent = 'Initializing SQL.js...';
+                await DB.initDatabase('names.db');
+                const db = DB.getDatabase();
+
+                // Get database stats using DataAccess module
+                statusEl.textContent = 'Loading database statistics...';
+                const stats = DB.getDatabaseStats();
+
+                // Display stats
+                statsEl.innerHTML = `
+                    <div class="stat-card">
+                        <div class="number">${stats.names}</div>
+                        <div class="label">Names</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">${stats.sources}</div>
+                        <div class="label">Sources</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">${stats.otherTags}</div>
+                        <div class="label">Other Tags</div>
+                    </div>
+                `;
+                statsEl.style.display = 'grid';
+
+                // Populate position filter using DataAccess module
+                const positionFilter = document.getElementById('positionFilter');
+                const positions = DB.getPositions();
+                positions.forEach(position => {
+                    const option = document.createElement('option');
+                    option.value = position;
+                    option.textContent = position;
+                    positionFilter.appendChild(option);
+                });
+
+                // Populate gender filter using DataAccess module
+                const genderFilter = document.getElementById('genderFilter');
+                const genders = DB.getGenders();
+                genders.forEach(gender => {
+                    const option = document.createElement('option');
+                    option.value = gender;
+                    option.textContent = gender;
+                    genderFilter.appendChild(option);
+                });
+
+                // Populate source filter with hierarchical display using DataAccess module
+                const sourceFilter = document.getElementById('sourceFilter');
+
+                // Add orphaned records option
+                const orphanedOption = document.createElement('option');
+                orphanedOption.value = '__ORPHANED__';
+                orphanedOption.textContent = 'Orphaned (No Source)';
+                sourceFilter.appendChild(orphanedOption);
+
+                const sourceTags = DB.getSourceTags();
+                sourceTags.forEach(tag => {
+                    const option = document.createElement('option');
+                    option.value = tag.name;
+                    // Indent child tags with a visual indicator
+                    option.textContent = tag.parentId ? `  └─ ${tag.name}` : tag.name;
+                    sourceFilter.appendChild(option);
+                });
+
+                // Add filter change listeners
+                positionFilter.addEventListener('change', loadNames);
+                genderFilter.addEventListener('change', loadNames);
+                sourceFilter.addEventListener('change', loadNames);
+
+                // Show filters
+                filtersEl.style.display = 'flex';
+
+                // Load initial data
+                await loadNames();
+
+            } catch (error) {
+                console.error('Error loading database:', error);
+                statusEl.className = 'status error';
+                statusEl.textContent = `✗ Error loading database: ${error.message}`;
+            }
+        }
+
+        // Load database when page loads
+        window.addEventListener('DOMContentLoaded', loadDatabase);
+    </script>
+</body>
+</html>
