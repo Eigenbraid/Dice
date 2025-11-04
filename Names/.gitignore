@@ -1,0 +1,16 @@
+# Node modules
+node_modules/
+
+# Test coverage
+coverage/
+
+# Vitest cache
+.vitest/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

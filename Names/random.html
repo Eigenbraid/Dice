@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name Generator</title>
+    <link rel="icon" type="image/x-icon" href="odd_turnip.ico">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Page-specific styles */
+        .container {
+            max-width: 800px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .results-header {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .names-list {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+        }
+
+        .name-item {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            color: #333;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .name-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .nav-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        .gender-filters {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 6px;
+        }
+
+        .gender-filters label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .gender-checkboxes {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-weight: normal;
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+
+        .source-filters {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 6px;
+        }
+
+        .source-filters > label {
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .source-dropdown {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .source-dropdown-button {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 1em;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .source-dropdown-button span {
+            color: #333;
+        }
+
+        .source-dropdown-button:hover {
+            border-color: #764ba2;
+        }
+
+        .source-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            margin-top: 5px;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .source-dropdown-content.show {
+            display: block;
+        }
+
+        .source-checkbox-group {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .source-checkbox-group:hover {
+            background-color: #f8f9ff;
+        }
+
+        .source-checkbox-group.indented {
+            padding-left: 30px;
+        }
+
+        .source-checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        /* Make indeterminate state more visible */
+        .source-checkbox-group input[type="checkbox"]:indeterminate {
+            opacity: 0.7;
+        }
+
+        .source-checkbox-group label {
+            cursor: pointer;
+            margin: 0;
+            flex: 1;
+            font-size: 0.95em;
+            user-select: none;
+        }
+
+        .source-actions {
+            padding: 10px 12px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            background: #f8f9ff;
+        }
+
+        .source-action-btn {
+            flex: 1;
+            padding: 6px 12px;
+            font-size: 0.9em;
+            border: 1px solid #667eea;
+            border-radius: 4px;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .source-action-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .generate-button-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        /* Responsive overrides */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="home-button">Home</a>
+            <h1>🎲 Name Generator</h1>
+            <p>Generate random full names from the database</p>
+        </header>
+
+        <div class="content">
+            <div class="controls" style="display: none;" id="controls">
+                <div class="control-group">
+                    <label for="quantity">Number of names:</label>
+                    <select id="quantity">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3" selected>3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="nicknameFreq">Nickname:</label>
+                    <select id="nicknameFreq">
+                        <option value="0">Never</option>
+                        <option value="0.10">10%</option>
+                        <option value="0.25" selected>25%</option>
+                        <option value="0.50">50%</option>
+                        <option value="1.0">Always</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="titleFreq">Title:</label>
+                    <select id="titleFreq">
+                        <option value="0">Never</option>
+                        <option value="0.10" selected>10%</option>
+                        <option value="0.25">25%</option>
+                        <option value="0.50">50%</option>
+                        <option value="1.0">Always</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="source-filters" style="display: none;" id="sourceFilters">
+                <label>Select Sources:</label>
+                <div class="source-dropdown">
+                    <button type="button" class="source-dropdown-button" id="sourceDropdownBtn">
+                        <span id="sourceDropdownText">Select Sources (all)</span>
+                        <span>▼</span>
+                    </button>
+                    <div class="source-dropdown-content" id="sourceDropdownContent"></div>
+                </div>
+            </div>
+
+            <div class="gender-filters" style="display: none;" id="genderFilters">
+                <label>Select Genders:</label>
+                <div class="gender-checkboxes">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="genderMale" value="male" checked>
+                        <label for="genderMale">Male</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="genderFemale" value="female" checked>
+                        <label for="genderFemale">Female</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="genderAmbiguous" value="ambiguous" checked>
+                        <label for="genderAmbiguous">Ambiguous</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="genderQueer" value="queer" checked>
+                        <label for="genderQueer">Queer</label>
+                    </div>
+                </div>
+                <div style="margin-top: 8px; font-size: 0.85em; color: #666;">
+                    Note: "Any" gender names are always included
+                </div>
+                <div class="generate-button-container">
+                    <button id="generateBtn">Generate Names</button>
+                </div>
+            </div>
+
+            <div id="status" class="status loading">
+                Loading database...
+            </div>
+
+            <div id="results" class="results" style="display: none;">
+                <div class="results-header">Generated Names</div>
+                <ul id="namesList" class="names-list"></ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div>Powered by SQL.js | Name Generator Database</div>
+            <a href="https://www.oddturnip.com" target="_blank" class="oddturnip-link">
+                <img src="odd_turnip.png" alt="OddTurnip Logo">
+                <span>OddTurnip.com</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script src="DataAccess.js"></script>
+    <script>
+        // Use the centralized DataAccess module
+        const DB = window.NameGeneratorDB;
+
+        async function loadDatabase() {
+            const statusEl = document.getElementById('status');
+            const controlsEl = document.getElementById('controls');
+            const genderFiltersEl = document.getElementById('genderFilters');
+
+            try {
+                // Initialize database using DataAccess module
+                statusEl.textContent = 'Initializing SQL.js...';
+                await DB.initDatabase('names.db');
+
+                // Populate source filter
+                populateSourceFilter();
+
+                // Update status
+                statusEl.className = 'status success';
+                statusEl.textContent = '✓ Database loaded! Select genders and click "Generate Names" to create random names.';
+
+                // Show controls and filters
+                controlsEl.style.display = 'flex';
+                document.getElementById('sourceFilters').style.display = 'block';
+                genderFiltersEl.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading database:', error);
+                statusEl.className = 'status error';
+                statusEl.textContent = `✗ Error loading database: ${error.message}`;
+            }
+        }
+
+        /**
+         * Update parent checkbox state based on its children.
+         * - All children checked → parent checked
+         * - No children checked → parent unchecked
+         * - Some children checked → parent indeterminate
+         */
+        function updateParentCheckboxState(parentId) {
+            const parentCheckbox = document.getElementById(`source_${parentId}`);
+            if (!parentCheckbox) return;
+
+            // Find all child checkboxes
+            const childCheckboxes = Array.from(document.querySelectorAll(`input[data-parent-id="${parentId}"]`));
+            if (childCheckboxes.length === 0) return;
+
+            const checkedChildren = childCheckboxes.filter(cb => cb.checked).length;
+
+            if (checkedChildren === 0) {
+                // No children checked
+                parentCheckbox.checked = false;
+                parentCheckbox.indeterminate = false;
+            } else if (checkedChildren === childCheckboxes.length) {
+                // All children checked
+                parentCheckbox.checked = true;
+                parentCheckbox.indeterminate = false;
+            } else {
+                // Some children checked
+                parentCheckbox.checked = false;
+                parentCheckbox.indeterminate = true;
+            }
+        }
+
+        /**
+         * Handle checkbox change with hierarchical behavior.
+         */
+        function handleCheckboxChange(checkbox) {
+            const tagId = checkbox.id.replace('source_', '');
+            const isParent = checkbox.hasAttribute('data-is-parent');
+            const parentId = checkbox.getAttribute('data-parent-id');
+
+            if (isParent) {
+                // Parent changed: update all children to match
+                const childCheckboxes = document.querySelectorAll(`input[data-parent-id="${tagId}"]`);
+                childCheckboxes.forEach(child => {
+                    child.checked = checkbox.checked;
+                });
+                // Clear indeterminate state when explicitly checking/unchecking
+                checkbox.indeterminate = false;
+            }
+
+            if (parentId) {
+                // Child changed: update parent state
+                updateParentCheckboxState(parentId);
+            }
+
+            updateSourceDropdownText();
+        }
+
+        function populateSourceFilter() {
+            const sourceDropdownContent = document.getElementById('sourceDropdownContent');
+            const db = DB.getDatabase();
+
+            // Get source tags using DataAccess module
+            const allTags = DB.getSourceTags();
+
+            // Filter out sources with insufficient names for generation
+            // We need at least 1 first name and 1 last name to generate names
+            // For parent tags, include children in the count (e.g., "Blades In The Dark" has 0 direct entries but children do)
+            const viableTags = allTags.filter(tag => {
+                const firstCount = DB.countNamesIncludingChildren('first', ['male', 'female', 'ambiguous', 'queer', 'any'], tag.id);
+                const lastCount = DB.countNamesIncludingChildren('last', ['male', 'female', 'ambiguous', 'queer', 'any'], tag.id);
+                return firstCount > 0 && lastCount > 0;
+            });
+
+            // Track which tags are parents (have children in the viable list)
+            const parentIds = new Set(viableTags.filter(t => t.parentId).map(t => t.parentId));
+
+            viableTags.forEach(tag => {
+                const div = document.createElement('div');
+                div.className = tag.parentId ? 'source-checkbox-group indented' : 'source-checkbox-group';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `source_${tag.id}`;
+                checkbox.value = tag.name;
+                checkbox.checked = true; // Default to checked
+
+                // Mark parent/child relationships for hierarchical behavior
+                if (parentIds.has(tag.id)) {
+                    checkbox.setAttribute('data-is-parent', 'true');
+                }
+                if (tag.parentId) {
+                    checkbox.setAttribute('data-parent-id', tag.parentId);
+                }
+
+                checkbox.addEventListener('change', (e) => handleCheckboxChange(e.target));
+
+                const label = document.createElement('label');
+                label.htmlFor = `source_${tag.id}`;
+                label.textContent = tag.name;
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+
+                // Make the whole div clickable (except when clicking directly on checkbox or label)
+                div.addEventListener('click', (e) => {
+                    if (e.target === div) {
+                        checkbox.checked = !checkbox.checked;
+                        handleCheckboxChange(checkbox);
+                    }
+                });
+
+                sourceDropdownContent.appendChild(div);
+            });
+
+            // Add Select All / Deselect All buttons
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'source-actions';
+
+            const selectAllBtn = document.createElement('button');
+            selectAllBtn.type = 'button';
+            selectAllBtn.className = 'source-action-btn';
+            selectAllBtn.textContent = 'Select All';
+            selectAllBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('#sourceDropdownContent input[type="checkbox"]').forEach(cb => {
+                    cb.checked = true;
+                    cb.indeterminate = false; // Clear indeterminate state
+                });
+                updateSourceDropdownText();
+            });
+
+            const deselectAllBtn = document.createElement('button');
+            deselectAllBtn.type = 'button';
+            deselectAllBtn.className = 'source-action-btn';
+            deselectAllBtn.textContent = 'Deselect All';
+            deselectAllBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('#sourceDropdownContent input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                    cb.indeterminate = false; // Clear indeterminate state
+                });
+                updateSourceDropdownText();
+            });
+
+            actionsDiv.appendChild(selectAllBtn);
+            actionsDiv.appendChild(deselectAllBtn);
+            sourceDropdownContent.appendChild(actionsDiv);
+
+            // Update the button text initially (all are checked by default)
+            updateSourceDropdownText();
+
+            // Setup dropdown toggle
+            const dropdownBtn = document.getElementById('sourceDropdownBtn');
+            dropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sourceDropdownContent.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.source-dropdown')) {
+                    sourceDropdownContent.classList.remove('show');
+                }
+            });
+        }
+
+        function updateSourceDropdownText() {
+            const allCheckboxes = document.querySelectorAll('#sourceDropdownContent input[type="checkbox"]');
+            const checkedCheckboxes = document.querySelectorAll('#sourceDropdownContent input[type="checkbox"]:checked');
+            const text = document.getElementById('sourceDropdownText');
+
+            if (!text) return; // Safety check
+
+            const totalCount = allCheckboxes.length;
+            const checkedCount = checkedCheckboxes.length;
+
+            if (checkedCount === 0) {
+                text.textContent = 'Select Sources (0)';
+            } else if (checkedCount === totalCount) {
+                text.textContent = 'Select Sources (all)';
+            } else {
+                text.textContent = `Select Sources (${checkedCount})`;
+            }
+        }
+
+        /**
+         * Get selected source names from the UI.
+         * @returns {string[]} Array of selected source tag names
+         */
+        function getSelectedSources() {
+            const checkboxes = document.querySelectorAll('#sourceDropdownContent input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        /**
+         * Get selected genders from the UI.
+         * Always includes 'any' gender.
+         * @returns {string[]} Array of selected gender names
+         */
+        function getSelectedGenders() {
+            const genders = ['any']; // Always include 'any'
+
+            if (document.getElementById('genderMale').checked) {
+                genders.push('male');
+            }
+            if (document.getElementById('genderFemale').checked) {
+                genders.push('female');
+            }
+            if (document.getElementById('genderAmbiguous').checked) {
+                genders.push('ambiguous');
+            }
+            if (document.getElementById('genderQueer').checked) {
+                genders.push('queer');
+            }
+
+            return genders;
+        }
+
+        /**
+         * Generate a random name using the DataAccess module.
+         * Much simpler than the old inline version!
+         * @returns {string} Generated full name
+         */
+        function generateRandomName() {
+            // Get UI selections
+            const selectedGenders = getSelectedGenders();
+            const selectedSources = getSelectedSources();
+            const nicknameFrequency = parseFloat(document.getElementById('nicknameFreq').value);
+            const titleFrequency = parseFloat(document.getElementById('titleFreq').value);
+
+            // Use the DataAccess module to generate the name
+            // All the complex logic is now centralized!
+            return DB.generateRandomName({
+                genders: selectedGenders,
+                sourceNames: selectedSources,
+                nicknameFrequency,
+                titleFrequency
+            });
+        }
+
+        function generateNames() {
+            if (!DB.getDatabase()) {
+                alert('Database not loaded yet!');
+                return;
+            }
+
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const resultsEl = document.getElementById('results');
+            const namesListEl = document.getElementById('namesList');
+
+            try {
+                // Generate the requested number of names
+                const names = [];
+                for (let i = 0; i < quantity; i++) {
+                    names.push(generateRandomName());
+                }
+
+                // Display results
+                namesListEl.innerHTML = names.map(name =>
+                    `<li class="name-item">${name}</li>`
+                ).join('');
+
+                resultsEl.style.display = 'block';
+
+                // Update status
+                const statusEl = document.getElementById('status');
+                statusEl.className = 'status success';
+                statusEl.textContent = `✓ Generated ${quantity} random name${quantity > 1 ? 's' : ''}!`;
+
+            } catch (error) {
+                console.error('Error generating names:', error);
+                const statusEl = document.getElementById('status');
+                statusEl.className = 'status error';
+                statusEl.textContent = `✗ Error generating names: ${error.message}`;
+            }
+        }
+
+        // Event listeners
+        document.getElementById('generateBtn').addEventListener('click', generateNames);
+
+        // Load database when page loads
+        window.addEventListener('DOMContentLoaded', loadDatabase);
+    </script>
+</body>
+</html>
