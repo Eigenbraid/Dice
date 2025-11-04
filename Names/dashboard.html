@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="odd_turnip.ico">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Page-specific styles */
+        header {
+            padding: 40px 30px;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .status {
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .filter-section {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .filter-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .filter-checkbox label {
+            cursor: pointer;
+            font-size: 1.05em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .filter-criteria {
+            margin-left: 30px;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e0e7ff;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .dashboard-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .dashboard-table th:nth-child(2),
+        .dashboard-table th:nth-child(3),
+        .dashboard-table th:nth-child(4),
+        .dashboard-table th:nth-child(5),
+        .dashboard-table th:nth-child(6) {
+            text-align: center;
+        }
+
+        .dashboard-table tbody tr {
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s;
+        }
+
+        .dashboard-table tbody tr:hover {
+            background-color: #f8f9ff;
+        }
+
+        .dashboard-table tbody tr.low-stock {
+            background-color: #fff3cd;
+        }
+
+        .dashboard-table tbody tr.low-stock:hover {
+            background-color: #ffe8a1;
+        }
+
+        .dashboard-table tbody tr.admin-entry {
+            background-color: #f0f0f0;
+        }
+
+        .dashboard-table tbody tr.admin-entry:hover {
+            background-color: #e8e8e8;
+        }
+
+        .dashboard-table td {
+            padding: 12px 15px;
+        }
+
+        .dashboard-table td:nth-child(2),
+        .dashboard-table td:nth-child(3),
+        .dashboard-table td:nth-child(4),
+        .dashboard-table td:nth-child(5),
+        .dashboard-table td:nth-child(6) {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .dashboard-table td.low {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .dashboard-table td.good {
+            color: #28a745;
+        }
+
+        .source-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .source-name.parent {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .source-name.child {
+            padding-left: 20px;
+            color: #666;
+        }
+
+        .source-name.child::before {
+            content: "└─ ";
+            color: #999;
+        }
+
+        .warning-badge {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .warning-badge.warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        /* Responsive overrides */
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+
+            .dashboard-table {
+                font-size: 0.9em;
+            }
+
+            .dashboard-table th,
+            .dashboard-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="home-button">Home</a>
+            <h1>📊 Source Dashboard</h1>
+            <p>View name availability by source</p>
+        </header>
+
+        <div class="content">
+            <div id="status" class="status loading">
+                Loading database...
+            </div>
+
+            <div id="summarySection" style="display: none;">
+                <div class="stats-summary">
+                    <div class="stat-card">
+                        <div class="number" id="totalFirstNames">0</div>
+                        <div class="label">First Names</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="totalLastNames">0</div>
+                        <div class="label">Last Names</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="totalNicknames">0</div>
+                        <div class="label">Nicknames</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="totalTitles">0</div>
+                        <div class="label">Titles</div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <div class="filter-checkbox" onclick="document.getElementById('lowStockFilter').click()">
+                        <input type="checkbox" id="lowStockFilter" onchange="applyFilter()" onclick="event.stopPropagation()">
+                        <label for="lowStockFilter" onclick="event.stopPropagation()">Show Only Undersupplied Sources</label>
+                    </div>
+                    <div class="filter-criteria" id="filterCriteria">
+                        <!-- Will be populated by JavaScript using shared constants -->
+                    </div>
+                </div>
+
+                <table class="dashboard-table" id="dashboardTable">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>First</th>
+                            <th>Last</th>
+                            <th>Nickname</th>
+                            <th>Title</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div>Powered by SQL.js | Name Generator Database</div>
+            <a href="https://www.oddturnip.com" target="_blank" class="oddturnip-link">
+                <img src="odd_turnip.png" alt="OddTurnip Logo">
+                <span>OddTurnip.com</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <script src="DataAccess.js"></script>
+    <script>
+        // Use the centralized DataAccess module
+        const DB = window.NameGeneratorDB;
+        let sourceData = [];
+
+        async function loadDatabase() {
+            const statusEl = document.getElementById('status');
+
+            try {
+                // Initialize database using DataAccess module
+                statusEl.textContent = 'Initializing SQL.js...';
+                await DB.initDatabase('names.db');
+
+                // Update filter criteria text with shared constants
+                document.getElementById('filterCriteria').textContent =
+                    `Undersupplied: <${DB.THRESHOLD_FIRST_NAMES} first OR <${DB.THRESHOLD_LAST_NAMES} last names`;
+
+                // Update summary with actual database totals (not sum of source associations)
+                updateSummary();
+
+                // Load source statistics
+                loadSourceStats();
+
+                // Update status
+                statusEl.className = 'status success';
+                statusEl.textContent = '✓ Dashboard loaded successfully!';
+                document.getElementById('summarySection').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading database:', error);
+                statusEl.className = 'status error';
+                statusEl.textContent = `✗ Error loading database: ${error.message}`;
+            }
+        }
+
+        function loadSourceStats() {
+            const db = DB.getDatabase();
+
+            // Use the centralized query builder
+            const query = DB.buildSourceStatsQuery();
+            const result = db.exec(query);
+
+            if (result.length > 0) {
+                sourceData = result[0].values
+                    .map(row => {
+                        const firstCount = row[4];
+                        const lastCount = row[5];
+                        const titleCount = row[6];
+                        const nicknameCount = row[7];
+                        const total = firstCount + lastCount + titleCount + nicknameCount;
+                        const name = row[1];
+
+                        // Check if this is an admin entry
+                        const isAdminEntry = name === 'Default' || name === 'Test Names' || name === 'Claude';
+
+                        // Use centralized undersupply logic with shared constants
+                        const isLowStock = DB.isUndersupplied(firstCount, lastCount, isAdminEntry);
+
+                        return {
+                            id: row[0],
+                            name: name,
+                            parentId: row[2],
+                            parentName: row[3],
+                            firstCount: firstCount,
+                            lastCount: lastCount,
+                            titleCount: titleCount,
+                            nicknameCount: nicknameCount,
+                            total: total,
+                            isLowStock: isLowStock,
+                            isAdminEntry: isAdminEntry
+                        };
+                    })
+                    .filter(source => source.total > 0); // Hide sources with 0 entries
+
+                updateSummary();
+                displayTable(sourceData);
+            }
+        }
+
+        /**
+         * Update summary cards with ACTUAL database totals (not sum of source associations).
+         *
+         * This prevents inflated totals when names are tagged with multiple sources.
+         * For example, if "Captain" is tagged with both "Default" and "Blades - Akoros",
+         * it should count as 1 title, not 2.
+         */
+        function updateSummary() {
+            const stats = DB.getDatabaseStats();
+
+            document.getElementById('totalFirstNames').textContent = stats.firstNames;
+            document.getElementById('totalLastNames').textContent = stats.lastNames;
+            document.getElementById('totalTitles').textContent = stats.titles;
+            document.getElementById('totalNicknames').textContent = stats.nicknames;
+        }
+
+        function displayTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(source => {
+                const row = document.createElement('tr');
+
+                // Apply admin entry styling (takes precedence over low-stock)
+                if (source.isAdminEntry) {
+                    row.classList.add('admin-entry');
+                } else if (source.isLowStock) {
+                    row.classList.add('low-stock');
+                }
+
+                const sourceNameClass = source.parentId ? 'source-name child' : 'source-name parent';
+                // Use shared constants for threshold checks
+                const firstClass = source.firstCount < DB.THRESHOLD_FIRST_NAMES ? 'low' : 'good';
+                const lastClass = source.lastCount < DB.THRESHOLD_LAST_NAMES ? 'low' : 'good';
+
+                let warningBadge = '';
+                if (source.isLowStock) {
+                    warningBadge = '<span class="warning-badge">!</span>';
+                }
+
+                row.innerHTML = `
+                    <td><span class="${sourceNameClass}">${source.name}</span>${warningBadge}</td>
+                    <td class="${firstClass}">${source.firstCount}</td>
+                    <td class="${lastClass}">${source.lastCount}</td>
+                    <td>${source.nicknameCount}</td>
+                    <td>${source.titleCount}</td>
+                    <td>${source.total}</td>
+                `;
+
+                tbody.appendChild(row);
+            });
+        }
+
+        function applyFilter() {
+            const filterChecked = document.getElementById('lowStockFilter').checked;
+
+            if (filterChecked) {
+                const filteredData = sourceData.filter(s => s.isLowStock);
+                displayTable(filteredData);
+            } else {
+                displayTable(sourceData);
+            }
+        }
+
+        // Load database on page load
+        window.addEventListener('DOMContentLoaded', loadDatabase);
+    </script>
+</body>
+</html>
