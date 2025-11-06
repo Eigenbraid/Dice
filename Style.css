@@ -535,7 +535,7 @@ body.gothic-theme {
     --error-border: #a82255 !important;
     --error-text: #ef5589 !important;
 
-    --fate-die-bg: #6a2c68 !important;
+    --fate-die-bg: #000000 !important;
 
     --scrollbar-track: #2a1a2a !important;
     --scrollbar-thumb: #8b4789 !important;
@@ -556,6 +556,18 @@ body.gothic-theme {
 /* Gothic theme: use background image */
 html.gothic-theme body {
     background: url('img/Background/gotham.png') center center / cover no-repeat fixed !important;
+}
+
+/* Gothic theme: dice styling with black background and yellow text */
+html.gothic-theme .fate-die {
+    background-color: #000000 !important;
+    color: #FFD700 !important;
+}
+
+html.gothic-theme .die {
+    background-color: #000000 !important;
+    color: #FFD700 !important;
+    border-color: #FFD700 !important;
 }
 
 /* ========================================
