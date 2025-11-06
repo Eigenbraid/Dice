@@ -18,9 +18,11 @@ Welcome! This guide helps AI assistants understand and work with the Dice Roller
 
 ### Code Organization
 - **Core libraries** (DiceLibrary.js, CardLibrary.js, HistoryLog.js) contain pure functions with no DOM dependencies
+  - DiceLibrary.js includes comprehensive functions: rollDiceWithModifiers(), rollWithAdvantage()
 - **Domain modules** (Fate.js, Blades.js, Tarot.js) implement specific game systems
 - **HTML files** use inline `<script type="module">` to import and orchestrate
-- **Comprehensive test suite** with 173 tests using Vitest
+- **Theme utilities** (ThemeManager.js, ThemeInit.js) handle theming without code duplication
+- **Comprehensive test suite** with 224 tests using Vitest
 
 ### Development Practices
 - **Test-driven**: All core modules have test coverage
@@ -30,15 +32,26 @@ Welcome! This guide helps AI assistants understand and work with the Dice Roller
 
 ### Deprecated Code
 - **CustomRoller.js** is deprecated - Do not use or reference
-- Custom.html has been refactored to use DiceLibrary.js instead
+- Custom.html has been fully refactored to use DiceLibrary.rollDiceWithModifiers() and rollWithAdvantage()
+  - All dice rolling logic now lives in DiceLibrary.js
+  - Custom.html UI layer only handles validation, display, and history
 
 ## When Making Changes
+
+### Key Architectural Principle
+**"DiceLibrary should have everything to do with actually rolling dice, and nothing to do with the DOM"**
+
+This principle applies to all core libraries:
+- Put ALL dice/card logic in the library modules (DiceLibrary.js, CardLibrary.js)
+- Keep ALL DOM manipulation in the HTML files
+- Use comprehensive orchestration functions (like rollDiceWithModifiers) instead of making UI code chain multiple library calls
 
 ### Adding New Features
 1. Add pure logic to appropriate library (DiceLibrary.js, CardLibrary.js, etc.)
 2. Write tests first (test-driven development)
 3. Update HTML files to use the new functions
 4. Ensure all themes work correctly (test dark/light themes especially)
+5. Consider if a comprehensive orchestration function would be useful (see rollDiceWithModifiers as example)
 
 ### Fixing Bugs
 1. Check if tests exist and are passing

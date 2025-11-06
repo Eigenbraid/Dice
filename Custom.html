@@ -6,21 +6,14 @@
     <title>Custom Dice Roller</title>
     <link rel="stylesheet" href="Style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script>
-        // Apply theme immediately to prevent flash of unstyled content
-        (function() {
-            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
-            if (theme) {
-                document.documentElement.classList.add(theme + '-theme');
-            }
-        })();
-    </script>
+    <!-- Apply theme immediately to prevent flash of unstyled content -->
+    <script src="ThemeInit.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Custom Dice Roller</h1>
-            <a href="Index.html" class="close-button" aria-label="Close">✕</a>
+            <a href="index.html" class="close-button" aria-label="Close">✕</a>
         </div>
 
         <div class="controls">
@@ -101,11 +94,19 @@
             <h2>Roll History</h2>
             <div id="rollHistory" class="roll-history"></div>
         </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <a href="https://www.oddturnip.com" target="_blank" rel="noopener noreferrer" class="oddturnip-link">
+                <img src="Names/odd_turnip.png" alt="OddTurnip Logo">
+                <span>OddTurnip.com</span>
+            </a>
+        </div>
     </div>
 
     <script type="module">
         // Import dice rolling logic
-        import { rollSingleDie, rollSingleExplodingDie, dropDice, countSuccesses } from './DiceLibrary.js';
+        import { rollDiceWithModifiers, rollWithAdvantage } from './DiceLibrary.js';
         import { addThemeSelector } from './ThemeManager.js';
         import { createSeasonalEffects } from './Snowflakes.js';
 
@@ -146,7 +147,7 @@
             rollButton.addEventListener('click', performRoll);
 
             // Also allow rolling with Enter key
-            document.addEventListener('keypress', function(event) {
+            document.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     performRoll();
                 }
@@ -419,130 +420,43 @@
                         successCountEnabled, successComparison, successThreshold,
                         dropEnabled, dropType, dropCount } = validation;
 
+                // Map UI comparison values to DiceLibrary format
+                const comparisonMap = {
+                    'atleast': '>=',
+                    'exactly': '==',
+                    'atmost': '<='
+                };
+
+                // Build roll options for DiceLibrary
+                const rollOptions = {
+                    numDice,
+                    diceType,
+                    exploding: explodingEnabled,
+                    explodingMode,
+                    drop: dropEnabled,
+                    dropType,
+                    dropCount,
+                    countSuccesses: successCountEnabled,
+                    successThreshold,
+                    successComparison: comparisonMap[successComparison]
+                };
+
                 // Perform roll(s)
                 if (rollMode === 'advantage' || rollMode === 'disadvantage') {
-                    const result1 = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
-                                                       dropEnabled, dropType, dropCount, successCountEnabled,
-                                                       successComparison, successThreshold);
-                    const result2 = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
-                                                       dropEnabled, dropType, dropCount, successCountEnabled,
-                                                       successComparison, successThreshold);
+                    // Use DiceLibrary's rollWithAdvantage function
+                    const result = rollWithAdvantage(rollMode, rollOptions);
 
-                    let chosenResult, otherResult;
-                    const compareValue = successCountEnabled ? 'successCount' : 'total';
-
-                    if (rollMode === 'advantage') {
-                        if (result1[compareValue] >= result2[compareValue]) {
-                            chosenResult = result1;
-                            otherResult = result2;
-                        } else {
-                            chosenResult = result2;
-                            otherResult = result1;
-                        }
-                    } else { // disadvantage
-                        if (result1[compareValue] <= result2[compareValue]) {
-                            chosenResult = result1;
-                            otherResult = result2;
-                        } else {
-                            chosenResult = result2;
-                            otherResult = result1;
-                        }
-                    }
-
-                    displayResult(chosenResult, successCountEnabled, successThreshold, successComparison, dropEnabled, otherResult);
-                    addToHistory(numDice, diceType, chosenResult, otherResult, rollMode, explodingEnabled,
+                    displayResult(result.chosenRoll, successCountEnabled, successThreshold, successComparison, dropEnabled, result.otherRoll);
+                    addToHistory(numDice, diceType, result.chosenRoll, result.otherRoll, rollMode, explodingEnabled,
                                 successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
                 } else {
-                    const result = performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
-                                                      dropEnabled, dropType, dropCount, successCountEnabled,
-                                                      successComparison, successThreshold);
+                    // Normal roll - use DiceLibrary's rollDiceWithModifiers
+                    const result = rollDiceWithModifiers(rollOptions);
+
                     displayResult(result, successCountEnabled, successThreshold, successComparison, dropEnabled, null);
                     addToHistory(numDice, diceType, result, null, rollMode, explodingEnabled,
                                 successCountEnabled, successComparison, successThreshold, dropEnabled, dropType, dropCount);
                 }
-            }
-
-            /**
-             * Perform a single roll with all modifiers
-             */
-            function performSingleRoll(numDice, diceType, explodingEnabled, explodingMode,
-                                      dropEnabled, dropType, dropCount, successCountEnabled,
-                                      successComparison, successThreshold) {
-                let rolls;
-
-                // Roll dice with or without exploding
-                if (explodingEnabled) {
-                    rolls = [];
-                    for (let i = 0; i < numDice; i++) {
-                        rolls.push(rollSingleExplodingDie(diceType, explodingMode));
-                    }
-                } else {
-                    rolls = [];
-                    for (let i = 0; i < numDice; i++) {
-                        const value = rollSingleDie(diceType);
-                        rolls.push({
-                            value: value,
-                            display: String(value),
-                            breakdown: [value]
-                        });
-                    }
-                }
-
-                let keptRolls = rolls;
-                let droppedRolls = [];
-
-                // Apply drop mechanic if enabled
-                if (dropEnabled) {
-                    const rollValues = rolls.map(r => r.value);
-                    const dropResult = dropDice(rollValues, dropCount, dropType);
-
-                    // Map back to roll objects
-                    const keptSet = new Set(dropResult.keptRolls);
-                    const droppedSet = new Set(dropResult.droppedRolls);
-                    keptRolls = [];
-                    droppedRolls = [];
-
-                    // Preserve order and handle duplicates
-                    const keptCopy = [...dropResult.keptRolls];
-                    const droppedCopy = [...dropResult.droppedRolls];
-
-                    for (const roll of rolls) {
-                        const keptIndex = keptCopy.indexOf(roll.value);
-                        const droppedIndex = droppedCopy.indexOf(roll.value);
-
-                        if (keptIndex !== -1) {
-                            keptRolls.push(roll);
-                            keptCopy.splice(keptIndex, 1);
-                        } else if (droppedIndex !== -1) {
-                            droppedRolls.push(roll);
-                            droppedCopy.splice(droppedIndex, 1);
-                        }
-                    }
-                }
-
-                // Calculate total
-                const total = keptRolls.reduce((sum, roll) => sum + roll.value, 0);
-
-                // Calculate success count if enabled
-                let successCount = 0;
-                if (successCountEnabled) {
-                    const rollValues = keptRolls.map(r => r.value);
-                    const comparisonMap = {
-                        'atleast': '>=',
-                        'exactly': '==',
-                        'atmost': '<='
-                    };
-                    const result = countSuccesses(rollValues, successThreshold, comparisonMap[successComparison]);
-                    successCount = result.successCount;
-                }
-
-                return {
-                    rolls,
-                    keptRolls,
-                    droppedRolls,
-                    total,
-                    successCount
-                };
             }
 
             /**

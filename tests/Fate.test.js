@@ -146,16 +146,16 @@ describe('formatFateRoll', () => {
 });
 
 describe('getFateSymbol', () => {
-    it('returns plus emoji for 1', () => {
-        expect(getFateSymbol(1)).toBe('➕');
+    it('returns plus symbol for 1', () => {
+        expect(getFateSymbol(1)).toBe('+');
     });
 
-    it('returns minus emoji for -1', () => {
-        expect(getFateSymbol(-1)).toBe('➖');
+    it('returns minus symbol for -1', () => {
+        expect(getFateSymbol(-1)).toBe('-');
     });
 
-    it('returns empty string for 0', () => {
-        expect(getFateSymbol(0)).toBe('');
+    it('returns space for 0', () => {
+        expect(getFateSymbol(0)).toBe(' ');
     });
 });
 

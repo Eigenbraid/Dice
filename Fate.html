@@ -6,21 +6,14 @@
     <title>Fate Dice Roller</title>
     <link rel="stylesheet" href="Style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script>
-        // Apply theme immediately to prevent flash of unstyled content
-        (function() {
-            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
-            if (theme) {
-                document.documentElement.classList.add(theme + '-theme');
-            }
-        })();
-    </script>
+    <!-- Apply theme immediately to prevent flash of unstyled content -->
+    <script src="ThemeInit.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Fate Dice Roller</h1>
-            <a href="Index.html" class="close-button" aria-label="Close">✕</a>
+            <a href="index.html" class="close-button" aria-label="Close">✕</a>
         </div>
 
         <div class="controls">
@@ -86,6 +79,14 @@
             <h2>Roll History</h2>
             <div id="rollHistory" class="roll-history"></div>
         </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <a href="https://www.oddturnip.com" target="_blank" rel="noopener noreferrer" class="oddturnip-link">
+                <img src="Names/odd_turnip.png" alt="OddTurnip Logo">
+                <span>OddTurnip.com</span>
+            </a>
+        </div>
     </div>
 
     <script type="module">
@@ -127,7 +128,7 @@
             });
 
             // Also allow rolling with Enter key
-            document.addEventListener('keypress', function(event) {
+            document.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     handleRoll();
                 }
@@ -183,65 +184,5 @@
             }
         });
     </script>
-
-    <style>
-        .statistics-section {
-            margin: 20px auto;
-            max-width: 800px;
-        }
-
-        .stats-toggle {
-            cursor: pointer;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        .stats-toggle:hover {
-            opacity: 0.7;
-        }
-
-        .info-icon {
-            font-size: 1.2em;
-            margin-right: 5px;
-        }
-
-        .stats-content {
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .stats-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px auto;
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-        }
-
-        .stats-table th,
-        .stats-table td {
-            padding: 8px 6px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--text-primary);
-        }
-
-        .stats-table th {
-            background-color: rgba(255, 255, 255, 0.1);
-            font-weight: bold;
-        }
-
-        .stats-table tbody tr:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .stats-table tbody td:first-child {
-            text-align: left;
-        }
-    </style>
 </body>
 </html>
