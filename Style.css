@@ -1058,6 +1058,44 @@ input[type="text"] {
     line-style: italic;
 }
 
+/* Footer */
+.footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border-light);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.footer .oddturnip-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 8px 15px;
+    background: var(--bg-white);
+    border: 2px solid var(--border-medium);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.footer .oddturnip-link:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--button-shadow);
+}
+
+.footer .oddturnip-link img {
+    height: 24px;
+    width: auto;
+}
+
 /* Responsive design */
 @media (max-width: 600px) {
     .container {
