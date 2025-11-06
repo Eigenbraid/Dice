@@ -7,8 +7,11 @@ This document describes the architecture, code organization, and development pra
 ### Core Modules (Pure Logic - No DOM)
 
 - **DiceLibrary.js** - Core dice rolling logic
-  - rollSingleDie(), rollDice(), rollExploding(), dropDice(), countSuccesses()
-  - Pure functions, fully testable
+  - **Basic functions**: rollSingleDie(), rollDice(), rollExploding(), dropDice(), countSuccesses()
+  - **Comprehensive functions**: rollDiceWithModifiers(), rollWithAdvantage()
+    - rollDiceWithModifiers() orchestrates multiple modifiers (exploding, dropping, success counting)
+    - rollWithAdvantage() handles advantage/disadvantage mechanics
+  - Pure functions, fully testable, no DOM dependencies
 
 - **CardLibrary.js** - Generic card deck mechanics
   - createDeck(), shuffleDeck(), drawCard(), dealHands()
@@ -46,7 +49,9 @@ All HTML files now use `<script type="module">` with inline code that:
 - ✅ Fate.html - Uses Fate + HistoryLog
 - ✅ Blades.html - Uses Blades + HistoryLog
 - ✅ Tarot.html - Uses Tarot + CardLibrary + HistoryLog
-- ✅ Custom.html - Uses DiceLibrary + HistoryLog (refactored from legacy CustomRoller.js)
+- ✅ Custom.html - Uses DiceLibrary.rollDiceWithModifiers() + rollWithAdvantage() + HistoryLog
+  - Fully refactored: all dice logic delegated to DiceLibrary
+  - UI layer only handles validation, display, and history
 
 ## Benefits
 
@@ -114,8 +119,9 @@ Dice/
 │   └── Tarot.js                # Tarot cards (uses CardLibrary)
 ├── UI & Theme Management
 │   ├── ThemeManager.js         # Theme switching & persistence
+│   ├── ThemeInit.js            # Theme initialization (prevents FOUC)
 │   ├── Snowflakes.js           # Seasonal animations
-│   └── Style.css               # All styling & themes
+│   └── Style.css               # All styling & themes (no inline CSS)
 ├── HTML Pages (UI Layer)
 │   ├── Index.html              # Main landing page
 │   ├── Basic.html              # Basic dice roller
@@ -140,6 +146,34 @@ Dice/
 │   ├── ARCHITECTURE.md         # This file - architecture & development
 │   └── CLAUDE.md               # Guide for AI assistants
 ```
+
+## Recent Architectural Improvements
+
+### DiceLibrary.js Enhancements
+- Added **rollDiceWithModifiers()** - Comprehensive function that orchestrates multiple modifiers in a single call
+  - Supports: exploding dice (standard/compound), drop lowest/highest, success counting
+  - Eliminates need for manual chaining of individual functions
+  - Returns: rolls, keptRolls, droppedRolls, total, successCount
+- Added **rollWithAdvantage()** - Handles advantage/disadvantage mechanics
+  - Automatically performs two rolls and selects appropriate result
+  - Works with all modifiers (exploding, drop, success counting)
+  - Returns: chosenRoll, otherRoll, mode
+
+### Custom.html Refactoring
+- Removed ~80 lines of duplicate dice rolling logic
+- Now uses rollDiceWithModifiers() and rollWithAdvantage() exclusively
+- UI layer only handles: input validation, result display, history management
+- Perfect example of "DiceLibrary has everything to do with rolling dice, nothing to do with DOM"
+
+### Code Organization Improvements
+- **ThemeInit.js** - Extracted theme initialization to eliminate duplication across 6 HTML files
+- **Style.css** - All inline CSS moved to external stylesheet (350+ lines consolidated)
+- **ThemeManager.js** - Removed debug console.log statements from production code
+
+### Test Coverage
+- **224 tests** passing (up from 173)
+- All new comprehensive functions have full test coverage
+- Tests cover: basic rolls, exploding, dropping, success counting, advantage/disadvantage
 
 ## Notes
 

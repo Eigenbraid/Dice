@@ -6,15 +6,8 @@
     <title>Dice Rollers</title>
     <link rel="stylesheet" href="Style.css">
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script>
-        // Apply theme immediately to prevent flash of unstyled content
-        (function() {
-            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
-            if (theme) {
-                document.documentElement.classList.add(theme + '-theme');
-            }
-        })();
-    </script>
+    <!-- Apply theme immediately to prevent flash of unstyled content -->
+    <script src="ThemeInit.js"></script>
 </head>
 <body>
     <div class="container">
@@ -75,9 +68,13 @@
         </div>
 
         <!-- Footer -->
-        <div class="footer-text">
+        <div class="footer">
             <p>Made with <a href="https://claude.com/claude-code" target="_blank" rel="noopener noreferrer">Claude Code</a></p>
-            <p style="margin-top: 10px;">Provided as-is with no warranties, express or implied. Use at your own risk.</p>
+            <a href="https://www.oddturnip.com" target="_blank" rel="noopener noreferrer" class="oddturnip-link">
+                <img src="Names/odd_turnip.png" alt="OddTurnip Logo">
+                <span>OddTurnip.com</span>
+            </a>
+            <p style="margin-top: 15px;">Provided as-is with no warranties, express or implied. Use at your own risk.</p>
         </div>
     </div>
 

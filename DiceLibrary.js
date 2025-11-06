@@ -286,3 +286,159 @@ export function parseDiceNotation(notation) {
 
     return { numDice, diceType };
 }
+
+/**
+ * Roll multiple dice with comprehensive modifiers
+ * Combines exploding, dropping, and success counting in one function
+ *
+ * @param {Object} options - Roll configuration
+ * @param {number} options.numDice - Number of dice to roll
+ * @param {number} options.diceType - Number of sides on each die
+ * @param {boolean} [options.exploding=false] - Whether dice explode
+ * @param {string} [options.explodingMode='standard'] - 'standard', 'compound', or 'penetrating'
+ * @param {boolean} [options.drop=false] - Whether to drop dice
+ * @param {string} [options.dropType='lowest'] - 'lowest' or 'highest'
+ * @param {number} [options.dropCount=1] - How many dice to drop
+ * @param {boolean} [options.countSuccesses=false] - Whether to count successes
+ * @param {number} [options.successThreshold=4] - Minimum value for success
+ * @param {string} [options.successComparison='>='] - '>=', '==', or '<='
+ * @returns {Object} - { rolls, keptRolls, droppedRolls, total, successCount }
+ * @throws {Error} - If options are invalid
+ */
+export function rollDiceWithModifiers(options) {
+    const {
+        numDice,
+        diceType,
+        exploding = false,
+        explodingMode = 'standard',
+        drop = false,
+        dropType = 'lowest',
+        dropCount = 1,
+        countSuccesses: countSuccessesEnabled = false,
+        successThreshold = 4,
+        successComparison = '>='
+    } = options;
+
+    // Validate inputs
+    if (!Number.isInteger(numDice) || numDice < 1) {
+        throw new Error(`Invalid number of dice: ${numDice}. Must be a positive integer.`);
+    }
+    if (!Number.isInteger(diceType) || diceType < 1) {
+        throw new Error(`Invalid dice type: ${diceType}. Must be a positive integer.`);
+    }
+
+    // Step 1: Roll dice (with or without exploding)
+    let rolls;
+    if (exploding) {
+        rolls = [];
+        for (let i = 0; i < numDice; i++) {
+            rolls.push(rollSingleExplodingDie(diceType, explodingMode));
+        }
+    } else {
+        rolls = [];
+        for (let i = 0; i < numDice; i++) {
+            const value = rollSingleDie(diceType);
+            rolls.push({
+                value: value,
+                display: String(value),
+                breakdown: [value]
+            });
+        }
+    }
+
+    // Step 2: Apply drop mechanic if enabled
+    let keptRolls = rolls;
+    let droppedRolls = [];
+
+    if (drop) {
+        const rollValues = rolls.map(r => r.value);
+        const dropResult = dropDice(rollValues, dropCount, dropType);
+
+        // Map back to roll objects, preserving order
+        const keptCopy = [...dropResult.keptRolls];
+        const droppedCopy = [...dropResult.droppedRolls];
+        keptRolls = [];
+        droppedRolls = [];
+
+        for (const roll of rolls) {
+            const keptIndex = keptCopy.indexOf(roll.value);
+            const droppedIndex = droppedCopy.indexOf(roll.value);
+
+            if (keptIndex !== -1) {
+                keptRolls.push(roll);
+                keptCopy.splice(keptIndex, 1);
+            } else if (droppedIndex !== -1) {
+                droppedRolls.push(roll);
+                droppedCopy.splice(droppedIndex, 1);
+            }
+        }
+    }
+
+    // Step 3: Calculate total from kept rolls
+    const total = keptRolls.reduce((sum, roll) => sum + roll.value, 0);
+
+    // Step 4: Calculate success count if enabled
+    let successCount = 0;
+    if (countSuccessesEnabled) {
+        const rollValues = keptRolls.map(r => r.value);
+        const result = countSuccesses(rollValues, successThreshold, successComparison);
+        successCount = result.successCount;
+    }
+
+    return {
+        rolls,
+        keptRolls,
+        droppedRolls,
+        total,
+        successCount
+    };
+}
+
+/**
+ * Roll with advantage or disadvantage
+ * Rolls twice and picks the better (advantage) or worse (disadvantage) result
+ *
+ * @param {string} mode - 'advantage' or 'disadvantage'
+ * @param {Object} rollOptions - Options to pass to rollDiceWithModifiers
+ * @returns {Object} - { chosenRoll, otherRoll, mode }
+ * @throws {Error} - If mode is invalid
+ */
+export function rollWithAdvantage(mode, rollOptions) {
+    if (mode !== 'advantage' && mode !== 'disadvantage') {
+        throw new Error(`Invalid mode: ${mode}. Must be 'advantage' or 'disadvantage'.`);
+    }
+
+    // Perform two rolls with the same options
+    const roll1 = rollDiceWithModifiers(rollOptions);
+    const roll2 = rollDiceWithModifiers(rollOptions);
+
+    // Determine comparison value (successCount if counting successes, otherwise total)
+    const useSuccessCount = rollOptions.countSuccesses || false;
+    const compareKey = useSuccessCount ? 'successCount' : 'total';
+
+    // Choose the appropriate roll based on mode
+    let chosenRoll, otherRoll;
+    if (mode === 'advantage') {
+        if (roll1[compareKey] >= roll2[compareKey]) {
+            chosenRoll = roll1;
+            otherRoll = roll2;
+        } else {
+            chosenRoll = roll2;
+            otherRoll = roll1;
+        }
+    } else { // disadvantage
+        if (roll1[compareKey] <= roll2[compareKey]) {
+            chosenRoll = roll1;
+            otherRoll = roll2;
+        } else {
+            chosenRoll = roll2;
+            otherRoll = roll1;
+        }
+    }
+
+    return {
+        chosenRoll,
+        otherRoll,
+        mode
+    };
+}

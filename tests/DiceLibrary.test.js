@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { rollSingleDie, rollSingleExplodingDie, rollDice, formatDiceRoll, parseDiceNotation, dropDice, countSuccesses } from '../DiceLibrary.js';
+import { rollSingleDie, rollSingleExplodingDie, rollDice, formatDiceRoll, parseDiceNotation, dropDice, countSuccesses, rollDiceWithModifiers, rollWithAdvantage } from '../DiceLibrary.js';
 
 describe('rollSingleDie', () => {
     it('returns a value between 1 and sides', () => {
@@ -229,5 +229,256 @@ describe('rollSingleExplodingDie', () => {
         expect(result.display).toBe('20+15');
 
         mockRandom.mockRestore();
+    });
+});
+
+describe('rollDiceWithModifiers', () => {
+    it('rolls basic dice without modifiers', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        mockRandom.mockReturnValueOnce(0.5);  // 4
+        mockRandom.mockReturnValueOnce(0.8);  // 5
+
+        const result = rollDiceWithModifiers({
+            numDice: 2,
+            diceType: 6
+        });
+
+        expect(result.rolls).toHaveLength(2);
+        expect(result.keptRolls).toEqual(result.rolls);
+        expect(result.droppedRolls).toEqual([]);
+        expect(result.total).toBe(9);
+        expect(result.successCount).toBe(0);
+
+        mockRandom.mockRestore();
+    });
+
+    it('rolls with exploding enabled', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        mockRandom.mockReturnValueOnce(0.99);  // 6 (explodes)
+        mockRandom.mockReturnValueOnce(0.5);   // 4
+        mockRandom.mockReturnValueOnce(0.2);   // 2
+
+        const result = rollDiceWithModifiers({
+            numDice: 2,
+            diceType: 6,
+            exploding: true
+        });
+
+        expect(result.rolls).toHaveLength(2);
+        expect(result.rolls[0].value).toBe(10);  // 6+4
+        expect(result.rolls[1].value).toBe(2);
+        expect(result.total).toBe(12);
+
+        mockRandom.mockRestore();
+    });
+
+    it('rolls with drop lowest', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        mockRandom.mockReturnValueOnce(0.2);   // 2
+        mockRandom.mockReturnValueOnce(0.5);   // 4
+        mockRandom.mockReturnValueOnce(0.9);   // 6
+
+        const result = rollDiceWithModifiers({
+            numDice: 3,
+            diceType: 6,
+            drop: true,
+            dropType: 'lowest',
+            dropCount: 1
+        });
+
+        expect(result.keptRolls).toHaveLength(2);
+        expect(result.droppedRolls).toHaveLength(1);
+        expect(result.keptRolls[0].value).toBe(4);
+        expect(result.keptRolls[1].value).toBe(6);
+        expect(result.total).toBe(10);
+
+        mockRandom.mockRestore();
+    });
+
+    it('rolls with drop highest', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        mockRandom.mockReturnValueOnce(0.2);   // 2
+        mockRandom.mockReturnValueOnce(0.5);   // 4
+        mockRandom.mockReturnValueOnce(0.9);   // 6
+
+        const result = rollDiceWithModifiers({
+            numDice: 3,
+            diceType: 6,
+            drop: true,
+            dropType: 'highest',
+            dropCount: 1
+        });
+
+        expect(result.keptRolls).toHaveLength(2);
+        expect(result.droppedRolls).toHaveLength(1);
+        expect(result.keptRolls[0].value).toBe(2);
+        expect(result.keptRolls[1].value).toBe(4);
+        expect(result.total).toBe(6);
+
+        mockRandom.mockRestore();
+    });
+
+    it('counts successes correctly', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        mockRandom.mockReturnValueOnce(0.2);   // 2
+        mockRandom.mockReturnValueOnce(0.5);   // 4
+        mockRandom.mockReturnValueOnce(0.9);   // 6
+
+        const result = rollDiceWithModifiers({
+            numDice: 3,
+            diceType: 6,
+            countSuccesses: true,
+            successThreshold: 4,
+            successComparison: '>='
+        });
+
+        expect(result.successCount).toBe(2);  // 4 and 6
+        expect(result.total).toBe(12);
+
+        mockRandom.mockRestore();
+    });
+
+    it('combines exploding and drop', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        mockRandom.mockReturnValueOnce(0.99);  // Die 1: 6 (explodes)
+        mockRandom.mockReturnValueOnce(0.5);   // Die 1 continues: 4
+        mockRandom.mockReturnValueOnce(0.2);   // Die 2: 2
+        mockRandom.mockReturnValueOnce(0.7);   // Die 3: 5 (no explode)
+
+        const result = rollDiceWithModifiers({
+            numDice: 3,
+            diceType: 6,
+            exploding: true,
+            drop: true,
+            dropType: 'lowest',
+            dropCount: 1
+        });
+
+        expect(result.rolls).toHaveLength(3);
+        expect(result.keptRolls).toHaveLength(2);
+        expect(result.droppedRolls).toHaveLength(1);
+        // Kept: 10 (6+4) and 5, Dropped: 2
+        expect(result.total).toBe(15);
+
+        mockRandom.mockRestore();
+    });
+
+    it('combines all modifiers', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        mockRandom.mockReturnValueOnce(0.2);   // 2
+        mockRandom.mockReturnValueOnce(0.5);   // 4
+        mockRandom.mockReturnValueOnce(0.9);   // 6
+
+        const result = rollDiceWithModifiers({
+            numDice: 3,
+            diceType: 6,
+            drop: true,
+            dropType: 'lowest',
+            dropCount: 1,
+            countSuccesses: true,
+            successThreshold: 4,
+            successComparison: '>='
+        });
+
+        expect(result.keptRolls).toHaveLength(2);
+        expect(result.total).toBe(10);  // 4 + 6
+        expect(result.successCount).toBe(2);  // Both 4 and 6 >= 4
+
+        mockRandom.mockRestore();
+    });
+
+    it('throws error for invalid numDice', () => {
+        expect(() => rollDiceWithModifiers({ numDice: 0, diceType: 6 })).toThrow();
+        expect(() => rollDiceWithModifiers({ numDice: -1, diceType: 6 })).toThrow();
+    });
+
+    it('throws error for invalid diceType', () => {
+        expect(() => rollDiceWithModifiers({ numDice: 2, diceType: 0 })).toThrow();
+        expect(() => rollDiceWithModifiers({ numDice: 2, diceType: -6 })).toThrow();
+    });
+});
+
+describe('rollWithAdvantage', () => {
+    it('chooses higher roll with advantage', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        // First roll: 3
+        mockRandom.mockReturnValueOnce(0.4);   // 3
+        // Second roll: 5
+        mockRandom.mockReturnValueOnce(0.7);   // 5
+
+        const result = rollWithAdvantage('advantage', {
+            numDice: 1,
+            diceType: 6
+        });
+
+        expect(result.mode).toBe('advantage');
+        expect(result.chosenRoll.total).toBe(5);
+        expect(result.otherRoll.total).toBe(3);
+
+        mockRandom.mockRestore();
+    });
+
+    it('chooses lower roll with disadvantage', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        // First roll: 3
+        mockRandom.mockReturnValueOnce(0.4);   // 3
+        // Second roll: 5
+        mockRandom.mockReturnValueOnce(0.7);   // 5
+
+        const result = rollWithAdvantage('disadvantage', {
+            numDice: 1,
+            diceType: 6
+        });
+
+        expect(result.mode).toBe('disadvantage');
+        expect(result.chosenRoll.total).toBe(3);
+        expect(result.otherRoll.total).toBe(5);
+
+        mockRandom.mockRestore();
+    });
+
+    it('uses success count when counting successes', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        // First roll: 2, 3 (0 successes)
+        mockRandom.mockReturnValueOnce(0.2);
+        mockRandom.mockReturnValueOnce(0.4);
+        // Second roll: 4, 5 (2 successes)
+        mockRandom.mockReturnValueOnce(0.5);
+        mockRandom.mockReturnValueOnce(0.7);
+
+        const result = rollWithAdvantage('advantage', {
+            numDice: 2,
+            diceType: 6,
+            countSuccesses: true,
+            successThreshold: 4,
+            successComparison: '>='
+        });
+
+        expect(result.chosenRoll.successCount).toBe(2);
+        expect(result.otherRoll.successCount).toBe(0);
+
+        mockRandom.mockRestore();
+    });
+
+    it('handles equal rolls correctly', () => {
+        const mockRandom = vi.spyOn(Math, 'random');
+        // Both rolls: 4
+        mockRandom.mockReturnValueOnce(0.5);
+        mockRandom.mockReturnValueOnce(0.5);
+
+        const result = rollWithAdvantage('advantage', {
+            numDice: 1,
+            diceType: 6
+        });
+
+        expect(result.chosenRoll.total).toBe(4);
+        expect(result.otherRoll.total).toBe(4);
+
+        mockRandom.mockRestore();
+    });
+
+    it('throws error for invalid mode', () => {
+        expect(() => rollWithAdvantage('invalid', { numDice: 1, diceType: 6 })).toThrow();
+        expect(() => rollWithAdvantage('ADVANTAGE', { numDice: 1, diceType: 6 })).toThrow();
     });
 });
