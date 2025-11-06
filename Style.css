@@ -910,10 +910,12 @@ input[type="text"] {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2em;
+    font-size: 4em;
+    font-weight: bold;
     color: var(--text-white);
     box-shadow: 0 2px 4px var(--shadow-primary);
-    padding-bottom: 3px;
+    padding-left: 2px;
+    padding-bottom: 14px;
 }
 
 .history-section {
