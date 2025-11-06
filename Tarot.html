@@ -71,7 +71,7 @@
 
         .card-name {
             font-size: 0.95em;
-            color: #5a1010;
+            color: var(--text-primary);
             font-weight: 600;
         }
 
@@ -86,8 +86,8 @@
 
         .history-hand {
             padding: 15px;
-            background: white;
-            border-left: 4px solid #5a7a47;
+            background: var(--bg-white);
+            border-left: 4px solid var(--border-accent);
             margin-bottom: 15px;
             border-radius: 5px;
             transition: all 0.2s ease;
@@ -95,22 +95,22 @@
         }
 
         .history-hand:hover {
-            background: #f0f5ef;
-            border: 2px solid #5a7a47;
-            border-left: 4px solid #5a7a47;
-            box-shadow: 0 2px 8px rgba(90, 122, 71, 0.15);
+            background: var(--bg-hover);
+            border: 2px solid var(--border-accent);
+            border-left: 4px solid var(--border-accent);
+            box-shadow: 0 2px 8px var(--history-border-shadow);
         }
 
         .history-hand-title {
             font-weight: 600;
-            color: #5a1010;
+            color: var(--text-primary);
             margin-bottom: 10px;
             font-size: 1em;
         }
 
         .history-hand ul {
             list-style-position: inside;
-            color: #555;
+            color: var(--text-secondary);
             font-size: 0.95em;
             padding-left: 10px;
         }
@@ -139,7 +139,7 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--bg-white);
             padding: 30px;
             border-radius: 15px;
             max-width: 500px;
@@ -157,7 +157,7 @@
             top: 15px;
             font-size: 28px;
             font-weight: bold;
-            color: #7a2a1f;
+            color: var(--text-primary);
             cursor: pointer;
             border: none;
             background: none;
@@ -167,7 +167,7 @@
         }
 
         .modal-close:hover {
-            color: #5a1010;
+            color: var(--accent-primary);
             transform: scale(1.2);
         }
 
@@ -187,7 +187,7 @@
         }
 
         .modal-card-name {
-            color: #5a1010;
+            color: var(--text-primary);
             font-size: 1.8em;
             font-weight: 700;
             margin-bottom: 15px;
@@ -195,14 +195,14 @@
         }
 
         .modal-card-orientation {
-            color: #7a2a1f;
+            color: var(--accent-primary);
             font-size: 1.2em;
             font-weight: 600;
             margin-bottom: 15px;
         }
 
         .modal-card-meaning {
-            color: #555;
+            color: var(--text-secondary);
             font-size: 1.1em;
             line-height: 1.8;
         }
