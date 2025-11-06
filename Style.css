@@ -496,6 +496,68 @@ html.stars-theme body {
     background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%) !important;
 }
 
+/* Gothic Theme */
+html.gothic-theme,
+html.gothic-theme:root,
+body.gothic-theme {
+    --bg-gradient-start: #1a0a1a !important;
+    --bg-gradient-end: #2d1a2d !important;
+    --container-bg: rgba(20, 10, 20, 0.85) !important;
+    --result-gradient-start: #6a0dad !important;
+    --result-gradient-end: #4a0a7a !important;
+
+    --heading-primary: #d8b4e2 !important;
+    --heading-secondary: #c299d8 !important;
+    --heading-tertiary: #b088c5 !important;
+    --text-primary: #d4c5d8 !important;
+    --text-secondary: #b8a5bc !important;
+    --text-light: #8a7a8e !important;
+    --text-white: #f0e8f0 !important;
+
+    --accent-primary: #8b4789 !important;
+    --accent-primary-dark: #6a2c68 !important;
+    --accent-secondary: #9d5b9b !important;
+    --accent-tertiary: #7a4477 !important;
+
+    --button-gradient-start: #8b4789 !important;
+    --button-gradient-end: #6a2c68 !important;
+    --button-shadow: rgba(139, 71, 137, 0.5) !important;
+
+    --border-light: #3d2a3d !important;
+    --border-medium: #4d3a4d !important;
+    --border-accent: #9d5b9b !important;
+
+    --bg-light: #2a1a2a !important;
+    --bg-white: #3a2a3a !important;
+    --bg-hover: #4a3a4a !important;
+
+    --error-bg: #3d1a2a !important;
+    --error-border: #a82255 !important;
+    --error-text: #ef5589 !important;
+
+    --fate-die-bg: #6a2c68 !important;
+
+    --scrollbar-track: #2a1a2a !important;
+    --scrollbar-thumb: #8b4789 !important;
+    --scrollbar-thumb-hover: #6a2c68 !important;
+
+    --close-btn-bg: rgba(139, 71, 137, 0.15) !important;
+    --close-btn-bg-hover: rgba(139, 71, 137, 0.25) !important;
+    --close-btn-color: #d8b4e2 !important;
+
+    --link-hover-gradient-start: rgba(139, 71, 137, 0.08) !important;
+    --link-hover-gradient-end: rgba(106, 44, 104, 0.08) !important;
+
+    --history-border-shadow: rgba(139, 71, 137, 0.25) !important;
+
+    --result-text-shadow: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Gothic theme: use background image */
+html.gothic-theme body {
+    background: url('img/Background/gotham.png') center center / cover no-repeat fixed !important;
+}
+
 /* ========================================
    GLOBAL STYLES
    ======================================== */
