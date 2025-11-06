@@ -78,19 +78,19 @@ export function formatFateRoll(result) {
 }
 
 /**
- * Get the display symbol for Fate die value (emoji version)
+ * Get the display symbol for Fate die value
  * @param {number} value - Die value (-1, 0, or 1)
- * @returns {string} - Emoji symbol (➖ for minus, blank for zero, ➕ for plus)
+ * @returns {string} - Symbol (- for minus, blank for zero, + for plus)
  */
 export function getFateSymbol(value) {
     switch (value) {
         case 1:
-            return '➕';
+            return '+';
         case -1:
-            return '➖';
+            return '-';
         case 0:
         default:
-            return '';  // Blank for zero
+            return ' ';  // Blank for zero
     }
 }
 

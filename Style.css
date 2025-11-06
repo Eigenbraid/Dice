@@ -570,6 +570,17 @@ html.gothic-theme .die {
     border-color: #FFD700 !important;
 }
 
+/* Gothic theme: make dice highlights more distinct */
+html.gothic-theme .die-highlight-high {
+    border: 3px solid #00FF00 !important;
+    box-shadow: 0 0 10px #00FF00, 0 2px 4px var(--shadow-primary) !important;
+}
+
+html.gothic-theme .die-highlight-low {
+    border: 3px solid #FF4500 !important;
+    box-shadow: 0 0 10px #FF4500, 0 2px 4px var(--shadow-primary) !important;
+}
+
 /* ========================================
    GLOBAL STYLES
    ======================================== */

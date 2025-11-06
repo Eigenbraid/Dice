@@ -209,12 +209,12 @@
                     if (isZeroDice) {
                         // For 0 dice, highlight the lowest
                         if (roll === result) {
-                            die.style.border = '3px solid #FFA500';
+                            die.classList.add('die-highlight-low');
                         }
                     } else {
                         // For normal rolls, highlight the highest (or all 6s for critical)
                         if (roll === result) {
-                            die.style.border = '3px solid #4CAF50';
+                            die.classList.add('die-highlight-high');
                         }
                     }
 
@@ -262,6 +262,14 @@
             border: 2px solid var(--border-medium);
             border-radius: 8px;
             box-shadow: 0 2px 4px var(--shadow-primary);
+        }
+
+        .die-highlight-high {
+            border: 3px solid #4CAF50;
+        }
+
+        .die-highlight-low {
+            border: 3px solid #FFA500;
         }
 
         .statistics-section {
