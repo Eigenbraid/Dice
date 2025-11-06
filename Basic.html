@@ -6,15 +6,8 @@
     <title>Dice Roller</title>
     <link rel="stylesheet" href="Style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script>
-        // Apply theme immediately to prevent flash of unstyled content
-        (function() {
-            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
-            if (theme) {
-                document.documentElement.classList.add(theme + '-theme');
-            }
-        })();
-    </script>
+    <!-- Apply theme immediately to prevent flash of unstyled content -->
+    <script src="ThemeInit.js"></script>
 </head>
 <body>
     <div class="container">
@@ -99,7 +92,7 @@
             rollButton.addEventListener('click', handleRoll);
 
             // Also allow rolling with Enter key
-            document.addEventListener('keypress', function(event) {
+            document.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
                     handleRoll();
                 }

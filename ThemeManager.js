@@ -52,8 +52,6 @@ function setAnimationsEnabled(enabled) {
  * @param {string} theme - The theme name to apply
  */
 function applyTheme(theme) {
-    console.log('Applying theme:', theme);
-
     // Apply to html element (works even before body exists)
     const htmlElement = document.documentElement;
 
@@ -67,9 +65,6 @@ function applyTheme(theme) {
 
     // Apply new theme class
     htmlElement.classList.add(`${theme}-theme`);
-    console.log('Added class to html:', `${theme}-theme`);
-
-    console.log('HTML classes:', htmlElement.className);
 
     // Trigger seasonal effects update
     // Delay to ensure DOM is ready
@@ -138,7 +133,6 @@ function createThemeSelector() {
 
     // Add event listener
     select.addEventListener('change', (e) => {
-        console.log('Theme dropdown changed to:', e.target.value);
         setTheme(e.target.value);
     });
 

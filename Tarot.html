@@ -6,15 +6,8 @@
     <title>Tarot Reading</title>
     <link rel="stylesheet" href="Style.css">
     <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <script>
-        // Apply theme immediately to prevent flash of unstyled content
-        (function() {
-            const theme = localStorage.getItem('dice-roller-theme') || 'autumn';
-            if (theme) {
-                document.documentElement.classList.add(theme + '-theme');
-            }
-        })();
-    </script>
+    <!-- Apply theme immediately to prevent flash of unstyled content -->
+    <script src="ThemeInit.js"></script>
     <style>
         .cards-container {
             display: flex;
