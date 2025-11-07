@@ -581,6 +581,94 @@ html.gothic-theme .die-highlight-low {
     box-shadow: 0 0 10px #FF4500, 0 2px 4px var(--shadow-primary) !important;
 }
 
+/* Cthulhu Theme */
+html.cthulhu-theme,
+html.cthulhu-theme:root,
+body.cthulhu-theme {
+    --bg-gradient-start: #0a0a0a !important;
+    --bg-gradient-end: #1a1a2e !important;
+    --container-bg: rgba(15, 15, 20, 0.88) !important;
+    --result-gradient-start: #4a0e4e !important;
+    --result-gradient-end: #2a0a3a !important;
+
+    --heading-primary: #7fb069 !important;
+    --heading-secondary: #6a9b5e !important;
+    --heading-tertiary: #b388eb !important;
+    --text-primary: #c4d8c4 !important;
+    --text-secondary: #a0b8a0 !important;
+    --text-light: #788878 !important;
+    --text-white: #e8f5e8 !important;
+
+    --accent-primary: #3fb57a !important;
+    --accent-primary-dark: #2e7d52 !important;
+    --accent-secondary: #4fc98a !important;
+    --accent-tertiary: #8e4ec6 !important;
+
+    --button-gradient-start: #3fb57a !important;
+    --button-gradient-end: #2e7d52 !important;
+    --button-shadow: rgba(63, 181, 122, 0.5) !important;
+
+    --border-light: #2a2a3a !important;
+    --border-medium: #3a3a4a !important;
+    --border-accent: #4fc98a !important;
+
+    --bg-light: #1a1a2a !important;
+    --bg-white: #252535 !important;
+    --bg-hover: #353545 !important;
+
+    --error-bg: #2a1a1f !important;
+    --error-border: #c62852 !important;
+    --error-text: #ef5577 !important;
+
+    --fate-die-bg: #1a4d2e !important;
+
+    --scrollbar-track: #1a1a2a !important;
+    --scrollbar-thumb: #3fb57a !important;
+    --scrollbar-thumb-hover: #2e7d52 !important;
+
+    --close-btn-bg: rgba(63, 181, 122, 0.15) !important;
+    --close-btn-bg-hover: rgba(63, 181, 122, 0.25) !important;
+    --close-btn-color: #7fb069 !important;
+
+    --link-hover-gradient-start: rgba(63, 181, 122, 0.08) !important;
+    --link-hover-gradient-end: rgba(46, 125, 82, 0.08) !important;
+
+    --history-border-shadow: rgba(63, 181, 122, 0.25) !important;
+
+    --result-text-shadow: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Cthulhu theme: use background image */
+html.cthulhu-theme body {
+    background: url('img/Background/cthulhu.png') center center / cover no-repeat fixed !important;
+}
+
+/* Cthulhu theme: dice styling with dark background and eldritch green text */
+html.cthulhu-theme .fate-die {
+    background-color: #0a0a0a !important;
+    color: #7fb069 !important;
+    border: 2px solid #3fb57a !important;
+    box-shadow: 0 0 8px rgba(63, 181, 122, 0.3) !important;
+}
+
+html.cthulhu-theme .die {
+    background-color: #0a0a0a !important;
+    color: #7fb069 !important;
+    border: 2px solid #3fb57a !important;
+    box-shadow: 0 0 8px rgba(63, 181, 122, 0.3) !important;
+}
+
+/* Cthulhu theme: make dice highlights more distinct with purple and green */
+html.cthulhu-theme .die-highlight-high {
+    border: 3px solid #7fb069 !important;
+    box-shadow: 0 0 12px #7fb069, 0 2px 4px var(--shadow-primary) !important;
+}
+
+html.cthulhu-theme .die-highlight-low {
+    border: 3px solid #b388eb !important;
+    box-shadow: 0 0 12px #b388eb, 0 2px 4px var(--shadow-primary) !important;
+}
+
 /* ========================================
    GLOBAL STYLES
    ======================================== */
