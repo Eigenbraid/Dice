@@ -131,8 +131,9 @@ def validate_and_import_csv(csv_file='names.csv', reset=False):
         print(f"✗ Error: File '{csv_file}' not found")
         conn.close()
         return
-    except Exception as e:
+    except (csv.Error, UnicodeDecodeError, KeyError) as e:
         print(f"✗ Error reading CSV: {str(e)}")
+        print(f"   This usually means the CSV file is malformed or has missing columns.")
         conn.close()
         return
 

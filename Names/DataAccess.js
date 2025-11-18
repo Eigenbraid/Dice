@@ -109,11 +109,38 @@ function getDatabase() {
 // ============================================================================
 
 /**
- * Escape single quotes in SQL string literals to prevent syntax errors.
- * Note: This is a basic implementation. In production, use parameterized queries.
+ * Execute a parameterized query and return all results.
+ * This is the RECOMMENDED and SECURE way to execute queries with user input.
+ *
+ * @param {string} sql - SQL query with ? placeholders
+ * @param {Array} params - Array of parameter values
+ * @returns {Array} Array of result rows, or empty array if no results
+ *
+ * @example
+ * const results = execParams("SELECT * FROM tags WHERE tag_name = ?", ["Blades 68"]);
+ */
+function execParams(sql, params = []) {
+    const stmt = db.prepare(sql);
+    stmt.bind(params);
+
+    const results = [];
+    while (stmt.step()) {
+        results.push(stmt.get());
+    }
+    stmt.free();
+
+    return results;
+}
+
+/**
+ * Escape single quotes in SQL string literals.
+ *
+ * @deprecated Use parameterized queries via execParams() instead. This function
+ * provides basic SQL escaping but is NOT a complete defense against SQL injection.
+ * Retained only for backward compatibility with buildNameViewerQuery() and tests.
  *
  * @param {string} value - The string value to escape
- * @returns {string} The escaped string safe for SQL string literals
+ * @returns {string} The escaped string with single quotes doubled
  *
  * @example
  * escapeSQL("O'Brien") // Returns: "O''Brien"
@@ -169,18 +196,16 @@ function getTagIdsForSources(sourceNames) {
     const tagIds = [];
 
     sourceNames.forEach(source => {
-        const escapedSource = escapeSQL(source);
-        const tagResult = db.exec(`
-            SELECT id FROM tags WHERE tag_name = '${escapedSource}'
+        const sql = `
+            SELECT id FROM tags WHERE tag_name = ?
             UNION
-            SELECT id FROM tags WHERE parent_tag_id = (SELECT id FROM tags WHERE tag_name = '${escapedSource}')
-        `);
+            SELECT id FROM tags WHERE parent_tag_id = (SELECT id FROM tags WHERE tag_name = ?)
+        `;
+        const tagResult = execParams(sql, [source, source]);
 
-        if (tagResult.length > 0 && tagResult[0].values.length > 0) {
-            tagResult[0].values.forEach(row => {
-                tagIds.push(row[0]);
-            });
-        }
+        tagResult.forEach(row => {
+            tagIds.push(row[0]);
+        });
     });
 
     return tagIds;
@@ -275,13 +300,19 @@ function getDatabaseStats() {
 /**
  * Build a SQL query for the database viewer with filters.
  *
+ * ⚠️ SECURITY WARNING: This function uses string interpolation (via escapeSQL())
+ * instead of parameterized queries. It should ONLY be used with trusted input
+ * from controlled UI elements (dropdowns populated from database values).
+ * For arbitrary user input, use parameterized queries via execParams() instead.
+ *
  * @param {Object} filters - Filter options
  * @param {string} [filters.position] - Filter by position (e.g., 'first', 'last')
  * @param {string} [filters.gender] - Filter by gender (e.g., 'male', 'female')
  * @param {string} [filters.source] - Filter by source tag name, or '__ORPHANED__' for names without sources
- * @returns {string} SQL query string
+ * @returns {string} SQL query string (not parameterized - use with caution)
  *
  * @example
+ * // Only use with values from controlled dropdowns
  * const query = buildNameViewerQuery({ position: 'first', gender: 'male' });
  * const result = db.exec(query);
  */
@@ -446,29 +477,33 @@ function isUndersupplied(firstCount, lastCount, isAdminEntry = false) {
  * const firstName = getWeightedName('first', ['male', 'any'], [1, 2, 3]);
  */
 function getWeightedName(position, genders, sourceTagIds = []) {
-    const genderList = genders.map(g => `'${escapeSQL(g)}'`).join(', ');
+    //Build placeholders for genders array
+    const genderPlaceholders = genders.map(() => '?').join(', ');
 
+    // Tag IDs are integers, safe to use directly in IN clause
     let sourceFilter = '';
     if (sourceTagIds.length > 0) {
         const tagIdList = sourceTagIds.join(', ');
         sourceFilter = ` AND n.id IN (SELECT nt.name_id FROM name_tags nt WHERE nt.tag_id IN (${tagIdList}))`;
     }
 
-    const query = `
+    const sql = `
         SELECT n.name FROM names n
-        WHERE n.position_id = (SELECT id FROM positions WHERE position = '${escapeSQL(position)}')
-          AND n.gender_id IN (SELECT id FROM genders WHERE gender IN (${genderList}))
+        WHERE n.position_id = (SELECT id FROM positions WHERE position = ?)
+          AND n.gender_id IN (SELECT id FROM genders WHERE gender IN (${genderPlaceholders}))
           ${sourceFilter}
         ORDER BY RANDOM() * n.frequency_weight DESC
         LIMIT 1
     `;
 
-    const result = db.exec(query);
-    if (result.length === 0 || result[0].values.length === 0) {
+    const params = [position, ...genders];
+    const result = execParams(sql, params);
+
+    if (result.length === 0) {
         return null;
     }
 
-    return result[0].values[0][0];
+    return result[0][0];
 }
 
 /**
@@ -483,27 +518,31 @@ function getWeightedName(position, genders, sourceTagIds = []) {
  * const count = countNames('nickname', ['male', 'any'], [1, 2]);
  */
 function countNames(position, genders, sourceTagIds = []) {
-    const genderList = genders.map(g => `'${escapeSQL(g)}'`).join(', ');
+    // Build placeholders for genders array
+    const genderPlaceholders = genders.map(() => '?').join(', ');
 
+    // Tag IDs are integers, safe to use directly in IN clause
     let sourceFilter = '';
     if (sourceTagIds.length > 0) {
         const tagIdList = sourceTagIds.join(', ');
         sourceFilter = ` AND n.id IN (SELECT nt.name_id FROM name_tags nt WHERE nt.tag_id IN (${tagIdList}))`;
     }
 
-    const query = `
+    const sql = `
         SELECT COUNT(DISTINCT n.id) FROM names n
-        WHERE n.position_id = (SELECT id FROM positions WHERE position = '${escapeSQL(position)}')
-          AND n.gender_id IN (SELECT id FROM genders WHERE gender IN (${genderList}))
+        WHERE n.position_id = (SELECT id FROM positions WHERE position = ?)
+          AND n.gender_id IN (SELECT id FROM genders WHERE gender IN (${genderPlaceholders}))
           ${sourceFilter}
     `;
 
-    const result = db.exec(query);
-    if (result.length === 0 || result[0].values.length === 0) {
+    const params = [position, ...genders];
+    const result = execParams(sql, params);
+
+    if (result.length === 0) {
         return 0;
     }
 
-    return result[0].values[0][0];
+    return result[0][0];
 }
 
 /**
@@ -520,24 +559,28 @@ function countNames(position, genders, sourceTagIds = []) {
  * const count = countNamesIncludingChildren('first', ['male', 'female', 'any'], 5);
  */
 function countNamesIncludingChildren(position, genders, tagId) {
-    const genderList = genders.map(g => `'${escapeSQL(g)}'`).join(', ');
+    // Build placeholders for genders array
+    const genderPlaceholders = genders.map(() => '?').join(', ');
 
-    const query = `
+    // tagId is an integer, safe to use directly
+    const sql = `
         SELECT COUNT(DISTINCT n.id) FROM names n
         JOIN positions pos ON n.position_id = pos.id
         JOIN name_tags nt ON n.id = nt.name_id
-        WHERE pos.position = '${escapeSQL(position)}'
-          AND n.gender_id IN (SELECT id FROM genders WHERE gender IN (${genderList}))
+        WHERE pos.position = ?
+          AND n.gender_id IN (SELECT id FROM genders WHERE gender IN (${genderPlaceholders}))
           AND (nt.tag_id = ${tagId}
                OR nt.tag_id IN (SELECT id FROM tags WHERE parent_tag_id = ${tagId}))
     `;
 
-    const result = db.exec(query);
-    if (result.length === 0 || result[0].values.length === 0) {
+    const params = [position, ...genders];
+    const result = execParams(sql, params);
+
+    if (result.length === 0) {
         return 0;
     }
 
-    return result[0].values[0][0];
+    return result[0][0];
 }
 
 /**
@@ -657,7 +700,8 @@ const NameGeneratorDB = {
     getDatabase,
 
     // Helper functions
-    escapeSQL,
+    execParams,
+    escapeSQL,  // Deprecated - use execParams() instead
     getSourceTags,
     getTagIdsForSources,
     getGenders,
